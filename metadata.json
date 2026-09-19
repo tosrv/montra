@@ -1,0 +1,6 @@
+{
+  "name": "Money Tracker",
+  "description": "A local-first personal finance tracker. Your money. Your device. Your privacy.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

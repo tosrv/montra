@@ -1,0 +1,426 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import { useOutletContext } from 'react-router-dom';
+import {
+  Plus,
+  Search,
+  Filter,
+  ArrowUpDown,
+  Download,
+  Trash2,
+  Edit2,
+  ArrowDownRight,
+  ArrowUpRight,
+  ArrowLeftRight,
+  Receipt,
+  FileSpreadsheet,
+  Calendar,
+} from 'lucide-react';
+import {
+  getFilteredTransactions,
+  updateTransaction,
+  deleteTransaction,
+  createTransaction,
+} from '../../services/transactionService.ts';
+import { exportTransactionsCsv } from '../../services/backupService.ts';
+import { useAccounts } from '../../hooks/useAccounts.ts';
+import { useCategories } from '../../hooks/useCategories.ts';
+import { useSettings } from '../../hooks/useSettings.ts';
+import { formatCurrency } from '../../utils/currency.ts';
+import { formatDisplayDate, getMonthNames } from '../../utils/dates.ts';
+import { TransactionModal } from '../../components/transactions/TransactionModal.tsx';
+import type { Transaction, TransactionType } from '../../types.ts';
+
+interface AppContext {
+  onOpenAddTransaction: () => void;
+}
+
+export function TransactionsPage() {
+  const { onOpenAddTransaction } = useOutletContext<AppContext>();
+  const { accounts, refreshAccounts } = useAccounts();
+  const { categories, refreshCategories } = useCategories();
+  const { settings } = useSettings();
+
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Filters & Search
+  const [search, setSearch] = useState('');
+  const [typeFilter, setTypeFilter] = useState<'all' | TransactionType>('all');
+  const [categoryFilter, setCategoryFilter] = useState<number>(0);
+  const [accountFilter, setAccountFilter] = useState<number>(0);
+  const [sortBy, setSortBy] = useState<'date_desc' | 'date_asc' | 'amount_desc' | 'amount_asc'>(
+    'date_desc'
+  );
+
+  // Edit modal
+  const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+
+  const fetchTxs = useCallback(async () => {
+    try {
+      setLoading(true);
+      const data = await getFilteredTransactions({
+        search,
+        type: typeFilter,
+        categoryId: categoryFilter,
+        accountId: accountFilter,
+        sortBy,
+      });
+      setTransactions(data);
+    } catch (e) {
+      console.error('Failed to query transactions:', e);
+    } finally {
+      setLoading(false);
+    }
+  }, [search, typeFilter, categoryFilter, accountFilter, sortBy]);
+
+  useEffect(() => {
+    fetchTxs();
+  }, [fetchTxs]);
+
+  // Listen to global add events
+  useEffect(() => {
+    const handleTxChanged = () => {
+      fetchTxs();
+      refreshAccounts();
+    };
+    window.addEventListener('money-tracker-tx-changed', handleTxChanged);
+    return () => {
+      window.removeEventListener('money-tracker-tx-changed', handleTxChanged);
+    };
+  }, [fetchTxs, refreshAccounts]);
+
+  const handleEditSubmit = async (data: any) => {
+    if (!editingTransaction?.id) return;
+    await updateTransaction(editingTransaction.id, data);
+    setEditingTransaction(null);
+    fetchTxs();
+    refreshAccounts();
+    window.dispatchEvent(new CustomEvent('money-tracker-tx-changed'));
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deletingId) return;
+    await deleteTransaction(deletingId);
+    setDeletingId(null);
+    fetchTxs();
+    refreshAccounts();
+    window.dispatchEvent(new CustomEvent('money-tracker-tx-changed'));
+  };
+
+  const accountMap = new Map(accounts.map((a) => [a.id!, a]));
+  const categoryMap = new Map(categories.map((c) => [c.id!, c]));
+
+  return (
+    <div className="space-y-6 animate-in fade-in duration-200">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-neutral-900 tracking-tight">Transactions</h1>
+          <p className="text-xs text-neutral-500 mt-0.5">
+            Complete local record of your financial movements
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => exportTransactionsCsv()}
+            className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-neutral-700 hover:text-neutral-900 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors shadow-2xs"
+            title="Export CSV client-side"
+          >
+            <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
+            <span>Export CSV</span>
+          </button>
+
+          <button
+            id="transactions-add-btn"
+            type="button"
+            onClick={onOpenAddTransaction}
+            className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-neutral-900 hover:bg-neutral-800 rounded-xl transition-all shadow-2xs active:scale-95"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>Add Transaction</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Filter and Search Bar */}
+      <div className="bg-white p-4 rounded-2xl border border-neutral-200/80 shadow-2xs space-y-3">
+        <div className="flex flex-col md:flex-row gap-3">
+          {/* Search input */}
+          <div className="relative flex-1">
+            <Search className="w-4 h-4 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              id="transaction-search-input"
+              type="text"
+              placeholder="Search description or amount..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-9 pr-3 py-2 bg-neutral-50 border border-neutral-200 rounded-xl text-xs text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent"
+            />
+          </div>
+
+          {/* Quick Type Filter */}
+          <div className="flex items-center gap-1 bg-neutral-100 p-1 rounded-xl shrink-0 text-xs">
+            {(['all', 'expense', 'income', 'transfer'] as const).map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => setTypeFilter(t)}
+                className={`py-1.5 px-3 rounded-lg font-medium capitalize transition-colors ${
+                  typeFilter === t
+                    ? 'bg-white text-neutral-900 font-semibold shadow-2xs'
+                    : 'text-neutral-600 hover:text-neutral-900'
+                }`}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Dropdown Filters */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 border-t border-neutral-100 text-xs">
+          {/* Account selector */}
+          <div className="flex items-center gap-2">
+            <span className="text-neutral-400 font-medium whitespace-nowrap">Account:</span>
+            <select
+              value={accountFilter}
+              onChange={(e) => setAccountFilter(Number(e.target.value))}
+              className="w-full bg-neutral-50 border border-neutral-200 rounded-lg py-1.5 px-2 text-neutral-800 focus:outline-none cursor-pointer"
+            >
+              <option value={0}>All Accounts</option>
+              {accounts.map((acc) => (
+                <option key={acc.id} value={acc.id}>
+                  {acc.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Category selector */}
+          <div className="flex items-center gap-2">
+            <span className="text-neutral-400 font-medium whitespace-nowrap">Category:</span>
+            <select
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(Number(e.target.value))}
+              className="w-full bg-neutral-50 border border-neutral-200 rounded-lg py-1.5 px-2 text-neutral-800 focus:outline-none cursor-pointer"
+            >
+              <option value={0}>All Categories</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name} ({cat.type})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Sort By selector */}
+          <div className="flex items-center gap-2">
+            <span className="text-neutral-400 font-medium whitespace-nowrap">Sort:</span>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as any)}
+              className="w-full bg-neutral-50 border border-neutral-200 rounded-lg py-1.5 px-2 text-neutral-800 focus:outline-none cursor-pointer"
+            >
+              <option value="date_desc">Date (Newest first)</option>
+              <option value="date_asc">Date (Oldest first)</option>
+              <option value="amount_desc">Amount (Highest first)</option>
+              <option value="amount_asc">Amount (Lowest first)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* Transaction List */}
+      <div className="bg-white rounded-2xl border border-neutral-200/80 shadow-2xs overflow-hidden">
+        {transactions.length === 0 ? (
+          <div className="py-16 text-center space-y-3">
+            <div className="w-12 h-12 rounded-2xl bg-neutral-100 text-neutral-400 flex items-center justify-center mx-auto">
+              <Receipt className="w-6 h-6" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-neutral-700">No transactions yet.</p>
+              <p className="text-xs text-neutral-400 mt-0.5">
+                {search || typeFilter !== 'all' || categoryFilter !== 0 || accountFilter !== 0
+                  ? 'No transactions matched your active filters.'
+                  : 'Add your first transaction to start managing your records.'}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={onOpenAddTransaction}
+              className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-neutral-900 hover:bg-neutral-800 rounded-xl transition-all shadow-2xs"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>Add Transaction</span>
+            </button>
+          </div>
+        ) : (
+          <div className="divide-y divide-neutral-100">
+            {transactions.map((tx) => {
+              const account = accountMap.get(tx.accountId);
+              const destAccount = tx.destinationAccountId
+                ? accountMap.get(tx.destinationAccountId)
+                : undefined;
+              const category = tx.categoryId ? categoryMap.get(tx.categoryId) : undefined;
+
+              return (
+                <div
+                  key={tx.id}
+                  className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-neutral-50/70 transition-colors"
+                >
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <div
+                      className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+                        tx.type === 'income'
+                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/50'
+                          : tx.type === 'expense'
+                          ? 'bg-rose-50 text-rose-700 border border-rose-200/50'
+                          : 'bg-blue-50 text-blue-700 border border-blue-200/50'
+                      }`}
+                    >
+                      {tx.type === 'income' ? (
+                        <ArrowDownRight className="w-4 h-4" />
+                      ) : tx.type === 'expense' ? (
+                        <ArrowUpRight className="w-4 h-4" />
+                      ) : (
+                        <ArrowLeftRight className="w-4 h-4" />
+                      )}
+                    </div>
+
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-sm font-semibold text-neutral-900 truncate">
+                          {tx.description ||
+                            (tx.type === 'transfer'
+                              ? `${account?.name || 'Account'} → ${destAccount?.name || 'Account'}`
+                              : tx.type)}
+                        </span>
+                        <span
+                          className={`text-[10px] font-semibold px-2 py-0.5 rounded-full capitalize ${
+                            tx.type === 'income'
+                              ? 'bg-emerald-100/70 text-emerald-800'
+                              : tx.type === 'expense'
+                              ? 'bg-rose-100/70 text-rose-800'
+                              : 'bg-blue-100/70 text-blue-800'
+                          }`}
+                        >
+                          {tx.type}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-3 text-xs text-neutral-500 mt-1 flex-wrap">
+                        <span className="flex items-center gap-1 font-medium text-neutral-600">
+                          <Calendar className="w-3 h-3 text-neutral-400" />
+                          {formatDisplayDate(tx.date)}
+                        </span>
+
+                        {tx.type === 'transfer' ? (
+                          <span className="text-neutral-600">
+                            {account?.name} → {destAccount?.name}
+                          </span>
+                        ) : (
+                          <>
+                            <span className="text-neutral-700 font-medium">
+                              {account?.name || 'Unknown Account'}
+                            </span>
+                            {category && (
+                              <>
+                                <span className="text-neutral-300">•</span>
+                                <span className="text-neutral-600">{category.name}</span>
+                              </>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between sm:justify-end gap-4 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-neutral-100">
+                    <div className="text-left sm:text-right">
+                      <div
+                        className={`text-base font-bold ${
+                          tx.type === 'income'
+                            ? 'text-emerald-700'
+                            : tx.type === 'expense'
+                            ? 'text-rose-700'
+                            : 'text-blue-700'
+                        }`}
+                      >
+                        {tx.type === 'income' ? '+' : tx.type === 'expense' ? '-' : ''}
+                        {formatCurrency(tx.amount, settings.currency)}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => setEditingTransaction(tx)}
+                        className="p-1.5 text-neutral-400 hover:text-neutral-900 rounded-lg hover:bg-neutral-100 transition-colors"
+                        title="Edit transaction"
+                      >
+                        <Edit2 className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setDeletingId(tx.id!)}
+                        className="p-1.5 text-neutral-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors"
+                        title="Delete transaction"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Edit Modal */}
+      {editingTransaction && (
+        <TransactionModal
+          isOpen={true}
+          onClose={() => setEditingTransaction(null)}
+          onSubmit={handleEditSubmit}
+          transactionToEdit={editingTransaction}
+          accounts={accounts}
+          categories={categories}
+          currencyCode={settings.currency}
+        />
+      )}
+
+      {/* Delete Confirmation Dialog */}
+      {deletingId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/40 backdrop-blur-xs">
+          <div className="w-full max-w-sm bg-white p-6 rounded-2xl shadow-xl border border-neutral-200 space-y-4">
+            <h3 className="text-base font-bold text-neutral-900">Delete Transaction?</h3>
+            <p className="text-xs text-neutral-600 leading-relaxed">
+              Are you sure you want to delete this transaction? This will update your account
+              balances and monthly calculations.
+            </p>
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setDeletingId(null)}
+                className="px-4 py-2 text-xs font-semibold text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-xl transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleDeleteConfirm}
+                className="px-4 py-2 text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-xl shadow-xs transition-colors"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

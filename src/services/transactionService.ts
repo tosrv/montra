@@ -1,0 +1,264 @@
+import { db } from '../db/database.ts';
+import { trackEvent } from './analyticsService.ts';
+import { isDateInMonth } from '../utils/dates.ts';
+import type { MonthlySummary, Transaction, TransactionType } from '../types.ts';
+
+export interface TransactionFilterOptions {
+  search?: string;
+  year?: number;
+  month?: number; // 0-11
+  type?: 'all' | TransactionType;
+  categoryId?: number;
+  accountId?: number;
+  sortBy?: 'date_desc' | 'date_asc' | 'amount_desc' | 'amount_asc';
+}
+
+export async function getAllTransactions(): Promise<Transaction[]> {
+  return await db.transactions.orderBy('date').reverse().toArray();
+}
+
+export async function getFilteredTransactions(
+  options: TransactionFilterOptions
+): Promise<Transaction[]> {
+  let txs = await db.transactions.toArray();
+
+  // Search filter (description)
+  if (options.search && options.search.trim() !== '') {
+    const q = options.search.toLowerCase().trim();
+    txs = txs.filter((tx) =>
+      tx.description.toLowerCase().includes(q) || tx.amount.toString().includes(q)
+    );
+  }
+
+  // Month & Year filter
+  if (options.year !== undefined && options.month !== undefined) {
+    txs = txs.filter((tx) => isDateInMonth(tx.date, options.year!, options.month!));
+  }
+
+  // Type filter
+  if (options.type && options.type !== 'all') {
+    txs = txs.filter((tx) => tx.type === options.type);
+  }
+
+  // Category filter
+  if (options.categoryId !== undefined && options.categoryId !== 0) {
+    txs = txs.filter((tx) => tx.categoryId === options.categoryId);
+  }
+
+  // Account filter (matches source or destination)
+  if (options.accountId !== undefined && options.accountId !== 0) {
+    txs = txs.filter(
+      (tx) => tx.accountId === options.accountId || tx.destinationAccountId === options.accountId
+    );
+  }
+
+  // Sorting
+  const sortBy = options.sortBy || 'date_desc';
+  txs.sort((a, b) => {
+    if (sortBy === 'date_desc') {
+      const cmp = b.date.localeCompare(a.date);
+      if (cmp !== 0) return cmp;
+      return (b.id || 0) - (a.id || 0);
+    }
+    if (sortBy === 'date_asc') {
+      const cmp = a.date.localeCompare(b.date);
+      if (cmp !== 0) return cmp;
+      return (a.id || 0) - (b.id || 0);
+    }
+    if (sortBy === 'amount_desc') {
+      return b.amount - a.amount;
+    }
+    if (sortBy === 'amount_asc') {
+      return a.amount - b.amount;
+    }
+    return 0;
+  });
+
+  return txs;
+}
+
+export async function getMonthlyDashboardSummary(
+  year: number,
+  month: number
+): Promise<{
+  currentBalance: number;
+  monthlyIncome: number;
+  monthlyExpense: number;
+  netCashFlow: number;
+  expenseBreakdown: {
+    categoryId: number;
+    categoryName: string;
+    categoryIcon: string;
+    amount: number;
+    percentage: number;
+  }[];
+  recentTransactions: Transaction[];
+}> {
+  const allAccounts = await db.accounts.toArray();
+  const allTransactions = await db.transactions.toArray();
+  const allCategories = await db.categories.toArray();
+
+  const categoryMap = new Map(allCategories.map((c) => [c.id!, c]));
+
+  // Calculate Overall Current Balance across all accounts:
+  // sum(initialBalance) + sum(income) - sum(expense)
+  // transfers cancel out across all accounts
+  let currentBalance = allAccounts.reduce((acc, a) => acc + (a.initialBalance || 0), 0);
+  for (const tx of allTransactions) {
+    if (tx.type === 'income') {
+      currentBalance += tx.amount;
+    } else if (tx.type === 'expense') {
+      currentBalance -= tx.amount;
+    }
+  }
+
+  // Calculate Monthly Figures for selected month
+  let monthlyIncome = 0;
+  let monthlyExpense = 0;
+  const expenseByCategory = new Map<number, number>();
+
+  const monthlyTransactions: Transaction[] = [];
+
+  for (const tx of allTransactions) {
+    if (isDateInMonth(tx.date, year, month)) {
+      monthlyTransactions.push(tx);
+      if (tx.type === 'income') {
+        monthlyIncome += tx.amount;
+      } else if (tx.type === 'expense') {
+        monthlyExpense += tx.amount;
+        if (tx.categoryId) {
+          const prev = expenseByCategory.get(tx.categoryId) || 0;
+          expenseByCategory.set(tx.categoryId, prev + tx.amount);
+        } else {
+          const uncategorizedKey = -1;
+          const prev = expenseByCategory.get(uncategorizedKey) || 0;
+          expenseByCategory.set(uncategorizedKey, prev + tx.amount);
+        }
+      }
+    }
+  }
+
+  // Net cash flow: monthlyIncome - monthlyExpense (transfers do not affect this)
+  const netCashFlow = monthlyIncome - monthlyExpense;
+
+  // Build expense breakdown
+  const expenseBreakdown = Array.from(expenseByCategory.entries())
+    .map(([catId, amount]) => {
+      const cat = categoryMap.get(catId);
+      const categoryName = cat ? cat.name : 'Other / Uncategorized';
+      const categoryIcon = cat ? cat.icon : 'CircleDot';
+      const percentage = monthlyExpense > 0 ? Math.round((amount / monthlyExpense) * 100) : 0;
+      return {
+        categoryId: catId,
+        categoryName,
+        categoryIcon,
+        amount,
+        percentage,
+      };
+    })
+    .sort((a, b) => b.amount - a.amount);
+
+  // Sort monthly transactions by date descending
+  monthlyTransactions.sort((a, b) => {
+    const cmp = b.date.localeCompare(a.date);
+    if (cmp !== 0) return cmp;
+    return (b.id || 0) - (a.id || 0);
+  });
+
+  return {
+    currentBalance,
+    monthlyIncome,
+    monthlyExpense,
+    netCashFlow,
+    expenseBreakdown,
+    recentTransactions: monthlyTransactions.slice(0, 5),
+  };
+}
+
+export async function createTransaction(data: {
+  type: TransactionType;
+  amount: number;
+  accountId: number;
+  destinationAccountId?: number;
+  categoryId?: number;
+  description: string;
+  date: string;
+}): Promise<number> {
+  if (data.amount <= 0) {
+    throw new Error('Transaction amount must be greater than zero');
+  }
+  if (!data.accountId) {
+    throw new Error('Source account is required');
+  }
+  if (data.type === 'transfer') {
+    if (!data.destinationAccountId) {
+      throw new Error('Destination account is required for transfers');
+    }
+    if (data.accountId === data.destinationAccountId) {
+      throw new Error('Source and destination accounts cannot be identical');
+    }
+  }
+
+  const now = new Date().toISOString();
+  const id = await db.transactions.add({
+    type: data.type,
+    amount: Math.round(data.amount),
+    accountId: data.accountId,
+    destinationAccountId: data.type === 'transfer' ? data.destinationAccountId : undefined,
+    categoryId: data.type !== 'transfer' ? data.categoryId : undefined,
+    description: data.description.trim(),
+    date: data.date,
+    createdAt: now,
+    updatedAt: now,
+  });
+
+  trackEvent('transaction_created');
+  return id;
+}
+
+export async function updateTransaction(
+  id: number,
+  data: {
+    type: TransactionType;
+    amount: number;
+    accountId: number;
+    destinationAccountId?: number;
+    categoryId?: number;
+    description: string;
+    date: string;
+  }
+): Promise<void> {
+  if (data.amount <= 0) {
+    throw new Error('Transaction amount must be greater than zero');
+  }
+  if (!data.accountId) {
+    throw new Error('Source account is required');
+  }
+  if (data.type === 'transfer') {
+    if (!data.destinationAccountId) {
+      throw new Error('Destination account is required for transfers');
+    }
+    if (data.accountId === data.destinationAccountId) {
+      throw new Error('Source and destination accounts cannot be identical');
+    }
+  }
+
+  const now = new Date().toISOString();
+  await db.transactions.update(id, {
+    type: data.type,
+    amount: Math.round(data.amount),
+    accountId: data.accountId,
+    destinationAccountId: data.type === 'transfer' ? data.destinationAccountId : undefined,
+    categoryId: data.type !== 'transfer' ? data.categoryId : undefined,
+    description: data.description.trim(),
+    date: data.date,
+    updatedAt: now,
+  });
+
+  trackEvent('transaction_edited');
+}
+
+export async function deleteTransaction(id: number): Promise<void> {
+  await db.transactions.delete(id);
+  trackEvent('transaction_deleted');
+}
