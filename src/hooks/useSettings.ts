@@ -6,12 +6,14 @@ import {
   subscribeSystemTheme,
   type ThemePreference,
 } from '../utils/theme.ts';
+import { getStoredLocale } from '../i18n/locale.ts';
 
 export function useSettings() {
   const [settings, setSettings] = useState<AppSettings>({
     id: 'default',
     currency: 'IDR',
     theme: 'system',
+    language: getStoredLocale(),
     schemaVersion: 1,
   });
   const [loading, setLoading] = useState(true);
@@ -20,8 +22,15 @@ export function useSettings() {
     try {
       const existing = await db.settings.get('default');
       if (existing) {
-        setSettings(existing);
-        applyTheme(existing.theme);
+        const normalized: AppSettings = {
+          ...existing,
+          language:
+            existing.language === 'en' || existing.language === 'id'
+              ? existing.language
+              : getStoredLocale(),
+        };
+        setSettings(normalized);
+        applyTheme(normalized.theme);
       } else {
         applyTheme('system');
       }

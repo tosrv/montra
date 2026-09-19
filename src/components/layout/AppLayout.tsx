@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Outlet, NavLink, Link, useLocation } from 'react-router-dom';
+import { Outlet, NavLink, Link } from 'react-router-dom';
 import {
   LayoutDashboard,
   Receipt,
@@ -7,8 +7,6 @@ import {
   Tags,
   Settings,
   Plus,
-  ArrowLeft,
-  Shield,
 } from 'lucide-react';
 import { AppSidebar } from './AppSidebar.tsx';
 import { TransactionModal } from '../transactions/TransactionModal.tsx';
@@ -17,11 +15,11 @@ import { useCategories } from '../../hooks/useCategories.ts';
 import { useSettings } from '../../hooks/useSettings.ts';
 import { createTransaction } from '../../services/transactionService.ts';
 import { initializeDatabase } from '../../db/database.ts';
+import { useLanguage } from '../../i18n/LanguageProvider.tsx';
 
 export function AppLayout() {
+  const { t } = useLanguage();
   const [isAddTxOpen, setIsAddTxOpen] = useState(false);
-  const [dbReady, setDbReady] = useState(false);
-  const location = useLocation();
 
   const { accounts, refreshAccounts } = useAccounts();
   const { categories, refreshCategories } = useCategories();
@@ -29,11 +27,7 @@ export function AppLayout() {
 
   // Initialize DB once on mount
   useEffect(() => {
-    async function init() {
-      await initializeDatabase();
-      setDbReady(true);
-    }
-    init();
+    void initializeDatabase();
   }, []);
 
   const handleCreateTransaction = async (data: any) => {
@@ -44,11 +38,11 @@ export function AppLayout() {
   };
 
   const navItems = [
-    { to: '/app', label: 'Dashboard', icon: LayoutDashboard, end: true },
-    { to: '/app/transactions', label: 'Transactions', icon: Receipt },
-    { to: '/app/accounts', label: 'Accounts', icon: Wallet },
-    { to: '/app/categories', label: 'Categories', icon: Tags },
-    { to: '/app/settings', label: 'Settings', icon: Settings },
+    { to: '/app', labelKey: 'app.nav.dashboard' as const, icon: LayoutDashboard, end: true },
+    { to: '/app/transactions', labelKey: 'app.nav.transactions' as const, icon: Receipt },
+    { to: '/app/accounts', labelKey: 'app.nav.accounts' as const, icon: Wallet },
+    { to: '/app/categories', labelKey: 'app.nav.categories' as const, icon: Tags },
+    { to: '/app/settings', labelKey: 'app.nav.settings' as const, icon: Settings },
   ];
 
   return (
@@ -64,7 +58,7 @@ export function AppLayout() {
           <div className="w-7 h-7 rounded-lg bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 flex items-center justify-center font-bold text-xs">
             MT
           </div>
-          <span className="font-bold text-neutral-900 dark:text-neutral-100 text-sm">Money Tracker</span>
+          <span className="font-bold text-neutral-900 dark:text-neutral-100 text-sm">{t('brand.name')}</span>
         </Link>
         <button
           type="button"
@@ -72,7 +66,7 @@ export function AppLayout() {
           className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-neutral-900 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-white hover:bg-neutral-800 rounded-lg shadow-xs active:scale-95"
         >
           <Plus className="w-3.5 h-3.5" />
-          <span>Add</span>
+          <span>{t('app.add')}</span>
         </button>
       </header>
 
@@ -101,7 +95,7 @@ export function AppLayout() {
               }
             >
               <Icon className="w-4 h-4 mb-0.5" />
-              <span>{item.label}</span>
+              <span>{t(item.labelKey)}</span>
             </NavLink>
           );
         })}

@@ -14,9 +14,22 @@ import {
 import { useAccounts } from '../../hooks/useAccounts.ts';
 import { useSettings } from '../../hooks/useSettings.ts';
 import { formatCurrency, parseCurrencyInput } from '../../utils/currency.ts';
+import { useLanguage } from '../../i18n/LanguageProvider.tsx';
 import type { AccountType, AccountWithBalance } from '../../types.ts';
 
+function accountTypeLabel(type: AccountType, t: ReturnType<typeof useLanguage>['t']) {
+  switch (type) {
+    case 'bank':
+      return t('accounts.typeBank');
+    case 'cash':
+      return t('accounts.typeCash');
+    default:
+      return t('accounts.typeOther');
+  }
+}
+
 export function AccountsPage() {
+  const { t } = useLanguage();
   const { accounts, loading, refreshAccounts, addAccount, editAccount, removeAccount } =
     useAccounts();
   const { settings } = useSettings();
@@ -55,7 +68,7 @@ export function AccountsPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
-      setError('Account name is required.');
+      setError(t('accounts.nameRequired'));
       return;
     }
 
@@ -78,7 +91,7 @@ export function AccountsPage() {
       setIsModalOpen(false);
       window.dispatchEvent(new CustomEvent('money-tracker-tx-changed'));
     } catch (err: any) {
-      setError(err?.message || 'Failed to save account.');
+      setError(err?.message || t('accounts.saveFailed'));
     }
   };
 
@@ -90,7 +103,7 @@ export function AccountsPage() {
       setDeleteError(null);
       window.dispatchEvent(new CustomEvent('money-tracker-tx-changed'));
     } catch (err: any) {
-      setDeleteError(err?.message || 'Failed to delete account.');
+      setDeleteError(err?.message || t('accounts.deleteFailed'));
     }
   };
 
@@ -110,9 +123,9 @@ export function AccountsPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 tracking-tight">Accounts</h1>
+          <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 tracking-tight">{t('accounts.title')}</h1>
           <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
-            Manage your bank accounts, cash wallets, and balances
+            {t('accounts.subtitle')}
           </p>
         </div>
 
@@ -123,7 +136,7 @@ export function AccountsPage() {
           className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-neutral-900 dark:bg-neutral-100 dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-white rounded-xl transition-all shadow-2xs active:scale-95 self-start sm:self-auto"
         >
           <Plus className="w-3.5 h-3.5" />
-          <span>New Account</span>
+          <span>{t('accounts.new')}</span>
         </button>
       </div>
 
@@ -134,9 +147,9 @@ export function AccountsPage() {
             <Wallet className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">No accounts yet.</p>
+            <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('accounts.emptyTitle')}</p>
             <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-0.5">
-              Add your first account to record income and expenses.
+              {t('accounts.emptyHint')}
             </p>
           </div>
           <button
@@ -145,7 +158,7 @@ export function AccountsPage() {
             className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-neutral-900 dark:bg-neutral-100 dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-white rounded-xl transition-all shadow-2xs"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>Add your first account</span>
+            <span>{t('accounts.addFirst')}</span>
           </button>
         </div>
       ) : (
@@ -165,8 +178,8 @@ export function AccountsPage() {
                       </div>
                       <div>
                         <h3 className="text-sm font-bold text-neutral-900 dark:text-neutral-100">{acc.name}</h3>
-                        <span className="text-[11px] text-neutral-400 capitalize font-medium">
-                          {acc.type} account
+                        <span className="text-[11px] text-neutral-400 font-medium">
+                          {t('accounts.typeLabel', { type: accountTypeLabel(acc.type, t) })}
                         </span>
                       </div>
                     </div>
@@ -176,7 +189,7 @@ export function AccountsPage() {
                         type="button"
                         onClick={() => openEditModal(acc)}
                         className="p-1.5 text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
-                        title="Edit Account"
+                        title={t('accounts.edit')}
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                       </button>
@@ -187,7 +200,7 @@ export function AccountsPage() {
                           setDeleteError(null);
                         }}
                         className="p-1.5 text-neutral-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
-                        title="Delete Account"
+                        title={t('accounts.delete')}
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -196,7 +209,7 @@ export function AccountsPage() {
 
                   <div className="mt-5">
                     <span className="text-[11px] font-medium text-neutral-400 uppercase tracking-wider block">
-                      Current Balance
+                      {t('accounts.currentBalance')}
                     </span>
                     <div className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mt-0.5 tracking-tight">
                       {formatCurrency(acc.currentBalance, settings.currency)}
@@ -206,13 +219,13 @@ export function AccountsPage() {
 
                 <div className="pt-3 border-t border-neutral-100 dark:border-neutral-800 text-[11px] text-neutral-500 dark:text-neutral-400 space-y-1">
                   <div className="flex items-center justify-between">
-                    <span>Initial Balance</span>
+                    <span>{t('accounts.initialBalance')}</span>
                     <span className="font-semibold text-neutral-700 dark:text-neutral-300">
                       {formatCurrency(acc.initialBalance, settings.currency)}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span>Transactions</span>
+                    <span>{t('accounts.transactions')}</span>
                     <span className="font-semibold text-neutral-700 dark:text-neutral-300">{acc.transactionCount}</span>
                   </div>
                 </div>
@@ -228,7 +241,7 @@ export function AccountsPage() {
           <div className="w-full max-w-md bg-white dark:bg-neutral-900 rounded-2xl shadow-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden">
             <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-100 dark:border-neutral-800">
               <h2 className="text-base font-bold text-neutral-900 dark:text-neutral-100">
-                {editingAccount ? 'Edit Account' : 'New Account'}
+                {editingAccount ? t('accounts.modalEdit') : t('accounts.modalNew')}
               </h2>
               <button
                 type="button"
@@ -248,12 +261,12 @@ export function AccountsPage() {
 
               <div>
                 <label className="block text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1">
-                  Account Name
+                  {t('accounts.name')}
                 </label>
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Mandiri, GoPay, Savings"
+                  placeholder={t('accounts.namePlaceholder')}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="w-full px-3.5 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-neutral-900 dark:focus:ring-neutral-100"
@@ -262,21 +275,21 @@ export function AccountsPage() {
 
               <div>
                 <label className="block text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1">
-                  Account Type
+                  {t('accounts.type')}
                 </label>
                 <div className="grid grid-cols-3 gap-2">
-                  {(['bank', 'cash', 'other'] as AccountType[]).map((t) => (
+                  {(['bank', 'cash', 'other'] as AccountType[]).map((accType) => (
                     <button
-                      key={t}
+                      key={accType}
                       type="button"
-                      onClick={() => setType(t)}
-                      className={`py-2 px-3 rounded-xl text-xs font-medium capitalize border transition-all ${
-                        type === t
+                      onClick={() => setType(accType)}
+                      className={`py-2 px-3 rounded-xl text-xs font-medium border transition-all ${
+                        type === accType
                           ? 'border-neutral-900 dark:border-neutral-100 bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 shadow-2xs'
                           : 'border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800'
                       }`}
                     >
-                      {t}
+                      {accountTypeLabel(accType, t)}
                     </button>
                   ))}
                 </div>
@@ -284,7 +297,7 @@ export function AccountsPage() {
 
               <div>
                 <label className="block text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1">
-                  Initial Balance ({settings.currency})
+                  {t('accounts.initialBalanceField', { currency: settings.currency })}
                 </label>
                 <input
                   type="text"
@@ -300,7 +313,7 @@ export function AccountsPage() {
                   className="w-full px-3.5 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-neutral-900 dark:focus:ring-neutral-100"
                 />
                 <p className="text-[11px] text-neutral-400 dark:text-neutral-500 mt-1">
-                  Starting balance before any recorded transactions.
+                  {t('accounts.initialHint')}
                 </p>
               </div>
 
@@ -310,14 +323,14 @@ export function AccountsPage() {
                   onClick={() => setIsModalOpen(false)}
                   className="px-4 py-2 text-xs font-semibold text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-xl"
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </button>
                 <button
                   type="submit"
                   className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-neutral-900 dark:bg-neutral-100 dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-white rounded-xl shadow-2xs"
                 >
                   <Check className="w-3.5 h-3.5" />
-                  <span>{editingAccount ? 'Save Changes' : 'Create Account'}</span>
+                  <span>{t('common.save')}</span>
                 </button>
               </div>
             </form>
@@ -334,26 +347,17 @@ export function AccountsPage() {
                 <AlertTriangle className="w-5 h-5" />
               </div>
               <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-100">
-                Delete Account "{accountToDelete.name}"?
+                {t('accounts.deleteConfirmTitle')}
               </h3>
             </div>
 
             {accountToDelete.transactionCount > 0 ? (
-              <div className="space-y-3 text-xs text-neutral-600 dark:text-neutral-300">
-                <p className="p-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-200 rounded-xl">
-                  <strong>Protected Action:</strong> This account is currently referenced by{' '}
-                  <span className="font-bold">{accountToDelete.transactionCount}</span> transaction(s).
-                  Deleting this account will remove or alter associated historical transactions.
-                </p>
-                <p>
-                  To preserve data integrity, consider editing the transactions first. If you choose
-                  to delete anyway, all associated transactions will be removed.
-                </p>
-              </div>
+              <p className="text-xs text-neutral-600 dark:text-neutral-300 p-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-200 rounded-xl">
+                {t('accounts.deleteForceHint')}
+              </p>
             ) : (
               <p className="text-xs text-neutral-600 dark:text-neutral-300">
-                This account has zero transactions and can be safely removed without affecting
-                history.
+                {t('accounts.deleteConfirmBody')}
               </p>
             )}
 
@@ -369,14 +373,14 @@ export function AccountsPage() {
                 onClick={() => setAccountToDelete(null)}
                 className="px-4 py-2 text-xs font-semibold text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-xl"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 type="button"
                 onClick={() => handleDelete(accountToDelete.transactionCount > 0)}
                 className="px-4 py-2 text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-xl shadow-2xs"
               >
-                {accountToDelete.transactionCount > 0 ? 'Force Delete Account & History' : 'Delete Account'}
+                {accountToDelete.transactionCount > 0 ? t('accounts.deleteForce') : t('common.delete')}
               </button>
             </div>
           </div>

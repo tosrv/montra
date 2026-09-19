@@ -2,7 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { X, ArrowDownRight, ArrowUpRight, ArrowLeftRight, Check } from 'lucide-react';
 import { formatCurrency, parseCurrencyInput } from '../../utils/currency.ts';
 import { getTodayDateString } from '../../utils/dates.ts';
-import type { Account, Category, Transaction, TransactionType } from '../../types.ts';
+import { useLanguage } from '../../i18n/LanguageProvider.tsx';
+import type { Account, AccountType, Category, Transaction, TransactionType } from '../../types.ts';
+
+function accountTypeLabel(type: AccountType, t: ReturnType<typeof useLanguage>['t']) {
+  switch (type) {
+    case 'bank':
+      return t('accounts.typeBank');
+    case 'cash':
+      return t('accounts.typeCash');
+    default:
+      return t('accounts.typeOther');
+  }
+}
 
 interface TransactionModalProps {
   isOpen: boolean;
@@ -31,6 +43,7 @@ export function TransactionModal({
   categories,
   currencyCode,
 }: TransactionModalProps) {
+  const { t } = useLanguage();
   const [type, setType] = useState<TransactionType>('expense');
   const [amountRaw, setAmountRaw] = useState<string>('');
   const [accountId, setAccountId] = useState<number>(accounts[0]?.id || 0);
@@ -85,27 +98,27 @@ export function TransactionModal({
     setError(null);
 
     if (numericAmount <= 0) {
-      setError('Amount must be greater than zero.');
+      setError(t('tx.modal.errAmount'));
       return;
     }
 
     if (!accountId) {
-      setError('Please select an account.');
+      setError(t('tx.modal.errAccount'));
       return;
     }
 
     if (type === 'transfer') {
       if (!destinationAccountId) {
-        setError('Please select a destination account.');
+        setError(t('tx.modal.errDest'));
         return;
       }
       if (accountId === destinationAccountId) {
-        setError('Source and destination accounts cannot be identical.');
+        setError(t('tx.modal.errSameAccount'));
         return;
       }
     } else {
       if (!categoryId) {
-        setError('Please select a category.');
+        setError(t('tx.modal.errCategory'));
         return;
       }
     }
@@ -123,7 +136,7 @@ export function TransactionModal({
       });
       onClose();
     } catch (err: any) {
-      setError(err?.message || 'Failed to save transaction.');
+      setError(err?.message || t('tx.modal.errSave'));
     } finally {
       setSubmitting(false);
     }
@@ -143,7 +156,7 @@ export function TransactionModal({
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-100 dark:border-neutral-800">
           <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
-            {transactionToEdit ? 'Edit Transaction' : 'New Transaction'}
+            {transactionToEdit ? t('tx.modal.edit') : t('tx.modal.new')}
           </h2>
           <button
             type="button"
@@ -174,7 +187,7 @@ export function TransactionModal({
               }`}
             >
               <ArrowUpRight className="w-4 h-4 text-rose-500" />
-              Expense
+              {t('common.expense')}
             </button>
             <button
               type="button"
@@ -186,7 +199,7 @@ export function TransactionModal({
               }`}
             >
               <ArrowDownRight className="w-4 h-4 text-emerald-500" />
-              Income
+              {t('common.income')}
             </button>
             <button
               type="button"
@@ -198,14 +211,14 @@ export function TransactionModal({
               }`}
             >
               <ArrowLeftRight className="w-4 h-4 text-blue-500" />
-              Transfer
+              {t('common.transfer')}
             </button>
           </div>
 
           {/* Amount Display & Input */}
           <div>
             <label className="block text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1.5">
-              Amount
+              {t('tx.modal.amount')}
             </label>
             <div className="relative">
               <input
@@ -235,7 +248,7 @@ export function TransactionModal({
           {/* Date Picker */}
           <div>
             <label className="block text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1.5">
-              Date
+              {t('tx.modal.date')}
             </label>
             <input
               id="transaction-date-input"
@@ -252,7 +265,7 @@ export function TransactionModal({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1.5">
-                  From Account
+                  {t('tx.modal.fromAccount')}
                 </label>
                 <select
                   id="transaction-source-account"
@@ -262,14 +275,14 @@ export function TransactionModal({
                 >
                   {accounts.map((acc) => (
                     <option key={acc.id} value={acc.id}>
-                      {acc.name} ({acc.type})
+                      {acc.name} ({accountTypeLabel(acc.type, t)})
                     </option>
                   ))}
                 </select>
               </div>
               <div>
                 <label className="block text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1.5">
-                  To Destination Account
+                  {t('tx.modal.toAccount')}
                 </label>
                 <select
                   id="transaction-destination-account"
@@ -279,7 +292,7 @@ export function TransactionModal({
                 >
                   {accounts.map((acc) => (
                     <option key={acc.id} value={acc.id}>
-                      {acc.name} ({acc.type})
+                      {acc.name} ({accountTypeLabel(acc.type, t)})
                     </option>
                   ))}
                 </select>
@@ -289,7 +302,7 @@ export function TransactionModal({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1.5">
-                  Account
+                  {t('tx.modal.account')}
                 </label>
                 <select
                   id="transaction-account-select"
@@ -299,7 +312,7 @@ export function TransactionModal({
                 >
                   {accounts.map((acc) => (
                     <option key={acc.id} value={acc.id}>
-                      {acc.name} ({acc.type})
+                      {acc.name} ({accountTypeLabel(acc.type, t)})
                     </option>
                   ))}
                 </select>
@@ -307,7 +320,7 @@ export function TransactionModal({
 
               <div>
                 <label className="block text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1.5">
-                  Category
+                  {t('tx.modal.category')}
                 </label>
                 <select
                   id="transaction-category-select"
@@ -316,7 +329,9 @@ export function TransactionModal({
                   className="w-full px-3 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl text-neutral-900 dark:text-neutral-100 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 dark:focus:ring-neutral-100"
                 >
                   {filteredCategories.length === 0 && (
-                    <option value="">No {type} categories</option>
+                    <option value="">
+                      {t('tx.modal.noCategories', { type: t(`common.${type}`) })}
+                    </option>
                   )}
                   {filteredCategories.map((cat) => (
                     <option key={cat.id} value={cat.id}>
@@ -331,12 +346,12 @@ export function TransactionModal({
           {/* Description */}
           <div>
             <label className="block text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1.5">
-              Description / Note (Optional)
+              {t('tx.modal.description')}
             </label>
             <input
               id="transaction-description-input"
               type="text"
-              placeholder="e.g. Lunch with team, Groceries, Client invoice"
+              placeholder={t('tx.modal.descriptionPlaceholder')}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl text-neutral-900 dark:text-neutral-100 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 dark:focus:ring-neutral-100 focus:border-transparent transition-all"
@@ -350,7 +365,7 @@ export function TransactionModal({
               onClick={onClose}
               className="px-4 py-2 text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-xl transition-colors"
             >
-              Cancel
+              {t('common.cancel')}
             </button>
             <button
               id="save-transaction-button"
@@ -359,7 +374,7 @@ export function TransactionModal({
               className="flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white bg-neutral-900 dark:bg-neutral-100 dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-white disabled:opacity-50 rounded-xl shadow-xs transition-colors"
             >
               <Check className="w-4 h-4" />
-              {submitting ? 'Saving...' : transactionToEdit ? 'Save Changes' : 'Record Transaction'}
+              {submitting ? t('tx.modal.saving') : t('tx.modal.save')}
             </button>
           </div>
         </form>

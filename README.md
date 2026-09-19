@@ -13,6 +13,7 @@ Track income, expenses, and account transfers entirely in your browser — no ac
 - **Backup & restore** — Full JSON export/import with validation
 - **CSV export** — Download transactions as a spreadsheet
 - **Privacy-first** — Financial data stored in IndexedDB; optional Umami pageviews only (no money data)
+- **i18n** — Interface language switch **EN / ID** (Settings + landing navbar)
 
 ## Tech stack
 

@@ -1,5 +1,6 @@
 import Dexie, { type Table } from 'dexie';
 import type { Account, AppSettings, Category, Transaction } from '../types.ts';
+import { getStoredLocale } from '../i18n/locale.ts';
 
 export class MoneyTrackerDB extends Dexie {
   transactions!: Table<Transaction, number>;
@@ -27,15 +28,24 @@ export const db = new MoneyTrackerDB();
 export async function initializeDatabase(): Promise<void> {
   const now = new Date().toISOString();
 
-  // 1. Settings initialization
+  // 1. Settings initialization / language migration
   const settingsCount = await db.settings.count();
   if (settingsCount === 0) {
     await db.settings.add({
       id: 'default',
       currency: 'IDR',
       theme: 'system',
+      language: getStoredLocale(),
       schemaVersion: 1,
     });
+  } else {
+    const existing = await db.settings.get('default');
+    if (existing && existing.language !== 'en' && existing.language !== 'id') {
+      await db.settings.put({
+        ...existing,
+        language: getStoredLocale(),
+      });
+    }
   }
 
   // 2. Default accounts initialization
@@ -53,13 +63,10 @@ export async function initializeDatabase(): Promise<void> {
   const categoriesCount = await db.categories.count();
   if (categoriesCount === 0) {
     await db.categories.bulkAdd([
-      // Income categories
       { name: 'Salary', type: 'income', icon: 'Wallet', createdAt: now },
       { name: 'Freelance', type: 'income', icon: 'Briefcase', createdAt: now },
       { name: 'Business', type: 'income', icon: 'TrendingUp', createdAt: now },
       { name: 'Other', type: 'income', icon: 'CircleDot', createdAt: now },
-
-      // Expense categories
       { name: 'Food', type: 'expense', icon: 'Utensils', createdAt: now },
       { name: 'Transport', type: 'expense', icon: 'Car', createdAt: now },
       { name: 'Bills', type: 'expense', icon: 'Receipt', createdAt: now },

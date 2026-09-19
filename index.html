@@ -23,6 +23,12 @@
             (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
           if (dark) document.documentElement.classList.add('dark');
           document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+          var lang = localStorage.getItem('money_tracker_language');
+          if (lang === 'en' || lang === 'id') {
+            document.documentElement.lang = lang;
+          } else if ((navigator.language || '').toLowerCase().indexOf('id') === 0) {
+            document.documentElement.lang = 'id';
+          }
         } catch (e) {}
       })();
     </script>

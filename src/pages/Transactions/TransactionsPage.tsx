@@ -28,6 +28,7 @@ import { useSettings } from '../../hooks/useSettings.ts';
 import { formatCurrency } from '../../utils/currency.ts';
 import { formatDisplayDate, getMonthNames } from '../../utils/dates.ts';
 import { TransactionModal } from '../../components/transactions/TransactionModal.tsx';
+import { useLanguage } from '../../i18n/LanguageProvider.tsx';
 import type { Transaction, TransactionType } from '../../types.ts';
 
 interface AppContext {
@@ -35,6 +36,7 @@ interface AppContext {
 }
 
 export function TransactionsPage() {
+  const { t } = useLanguage();
   const { onOpenAddTransaction } = useOutletContext<AppContext>();
   const { accounts, refreshAccounts } = useAccounts();
   const { categories, refreshCategories } = useCategories();
@@ -116,9 +118,9 @@ export function TransactionsPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 tracking-tight">Transactions</h1>
+          <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 tracking-tight">{t('tx.title')}</h1>
           <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
-            Complete local record of your financial movements
+            {t('tx.subtitle')}
           </p>
         </div>
 
@@ -127,10 +129,10 @@ export function TransactionsPage() {
             type="button"
             onClick={() => exportTransactionsCsv()}
             className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-neutral-100 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors shadow-2xs"
-            title="Export CSV client-side"
+            title={t('tx.exportCsvTitle')}
           >
             <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Export CSV</span>
+            <span>{t('tx.exportCsv')}</span>
           </button>
 
           <button
@@ -140,7 +142,7 @@ export function TransactionsPage() {
             className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-neutral-900 dark:bg-neutral-100 dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-white rounded-xl transition-all shadow-2xs active:scale-95"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>Add Transaction</span>
+            <span>{t('tx.add')}</span>
           </button>
         </div>
       </div>
@@ -154,7 +156,7 @@ export function TransactionsPage() {
             <input
               id="transaction-search-input"
               type="text"
-              placeholder="Search description or amount..."
+              placeholder={t('tx.searchPlaceholder')}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-9 pr-3 py-2 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl text-xs text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-neutral-900 dark:focus:ring-neutral-100 focus:border-transparent"
@@ -163,18 +165,18 @@ export function TransactionsPage() {
 
           {/* Quick Type Filter */}
           <div className="flex items-center gap-1 bg-neutral-100 dark:bg-neutral-800 p-1 rounded-xl shrink-0 text-xs">
-            {(['all', 'expense', 'income', 'transfer'] as const).map((t) => (
+            {(['all', 'expense', 'income', 'transfer'] as const).map((filterType) => (
               <button
-                key={t}
+                key={filterType}
                 type="button"
-                onClick={() => setTypeFilter(t)}
-                className={`py-1.5 px-3 rounded-lg font-medium capitalize transition-colors ${
-                  typeFilter === t
+                onClick={() => setTypeFilter(filterType)}
+                className={`py-1.5 px-3 rounded-lg font-medium transition-colors ${
+                  typeFilter === filterType
                     ? 'bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 font-semibold shadow-2xs'
                     : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100'
                 }`}
               >
-                {t}
+                {filterType === 'all' ? t('tx.filterAll') : t(`common.${filterType}`)}
               </button>
             ))}
           </div>
@@ -184,13 +186,13 @@ export function TransactionsPage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 border-t border-neutral-100 dark:border-neutral-800 text-xs">
           {/* Account selector */}
           <div className="flex items-center gap-2">
-            <span className="text-neutral-400 font-medium whitespace-nowrap">Account:</span>
+            <span className="text-neutral-400 font-medium whitespace-nowrap">{t('tx.account')}:</span>
             <select
               value={accountFilter}
               onChange={(e) => setAccountFilter(Number(e.target.value))}
               className="w-full bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg py-1.5 px-2 text-neutral-800 dark:text-neutral-100 focus:outline-none cursor-pointer"
             >
-              <option value={0}>All Accounts</option>
+              <option value={0}>{t('tx.allAccounts')}</option>
               {accounts.map((acc) => (
                 <option key={acc.id} value={acc.id}>
                   {acc.name}
@@ -201,16 +203,16 @@ export function TransactionsPage() {
 
           {/* Category selector */}
           <div className="flex items-center gap-2">
-            <span className="text-neutral-400 font-medium whitespace-nowrap">Category:</span>
+            <span className="text-neutral-400 font-medium whitespace-nowrap">{t('tx.category')}:</span>
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(Number(e.target.value))}
               className="w-full bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg py-1.5 px-2 text-neutral-800 dark:text-neutral-100 focus:outline-none cursor-pointer"
             >
-              <option value={0}>All Categories</option>
+              <option value={0}>{t('tx.allCategories')}</option>
               {categories.map((cat) => (
                 <option key={cat.id} value={cat.id}>
-                  {cat.name} ({cat.type})
+                  {cat.name} ({t(`common.${cat.type}`)})
                 </option>
               ))}
             </select>
@@ -218,16 +220,16 @@ export function TransactionsPage() {
 
           {/* Sort By selector */}
           <div className="flex items-center gap-2">
-            <span className="text-neutral-400 font-medium whitespace-nowrap">Sort:</span>
+            <span className="text-neutral-400 font-medium whitespace-nowrap">{t('tx.sort')}:</span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
               className="w-full bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg py-1.5 px-2 text-neutral-800 dark:text-neutral-100 focus:outline-none cursor-pointer"
             >
-              <option value="date_desc">Date (Newest first)</option>
-              <option value="date_asc">Date (Oldest first)</option>
-              <option value="amount_desc">Amount (Highest first)</option>
-              <option value="amount_asc">Amount (Lowest first)</option>
+              <option value="date_desc">{t('tx.sortDateNewest')}</option>
+              <option value="date_asc">{t('tx.sortDateOldest')}</option>
+              <option value="amount_desc">{t('tx.sortAmountHigh')}</option>
+              <option value="amount_asc">{t('tx.sortAmountLow')}</option>
             </select>
           </div>
         </div>
@@ -241,11 +243,11 @@ export function TransactionsPage() {
               <Receipt className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">No transactions yet.</p>
+              <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('tx.emptyTitle')}</p>
               <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-0.5">
                 {search || typeFilter !== 'all' || categoryFilter !== 0 || accountFilter !== 0
-                  ? 'No transactions matched your active filters.'
-                  : 'Add your first transaction to start managing your records.'}
+                  ? t('tx.emptyFiltered')
+                  : t('tx.emptyHint')}
               </p>
             </div>
             <button
@@ -254,7 +256,7 @@ export function TransactionsPage() {
               className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-neutral-900 dark:bg-neutral-100 dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-white rounded-xl transition-all shadow-2xs"
             >
               <Plus className="w-3.5 h-3.5" />
-              <span>Add Transaction</span>
+              <span>{t('tx.add')}</span>
             </button>
           </div>
         ) : (
@@ -295,11 +297,11 @@ export function TransactionsPage() {
                         <span className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 truncate">
                           {tx.description ||
                             (tx.type === 'transfer'
-                              ? `${account?.name || 'Account'} → ${destAccount?.name || 'Account'}`
-                              : tx.type)}
+                              ? `${account?.name || t('tx.accountFallback')} → ${destAccount?.name || t('tx.accountFallback')}`
+                              : t(`common.${tx.type}`))}
                         </span>
                         <span
-                          className={`text-[10px] font-semibold px-2 py-0.5 rounded-full capitalize ${
+                          className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
                             tx.type === 'income'
                               ? 'bg-emerald-100/70 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-200'
                               : tx.type === 'expense'
@@ -307,7 +309,7 @@ export function TransactionsPage() {
                               : 'bg-blue-100/70 dark:bg-blue-950/40 text-blue-800 dark:text-blue-200'
                           }`}
                         >
-                          {tx.type}
+                          {t(`common.${tx.type}`)}
                         </span>
                       </div>
 
@@ -324,7 +326,7 @@ export function TransactionsPage() {
                         ) : (
                           <>
                             <span className="text-neutral-700 dark:text-neutral-300 font-medium">
-                              {account?.name || 'Unknown Account'}
+                              {account?.name || t('tx.unknownAccount')}
                             </span>
                             {category && (
                               <>
@@ -359,7 +361,7 @@ export function TransactionsPage() {
                         type="button"
                         onClick={() => setEditingTransaction(tx)}
                         className="p-1.5 text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
-                        title="Edit transaction"
+                        title={t('tx.editTitle')}
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                       </button>
@@ -367,7 +369,7 @@ export function TransactionsPage() {
                         type="button"
                         onClick={() => setDeletingId(tx.id!)}
                         className="p-1.5 text-neutral-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
-                        title="Delete transaction"
+                        title={t('tx.deleteTitle')}
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -397,10 +399,9 @@ export function TransactionsPage() {
       {deletingId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/40 dark:bg-black/60 backdrop-blur-xs">
           <div className="w-full max-w-sm bg-white dark:bg-neutral-900 p-6 rounded-2xl shadow-xl border border-neutral-200 dark:border-neutral-800 space-y-4">
-            <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-100">Delete Transaction?</h3>
+            <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-100">{t('tx.deleteConfirmTitle')}</h3>
             <p className="text-xs text-neutral-600 dark:text-neutral-300 leading-relaxed">
-              Are you sure you want to delete this transaction? This will update your account
-              balances and monthly calculations.
+              {t('tx.deleteConfirmBody')}
             </p>
             <div className="flex items-center justify-end gap-2 pt-2">
               <button
@@ -408,14 +409,14 @@ export function TransactionsPage() {
                 onClick={() => setDeletingId(null)}
                 className="px-4 py-2 text-xs font-semibold text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-xl transition-colors"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 type="button"
                 onClick={handleDeleteConfirm}
                 className="px-4 py-2 text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-xl shadow-xs transition-colors"
               >
-                Delete
+                {t('tx.deleteConfirm')}
               </button>
             </div>
           </div>

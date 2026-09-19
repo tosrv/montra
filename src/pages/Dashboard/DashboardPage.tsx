@@ -18,12 +18,14 @@ import { useSettings } from '../../hooks/useSettings.ts';
 import { formatCurrency } from '../../utils/currency.ts';
 import { formatMonthYear, getMonthNames, formatDisplayDate } from '../../utils/dates.ts';
 import { CategoryIcon } from '../../components/ui/CategoryIcon.tsx';
+import { useLanguage } from '../../i18n/LanguageProvider.tsx';
 
 interface AppContext {
   onOpenAddTransaction: () => void;
 }
 
 export function DashboardPage() {
+  const { t } = useLanguage();
   const { onOpenAddTransaction } = useOutletContext<AppContext>();
   const {
     selectedYear,
@@ -62,9 +64,9 @@ export function DashboardPage() {
       {/* Month & Year Navigator Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 tracking-tight">Dashboard</h1>
+          <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 tracking-tight">{t('dashboard.title')}</h1>
           <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
-            How your money is doing this month
+            {formatMonthYear(selectedYear, selectedMonth)}
           </p>
         </div>
 
@@ -74,7 +76,7 @@ export function DashboardPage() {
             type="button"
             onClick={goToPreviousMonth}
             className="p-1.5 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors"
-            title="Previous Month"
+            title={t('dashboard.title')}
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
@@ -109,7 +111,7 @@ export function DashboardPage() {
             type="button"
             onClick={goToNextMonth}
             className="p-1.5 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors"
-            title="Next Month"
+            title={t('dashboard.title')}
           >
             <ChevronRight className="w-4 h-4" />
           </button>
@@ -121,20 +123,20 @@ export function DashboardPage() {
         {/* 1. Current Balance (Overall) */}
         <div className="bg-white dark:bg-neutral-900 p-5 rounded-2xl border border-neutral-200/80 dark:border-neutral-800 shadow-2xs space-y-2">
           <div className="flex items-center justify-between text-neutral-500 dark:text-neutral-400">
-            <span className="text-xs font-medium uppercase tracking-wider">Current Balance</span>
+            <span className="text-xs font-medium uppercase tracking-wider">{t('app.nav.accounts')}</span>
             <Wallet className="w-4 h-4 text-neutral-400 dark:text-neutral-500" />
           </div>
           <div className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 tracking-tight">
             {formatCurrency(data.currentBalance, settings.currency)}
           </div>
-          <p className="text-[11px] text-neutral-400 dark:text-neutral-500">All accounts total</p>
+          <p className="text-[11px] text-neutral-400 dark:text-neutral-500">{formatMonthYear(selectedYear, selectedMonth)}</p>
         </div>
 
         {/* 2. Monthly Income */}
         <div className="bg-white dark:bg-neutral-900 p-5 rounded-2xl border border-neutral-200/80 dark:border-neutral-800 shadow-2xs space-y-2">
           <div className="flex items-center justify-between text-emerald-700 dark:text-emerald-400">
             <span className="text-xs font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-              Monthly Income
+              {t('dashboard.income')}
             </span>
             <ArrowDownRight className="w-4 h-4 text-emerald-600" />
           </div>
@@ -148,7 +150,7 @@ export function DashboardPage() {
         <div className="bg-white dark:bg-neutral-900 p-5 rounded-2xl border border-neutral-200/80 dark:border-neutral-800 shadow-2xs space-y-2">
           <div className="flex items-center justify-between text-rose-700 dark:text-rose-400">
             <span className="text-xs font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-              Monthly Expense
+              {t('dashboard.expense')}
             </span>
             <ArrowUpRight className="w-4 h-4 text-rose-600" />
           </div>
@@ -161,7 +163,7 @@ export function DashboardPage() {
         {/* 4. Net Cash Flow */}
         <div className="bg-white dark:bg-neutral-900 p-5 rounded-2xl border border-neutral-200/80 dark:border-neutral-800 shadow-2xs space-y-2">
           <div className="flex items-center justify-between text-neutral-500 dark:text-neutral-400">
-            <span className="text-xs font-medium uppercase tracking-wider">Net Cash Flow</span>
+            <span className="text-xs font-medium uppercase tracking-wider">{t('dashboard.net')}</span>
             {data.netCashFlow >= 0 ? (
               <TrendingUp className="w-4 h-4 text-emerald-600" />
             ) : (
@@ -175,16 +177,16 @@ export function DashboardPage() {
           >
             {formatCurrency(data.netCashFlow, settings.currency)}
           </div>
-          <p className="text-[11px] text-neutral-400 dark:text-neutral-500">Income minus expense</p>
+          <p className="text-[11px] text-neutral-400 dark:text-neutral-500">{formatMonthYear(selectedYear, selectedMonth)}</p>
         </div>
       </div>
 
       {/* 5. Add Transaction Banner / Action */}
       <div className="p-4 bg-neutral-900 dark:bg-neutral-800 text-white rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs">
         <div className="text-center sm:text-left">
-          <h3 className="text-sm font-semibold">Have a new transaction to record?</h3>
+          <h3 className="text-sm font-semibold">{t('app.addTransaction')}</h3>
           <p className="text-xs text-neutral-300 mt-0.5">
-            Record expenses, income, or transfers between your local accounts anytime.
+            {t('dashboard.addFirst')}
           </p>
         </div>
         <button
@@ -194,7 +196,7 @@ export function DashboardPage() {
           className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-neutral-900 bg-white dark:bg-neutral-100 dark:text-neutral-900 hover:bg-neutral-100 dark:hover:bg-white rounded-xl transition-all shadow-xs shrink-0 active:scale-95"
         >
           <Plus className="w-4 h-4" />
-          <span>Add Transaction</span>
+          <span>{t('app.addTransaction')}</span>
         </button>
       </div>
 
@@ -202,21 +204,21 @@ export function DashboardPage() {
       <div className="bg-white dark:bg-neutral-900 p-6 rounded-2xl border border-neutral-200/80 dark:border-neutral-800 shadow-2xs space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-base font-bold text-neutral-900 dark:text-neutral-100">Expense Breakdown</h2>
+            <h2 className="text-base font-bold text-neutral-900 dark:text-neutral-100">{t('dashboard.breakdown')}</h2>
             <p className="text-xs text-neutral-500 dark:text-neutral-400">
-              Where your money went in {formatMonthYear(selectedYear, selectedMonth)}
+              {formatMonthYear(selectedYear, selectedMonth)}
             </p>
           </div>
           {data.expenseBreakdown.length > 0 && (
             <span className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">
-              Total: {formatCurrency(data.monthlyExpense, settings.currency)}
+              {t('dashboard.expense')}: {formatCurrency(data.monthlyExpense, settings.currency)}
             </span>
           )}
         </div>
 
         {data.expenseBreakdown.length === 0 ? (
           <div className="py-8 text-center text-neutral-400 dark:text-neutral-500 text-xs">
-            No expenses recorded for {formatMonthYear(selectedYear, selectedMonth)}.
+            {t('dashboard.noData')}
           </div>
         ) : (
           <div className="space-y-3 pt-2">
@@ -256,16 +258,16 @@ export function DashboardPage() {
       <div className="bg-white dark:bg-neutral-900 p-6 rounded-2xl border border-neutral-200/80 dark:border-neutral-800 shadow-2xs space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-base font-bold text-neutral-900 dark:text-neutral-100">Recent Transactions</h2>
+            <h2 className="text-base font-bold text-neutral-900 dark:text-neutral-100">{t('app.nav.transactions')}</h2>
             <p className="text-xs text-neutral-500 dark:text-neutral-400">
-              Latest activity in {formatMonthYear(selectedYear, selectedMonth)}
+              {formatMonthYear(selectedYear, selectedMonth)}
             </p>
           </div>
           <Link
             to="/app/transactions"
             className="inline-flex items-center gap-1 text-xs font-semibold text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-neutral-100 hover:underline"
           >
-            <span>View All</span>
+            <span>{t('app.nav.transactions')}</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
@@ -276,9 +278,9 @@ export function DashboardPage() {
               <Receipt className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">No transactions this month.</p>
+              <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('dashboard.noData')}</p>
               <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-0.5">
-                Record your first income, expense, or transfer to get started.
+                {t('dashboard.addFirst')}
               </p>
             </div>
             <button
@@ -287,7 +289,7 @@ export function DashboardPage() {
               className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-neutral-900 dark:bg-neutral-100 dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-white rounded-xl transition-all shadow-2xs"
             >
               <Plus className="w-3.5 h-3.5" />
-              <span>Add Transaction</span>
+              <span>{t('app.addTransaction')}</span>
             </button>
           </div>
         ) : (
@@ -314,7 +316,7 @@ export function DashboardPage() {
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 leading-tight">
-                      {tx.description || (tx.type === 'transfer' ? 'Account Transfer' : tx.type)}
+                      {tx.description || (tx.type === 'transfer' ? t('common.transfer') : t(`common.${tx.type}` as 'common.income' | 'common.expense'))}
                     </p>
                     <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-0.5">
                       {formatDisplayDate(tx.date)}
@@ -335,7 +337,13 @@ export function DashboardPage() {
                     {tx.type === 'income' ? '+' : tx.type === 'expense' ? '-' : ''}
                     {formatCurrency(tx.amount, settings.currency)}
                   </div>
-                  <span className="text-[10px] text-neutral-400 dark:text-neutral-500 capitalize">{tx.type}</span>
+                  <span className="text-[10px] text-neutral-400 dark:text-neutral-500 capitalize">
+                    {tx.type === 'income'
+                      ? t('common.income')
+                      : tx.type === 'expense'
+                      ? t('common.expense')
+                      : t('common.transfer')}
+                  </span>
                 </div>
               </div>
             ))}

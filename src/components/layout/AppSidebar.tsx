@@ -10,20 +10,23 @@ import {
   ArrowLeft,
   ShieldCheck,
 } from 'lucide-react';
+import { useLanguage } from '../../i18n/LanguageProvider.tsx';
 
 interface AppSidebarProps {
   onOpenAddTransaction: () => void;
 }
 
-const NAV_ITEMS = [
-  { to: '/app', label: 'Dashboard', icon: LayoutDashboard, end: true },
-  { to: '/app/transactions', label: 'Transactions', icon: Receipt },
-  { to: '/app/accounts', label: 'Accounts', icon: Wallet },
-  { to: '/app/categories', label: 'Categories', icon: Tags },
-  { to: '/app/settings', label: 'Settings', icon: Settings },
-];
-
 export function AppSidebar({ onOpenAddTransaction }: AppSidebarProps) {
+  const { t } = useLanguage();
+
+  const navItems = [
+    { to: '/app', labelKey: 'app.nav.dashboard' as const, icon: LayoutDashboard, end: true },
+    { to: '/app/transactions', labelKey: 'app.nav.transactions' as const, icon: Receipt },
+    { to: '/app/accounts', labelKey: 'app.nav.accounts' as const, icon: Wallet },
+    { to: '/app/categories', labelKey: 'app.nav.categories' as const, icon: Tags },
+    { to: '/app/settings', labelKey: 'app.nav.settings' as const, icon: Settings },
+  ];
+
   return (
     <aside className="w-64 border-r border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 flex flex-col justify-between h-screen sticky top-0 shrink-0">
       <div className="p-4 space-y-6">
@@ -35,10 +38,10 @@ export function AppSidebar({ onOpenAddTransaction }: AppSidebarProps) {
             </div>
             <div>
               <span className="font-bold text-neutral-900 dark:text-neutral-100 text-base leading-tight block">
-                Money Tracker
+                {t('brand.name')}
               </span>
               <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
-                <ShieldCheck className="w-2.5 h-2.5" /> Local-first (IndexedDB)
+                <ShieldCheck className="w-2.5 h-2.5" /> {t('app.localFirstDb')}
               </span>
             </div>
           </Link>
@@ -52,12 +55,12 @@ export function AppSidebar({ onOpenAddTransaction }: AppSidebarProps) {
           className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-semibold text-white bg-neutral-900 dark:bg-neutral-100 dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-white shadow-xs hover:shadow-md transition-all active:scale-[0.99]"
         >
           <Plus className="w-4 h-4" />
-          <span>Add Transaction</span>
+          <span>{t('app.addTransaction')}</span>
         </button>
 
         {/* Navigation Items */}
         <nav className="space-y-1">
-          {NAV_ITEMS.map((item) => {
+          {navItems.map((item) => {
             const Icon = item.icon;
             return (
               <NavLink
@@ -73,7 +76,7 @@ export function AppSidebar({ onOpenAddTransaction }: AppSidebarProps) {
                 }
               >
                 <Icon className="w-4 h-4 text-neutral-500 dark:text-neutral-400" />
-                <span>{item.label}</span>
+                <span>{t(item.labelKey)}</span>
               </NavLink>
             );
           })}
@@ -87,7 +90,7 @@ export function AppSidebar({ onOpenAddTransaction }: AppSidebarProps) {
           className="flex items-center gap-2 text-xs font-medium text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 p-2 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Back to Home Page</span>
+          <span>{t('app.backHome')}</span>
         </Link>
       </div>
     </aside>

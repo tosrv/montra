@@ -14,6 +14,7 @@ export async function exportBackupJson(): Promise<void> {
     id: 'default',
     currency: 'IDR',
     theme: 'system',
+    language: 'en' as const,
     schemaVersion: 1,
   };
 
