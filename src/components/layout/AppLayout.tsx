@@ -16,6 +16,7 @@ import { useSettings } from '../../hooks/useSettings.ts';
 import { createTransaction } from '../../services/transactionService.ts';
 import { initializeDatabase } from '../../db/database.ts';
 import { useLanguage } from '../../i18n/LanguageProvider.tsx';
+import { PWAInstallButton } from '../pwa/PWAInstallButton.tsx';
 
 export function AppLayout() {
   const { t } = useLanguage();
@@ -75,20 +76,23 @@ export function AppLayout() {
 
       {/* Mobile Top Header */}
       <header className="md:hidden sticky top-0 z-30 flex items-center justify-between px-4 py-3 bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800">
-        <Link to="/" className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 flex items-center justify-center font-bold text-xs">
+        <Link to="/" className="flex items-center gap-2 min-w-0">
+          <div className="w-7 h-7 rounded-lg bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 flex items-center justify-center font-bold text-xs shrink-0">
             MT
           </div>
-          <span className="font-bold text-neutral-900 dark:text-neutral-100 text-sm">{t('brand.name')}</span>
+          <span className="font-bold text-neutral-900 dark:text-neutral-100 text-sm truncate">{t('brand.name')}</span>
         </Link>
-        <Link
-          to="/app/settings"
-          className="p-2 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors"
-          aria-label={t('app.nav.settings')}
-          title={t('app.nav.settings')}
-        >
-          <Settings className="w-5 h-5" />
-        </Link>
+        <div className="flex items-center gap-1.5 shrink-0">
+          <PWAInstallButton variant="navbar" />
+          <Link
+            to="/app/settings"
+            className="p-2 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors"
+            aria-label={t('app.nav.settings')}
+            title={t('app.nav.settings')}
+          >
+            <Settings className="w-5 h-5" />
+          </Link>
+        </div>
       </header>
 
       {/* Main Content Viewport */}

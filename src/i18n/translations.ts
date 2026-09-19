@@ -291,6 +291,10 @@ const en = {
   'common.delete': 'Delete',
   'common.edit': 'Edit',
   'common.loading': 'Loading…',
+
+  // PWA
+  'pwa.addToHomeScreen': 'Add to Home Screen',
+  'pwa.addToHomeScreenShort': 'Install',
 } as const;
 
 const id: Record<TranslationKey, string> = {
@@ -572,6 +576,9 @@ const id: Record<TranslationKey, string> = {
   'common.delete': 'Hapus',
   'common.edit': 'Ubah',
   'common.loading': 'Memuat…',
+
+  'pwa.addToHomeScreen': 'Tambah ke Layar Utama',
+  'pwa.addToHomeScreenShort': 'Instal',
 };
 
 const dictionaries: Record<Locale, Record<TranslationKey, string>> = {
