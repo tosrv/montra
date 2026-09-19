@@ -38,6 +38,7 @@ export interface AppSettings {
   id: string;
   currency: string; // 'IDR' | 'USD' | 'EUR' etc.
   theme: 'system' | 'light' | 'dark';
+  language: 'en' | 'id';
   schemaVersion: number;
 }
 
