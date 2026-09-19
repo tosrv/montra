@@ -20,20 +20,34 @@ import { useLanguage } from '../../i18n/LanguageProvider.tsx';
 export function AppLayout() {
   const { t } = useLanguage();
   const [isAddTxOpen, setIsAddTxOpen] = useState(false);
+  const [dbReady, setDbReady] = useState(false);
 
   const { accounts, refreshAccounts } = useAccounts();
   const { categories, refreshCategories } = useCategories();
   const { settings } = useSettings();
 
-  // Initialize DB once on mount
+  // Wait for IndexedDB seed before rendering workspace (critical for direct /app loads)
   useEffect(() => {
-    void initializeDatabase();
-  }, []);
+    let cancelled = false;
+    async function init() {
+      try {
+        await initializeDatabase();
+        await Promise.all([refreshAccounts(), refreshCategories()]);
+      } catch (e) {
+        console.error('Failed to initialize app database:', e);
+      } finally {
+        if (!cancelled) setDbReady(true);
+      }
+    }
+    void init();
+    return () => {
+      cancelled = true;
+    };
+  }, [refreshAccounts, refreshCategories]);
 
   const handleCreateTransaction = async (data: any) => {
     await createTransaction(data);
     refreshAccounts();
-    // Dispatch custom event so current page (e.g. Dashboard or Transactions) reloads immediately
     window.dispatchEvent(new CustomEvent('money-tracker-tx-changed'));
   };
 
@@ -44,6 +58,14 @@ export function AppLayout() {
     { to: '/app/categories', labelKey: 'app.nav.categories' as const, icon: Tags },
     { to: '/app/settings', labelKey: 'app.nav.settings' as const, icon: Settings },
   ];
+
+  if (!dbReady) {
+    return (
+      <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 text-neutral-600 dark:text-neutral-400 flex items-center justify-center text-sm">
+        {t('common.loading')}
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-neutral-50/70 dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 flex flex-col md:flex-row">

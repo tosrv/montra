@@ -63,6 +63,8 @@ npm run build
 npm run preview
 ```
 
+For **Vercel**, `vercel.json` already rewrites all routes to `index.html` so direct links like `/app` work after deploy.
+
 ### Lint (typecheck)
 
 ```bash
