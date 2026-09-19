@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Settings as SettingsIcon,
   Shield,
@@ -11,8 +11,6 @@ import {
   Info,
   RefreshCw,
   ExternalLink,
-  Eye,
-  EyeOff,
 } from 'lucide-react';
 import { useSettings } from '../../hooks/useSettings.ts';
 import { CURRENCY_OPTIONS } from '../../utils/currency.ts';
@@ -24,23 +22,11 @@ import {
   resetDatabaseToDefaults,
   type ValidationResult,
 } from '../../services/backupService.ts';
-import {
-  getAnonymousInstallationId,
-  isAnalyticsEnabled,
-  setAnalyticsEnabled,
-  getLocalAnalyticsLog,
-} from '../../services/analyticsService.ts';
 import type { BackupData } from '../../types.ts';
 
 export function SettingsPage() {
   const { settings, updateCurrency, updateTheme } = useSettings();
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // Analytics preferences
-  const [analyticsActive, setAnalyticsActive] = useState(isAnalyticsEnabled());
-  const [installId, setInstallId] = useState('');
-  const [showAuditLogs, setShowAuditLogs] = useState(false);
-  const [auditLogs, setAuditLogs] = useState(getLocalAnalyticsLog());
 
   // Import flow states
   const [importedFile, setImportedFile] = useState<File | null>(null);
@@ -51,18 +37,6 @@ export function SettingsPage() {
 
   // Reset database state
   const [showResetConfirm, setShowResetConfirm] = useState(false);
-
-  useEffect(() => {
-    const { id } = getAnonymousInstallationId();
-    setInstallId(id);
-    setAuditLogs(getLocalAnalyticsLog());
-  }, []);
-
-  const handleToggleAnalytics = (enabled: boolean) => {
-    setAnalyticsEnabled(enabled);
-    setAnalyticsActive(enabled);
-    setAuditLogs(getLocalAnalyticsLog());
-  };
 
   const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -138,8 +112,7 @@ export function SettingsPage() {
         </div>
         <p className="text-xs text-emerald-800/90 leading-relaxed font-medium">
           Your financial data is stored locally on this device. Money Tracker does not require an
-          account or cloud database. Anonymous usage metrics may be collected to understand overall
-          app usage, but financial information is never sent to analytics.
+          account or cloud database. Balances, transactions, and notes never leave your browser.
         </p>
       </div>
 
@@ -359,85 +332,7 @@ export function SettingsPage() {
         </div>
       </div>
 
-      {/* 4. Anonymous Analytics & Transparency */}
-      <div className="bg-white p-6 rounded-2xl border border-neutral-200/80 shadow-2xs space-y-5">
-        <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
-          <div>
-            <h2 className="text-base font-bold text-neutral-900">Anonymous Usage Telemetry</h2>
-            <p className="text-xs text-neutral-500">
-              Complete transparency into anonymous usage metrics
-            </p>
-          </div>
-
-          <label className="relative inline-flex items-center cursor-pointer">
-            <input
-              type="checkbox"
-              checked={analyticsActive}
-              onChange={(e) => handleToggleAnalytics(e.target.checked)}
-              className="sr-only peer"
-            />
-            <div className="w-9 h-5 bg-neutral-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-neutral-900"></div>
-          </label>
-        </div>
-
-        <div className="space-y-3 text-xs text-neutral-600 leading-relaxed">
-          <p>
-            Money Tracker may collect anonymous usage statistics to understand overall feature
-            adoption (e.g. how many times transactions are added or backups are made).
-          </p>
-
-          <div className="p-3 bg-neutral-50 rounded-xl border border-neutral-200 space-y-1.5 font-mono text-[11px]">
-            <div className="text-neutral-500 font-sans font-medium text-xs">
-              Anonymous Installation Identifier:
-            </div>
-            <div className="text-neutral-900 select-all font-semibold break-all">
-              {installId || 'anonymous-session'}
-            </div>
-            <p className="font-sans text-[10px] text-neutral-400 pt-1">
-              This identifier is a random UUID generated in your browser. It identifies an
-              installation, NOT a human, and changes if browser storage is cleared.
-            </p>
-          </div>
-
-          {/* Verification Audit Log Toggle */}
-          <div className="pt-1">
-            <button
-              type="button"
-              onClick={() => {
-                setAuditLogs(getLocalAnalyticsLog());
-                setShowAuditLogs(!showAuditLogs);
-              }}
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-neutral-700 hover:text-neutral-900 underline"
-            >
-              {showAuditLogs ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-              <span>{showAuditLogs ? 'Hide Audit Log' : 'Inspect Dispatched Event Payloads (Verify Zero Financial Data)'}</span>
-            </button>
-          </div>
-
-          {showAuditLogs && (
-            <div className="mt-3 p-3 bg-neutral-900 text-neutral-100 rounded-xl text-[11px] font-mono max-h-48 overflow-y-auto space-y-2">
-              <p className="text-neutral-400 font-sans text-xs">
-                Recent anonymous events dispatched locally ({auditLogs.length}):
-              </p>
-              {auditLogs.length === 0 ? (
-                <p className="text-neutral-500">No events logged yet in this session.</p>
-              ) : (
-                auditLogs.map((log, index) => (
-                  <div key={index} className="p-2 rounded bg-neutral-800/80 border border-neutral-700">
-                    <span className="text-emerald-400 font-bold">{log.event_name}</span> at{' '}
-                    <span className="text-neutral-400">{log.timestamp}</span>
-                    <div className="text-[10px] text-neutral-400">
-                      installation: {log.anonymous_installation_id.slice(0, 18)}... | version: {log.app_version}
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* 5. Destructive Area: Reset Database */}
+      {/* 4. Destructive Area: Reset Database */}
       <div className="bg-rose-50/50 p-6 rounded-2xl border border-rose-200/80 shadow-2xs space-y-4">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div>

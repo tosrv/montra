@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import {
   ShieldCheck,
@@ -17,17 +17,8 @@ import {
 } from 'lucide-react';
 import { PublicNavbar } from '../../components/layout/PublicNavbar.tsx';
 import { PublicFooter } from '../../components/layout/PublicFooter.tsx';
-import { trackEvent } from '../../services/analyticsService.ts';
 
 export function LandingPage() {
-  useEffect(() => {
-    trackEvent('landing_page_viewed');
-  }, []);
-
-  const handleStartTracking = () => {
-    trackEvent('start_tracking_clicked');
-  };
-
   return (
     <div className="min-h-screen bg-white text-neutral-900 flex flex-col selection:bg-emerald-100 selection:text-emerald-900">
       <PublicNavbar />
@@ -58,7 +49,6 @@ export function LandingPage() {
             <Link
               id="hero-start-tracking-cta"
               to="/app"
-              onClick={handleStartTracking}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 text-base font-semibold text-white bg-neutral-900 hover:bg-neutral-800 rounded-xl shadow-md hover:shadow-lg transition-all active:scale-[0.98]"
             >
               <span>Start Tracking</span>
@@ -148,9 +138,8 @@ export function LandingPage() {
               </div>
               <h3 className="text-lg font-bold text-neutral-900">Strict Analytics Separation</h3>
               <p className="text-sm text-neutral-600 leading-relaxed">
-                Anonymous product telemetry may exist only to know feature counts (e.g., “a
-                transaction was created”). Analytics code NEVER reads your balance, amounts, notes,
-                or categories.
+                Your balances, amounts, notes, and categories stay in the browser. Optional Umami
+                pageviews (if configured by the host) never include financial data.
               </p>
             </div>
           </div>
@@ -331,7 +320,6 @@ export function LandingPage() {
             <Link
               id="final-start-tracking-cta"
               to="/app"
-              onClick={handleStartTracking}
               className="inline-flex items-center gap-2 px-8 py-4 text-base font-semibold text-white bg-neutral-900 hover:bg-neutral-800 rounded-xl shadow-lg hover:shadow-xl transition-all active:scale-[0.98]"
             >
               <span>Start Tracking</span>

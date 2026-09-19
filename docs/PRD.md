@@ -67,7 +67,6 @@ Money Tracker menargetkan pengguna yang ingin **kejelasan keuangan harian** deng
 | UC-07 | Export backup JSON / restore | P1 |
 | UC-08 | Export transaksi ke CSV | P1 |
 | UC-09 | Mengubah mata uang & tema | P2 |
-| UC-10 | Menonaktifkan analytics anonim | P2 |
 | UC-11 | Reset database ke default | P2 |
 
 ---
@@ -113,7 +112,7 @@ Money Tracker menargetkan pengguna yang ingin **kejelasan keuangan harian** deng
 - Tema: system / light / dark
 - Backup JSON (export) & restore dengan validasi skema
 - Export CSV transaksi
-- Toggle analytics anonim + audit log lokal (maks. 30 event terakhir)
+- _(Opsional host)_ Umami pageviews via env — bukan fitur Settings user
 - Reset database ke default (dengan konfirmasi)
 
 ---
@@ -124,7 +123,7 @@ Money Tracker menargetkan pengguna yang ingin **kejelasan keuangan harian** deng
 |------|-------------|
 | Privacy | Data keuangan hanya di IndexedDB klien |
 | Offline | Inti app harus tetap berfungsi tanpa jaringan setelah load |
-| Analytics | Hanya nama event + installation ID anonim; **dilarang** mengirim amount, deskripsi, kategori, atau saldo |
+| Analytics | Opsional Umami pageviews saja; **dilarang** mengirim amount, deskripsi, kategori, atau saldo |
 | Integrity | Restore backup wajib validasi (tipe, amount > 0, referensi transfer, dll.) |
 | UX | Tanpa login; time-to-first-transaction seminimal mungkin |
 | Performance | Operasi lokal; dashboard bulanan harus responsif untuk volume data personal tipikal |
@@ -149,14 +148,13 @@ AppSettings  → id, currency, theme, schemaVersion
 
 ## 8. Metrik sukses (produk)
 
-Karena local-first, metrik remote terbatas pada event anonim (jika diaktifkan user):
+Karena local-first, metrik remote (jika host mengaktifkan Umami):
 
 | Metrik | Definisi |
 |--------|----------|
-| Activation | `start_tracking_clicked` → setidaknya satu `transaction_created` |
-| Engagement | Frekuensi `app_opened` / `transaction_created` |
-| Retention proxy | `backup_exported` (indikasi data dianggap berharga) |
-| Trust | Rendahnya disable analytics + tingginya restore sukses |
+| Unique visitors | Umami visitors (ada pengguna lain?) |
+| Pageviews | Beban traffic |
+| Retention proxy | Frekuensi restore/backup (kualitatif, tidak di-track otomatis) |
 
 Metrik keuangan **tidak** dikumpulkan.
 
@@ -190,7 +188,7 @@ Metrik keuangan **tidak** dikumpulkan.
 1. **Local-first adalah constraint, bukan fitur opsional** — jangan menambahkan cloud sync finansial tanpa keputusan produk eksplisit dan perubahan privasi.
 2. **Tidak ada login** pada jalur kritis MVP.
 3. **Amount integer** untuk menghindari error floating-point.
-4. **Analytics terpisah ketat** dari data keuangan.
+4. **Data keuangan tidak pernah ke analytics** (Umami pageview opsional hanya di level host).
 5. **Seed akun/kategori boleh ada; seed saldo/transaksi palsu tidak boleh.**
 
 ---
@@ -201,6 +199,6 @@ Metrik keuangan **tidak** dikumpulkan.
 - Schema & seed: `src/db/database.ts`
 - Domain types: `src/types.ts`
 - Backup/CSV: `src/services/backupService.ts`
-- Analytics policy: `src/services/analyticsService.ts`
+- Analytics bootstrap: `src/services/analyticsService.ts` (Umami only)
 - Data model / ERD: [ERD.md](./ERD.md)
 - Developer setup: [README.md](./README.md)

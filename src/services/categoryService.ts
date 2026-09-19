@@ -1,5 +1,4 @@
 import { db } from '../db/database.ts';
-import { trackEvent } from './analyticsService.ts';
 import type { Category, CategoryType } from '../types.ts';
 
 export async function getAllCategories(): Promise<Category[]> {
@@ -23,7 +22,6 @@ export async function createCategory(data: {
     createdAt: now,
   });
 
-  trackEvent('category_created');
   return id;
 }
 

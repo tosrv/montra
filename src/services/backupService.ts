@@ -1,5 +1,4 @@
 import { db, initializeDatabase } from '../db/database.ts';
-import { trackEvent } from './analyticsService.ts';
 import type { Account, AppSettings, BackupData, Category, Transaction } from '../types.ts';
 
 export interface ValidationResult {
@@ -49,8 +48,6 @@ export async function exportBackupJson(): Promise<void> {
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
-
-  trackEvent('backup_exported');
 }
 
 /**
@@ -190,8 +187,6 @@ export async function restoreBackupData(data: BackupData): Promise<void> {
       });
     }
   });
-
-  trackEvent('backup_imported');
 }
 
 /**
@@ -242,8 +237,6 @@ export async function exportTransactionsCsv(): Promise<void> {
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
-
-  trackEvent('csv_exported');
 }
 
 /**

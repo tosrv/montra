@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { LandingPage } from './pages/Landing/LandingPage.tsx';
 import { AppLayout } from './components/layout/AppLayout.tsx';
@@ -7,8 +7,13 @@ import { TransactionsPage } from './pages/Transactions/TransactionsPage.tsx';
 import { AccountsPage } from './pages/Accounts/AccountsPage.tsx';
 import { CategoriesPage } from './pages/Categories/CategoriesPage.tsx';
 import { SettingsPage } from './pages/Settings/SettingsPage.tsx';
+import { initializeAnalytics } from './services/analyticsService.ts';
 
 export default function App() {
+  useEffect(() => {
+    initializeAnalytics();
+  }, []);
+
   return (
     <BrowserRouter>
       <Routes>

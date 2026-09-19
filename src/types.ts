@@ -75,26 +75,3 @@ export interface BackupData {
   categories: Category[];
   transactions: Transaction[];
 }
-
-export type AnalyticsEventName =
-  | 'first_visit'
-  | 'app_opened'
-  | 'landing_page_viewed'
-  | 'start_tracking_clicked'
-  | 'transaction_created'
-  | 'transaction_edited'
-  | 'transaction_deleted'
-  | 'account_created'
-  | 'category_created'
-  | 'backup_exported'
-  | 'backup_imported'
-  | 'csv_exported';
-
-export interface AnalyticsEvent {
-  event_name: AnalyticsEventName;
-  anonymous_installation_id: string;
-  app_version: string;
-  timestamp: string;
-  platform?: string;
-  browser_family?: string;
-}

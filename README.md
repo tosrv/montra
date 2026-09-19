@@ -12,7 +12,7 @@ Track income, expenses, and account transfers entirely in your browser — no ac
 - **Monthly dashboard** — Income, expense, net cash flow, and category breakdown
 - **Backup & restore** — Full JSON export/import with validation
 - **CSV export** — Download transactions as a spreadsheet
-- **Privacy-first** — Data stored in IndexedDB; optional anonymous product analytics (no amounts, notes, or balances)
+- **Privacy-first** — Financial data stored in IndexedDB; optional Umami pageviews only (no money data)
 
 ## Tech stack
 
@@ -40,10 +40,20 @@ npm install
 ### Development
 
 ```bash
+cp .env.example .env   # optional — needed for Umami
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
+
+### Umami (optional remote visits)
+
+To see whether other people open the app, use free **Umami Cloud Hobby**.  
+Step-by-step: [docs/UMAMI.md](./docs/UMAMI.md).
+
+```env
+VITE_UMAMI_WEBSITE_ID="your-website-uuid"
+```
 
 ### Build
 
@@ -67,7 +77,7 @@ npm run lint
 | `/app/transactions` | Transaction list & management |
 | `/app/accounts` | Accounts & balances |
 | `/app/categories` | Category management |
-| `/app/settings` | Currency, theme, backup, analytics, reset |
+| `/app/settings` | Currency, theme, backup, reset |
 
 ## Data & privacy
 
@@ -86,7 +96,7 @@ src/
   db/             # Dexie schema & seed
   hooks/          # Dashboard, accounts, categories, settings
   pages/          # Landing + app pages
-  services/       # Transactions, accounts, categories, backup, analytics
+  services/       # Transactions, accounts, categories, backup, Umami bootstrap
   utils/          # Currency & date helpers
   types.ts        # Shared domain types
   App.tsx         # Routes
@@ -104,8 +114,9 @@ src/
 
 ## Product docs
 
-- [PRD.md](./PRD.md) — product goals, requirements, and scope
-- [ERD.md](./ERD.md) — entity relationship diagram (IndexedDB / Dexie)
+- [PRD.md](./docs/PRD.md) — product goals, requirements, and scope
+- [ERD.md](./docs/ERD.md) — entity relationship diagram (IndexedDB / Dexie)
+- [UMAMI.md](./docs/UMAMI.md) — Umami Cloud setup for anonymous visits
 
 ## License
 

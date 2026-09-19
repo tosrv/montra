@@ -1,5 +1,4 @@
 import { db } from '../db/database.ts';
-import { trackEvent } from './analyticsService.ts';
 import type { Account, AccountWithBalance, AccountType } from '../types.ts';
 
 export async function getAllAccounts(): Promise<Account[]> {
@@ -69,7 +68,6 @@ export async function createAccount(data: {
     updatedAt: now,
   });
 
-  trackEvent('account_created');
   return id;
 }
 

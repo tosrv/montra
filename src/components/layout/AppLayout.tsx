@@ -16,7 +16,6 @@ import { useAccounts } from '../../hooks/useAccounts.ts';
 import { useCategories } from '../../hooks/useCategories.ts';
 import { useSettings } from '../../hooks/useSettings.ts';
 import { createTransaction } from '../../services/transactionService.ts';
-import { initializeAnonymousSession } from '../../services/analyticsService.ts';
 import { initializeDatabase } from '../../db/database.ts';
 
 export function AppLayout() {
@@ -28,11 +27,10 @@ export function AppLayout() {
   const { categories, refreshCategories } = useCategories();
   const { settings } = useSettings();
 
-  // Initialize DB and session once on mount
+  // Initialize DB once on mount
   useEffect(() => {
     async function init() {
       await initializeDatabase();
-      initializeAnonymousSession();
       setDbReady(true);
     }
     init();

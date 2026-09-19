@@ -1,5 +1,4 @@
 import { db } from '../db/database.ts';
-import { trackEvent } from './analyticsService.ts';
 import { isDateInMonth } from '../utils/dates.ts';
 import type { MonthlySummary, Transaction, TransactionType } from '../types.ts';
 
@@ -212,7 +211,6 @@ export async function createTransaction(data: {
     updatedAt: now,
   });
 
-  trackEvent('transaction_created');
   return id;
 }
 
@@ -255,10 +253,8 @@ export async function updateTransaction(
     updatedAt: now,
   });
 
-  trackEvent('transaction_edited');
 }
 
 export async function deleteTransaction(id: number): Promise<void> {
   await db.transactions.delete(id);
-  trackEvent('transaction_deleted');
 }

@@ -122,7 +122,7 @@ settings:     id, currency, theme, schemaVersion
 | `AccountWithBalance` | Computed di memory | View atas Account + Transaction |
 | `MonthlySummary` | Computed di memory | Agregasi Transaction (+ Category) |
 | `BackupData` | File JSON export | Snapshot: settings + accounts + categories + transactions |
-| `AnalyticsEvent` | `localStorage` (opsional) | **Tidak** menyentuh data keuangan |
+| Umami pageviews | Remote (opsional via env) | Bukan data keuangan |
 
 ---
 

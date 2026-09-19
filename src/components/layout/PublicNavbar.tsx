@@ -1,13 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Shield, ArrowRight } from 'lucide-react';
-import { trackEvent } from '../../services/analyticsService.ts';
+import { ArrowRight } from 'lucide-react';
 
 export function PublicNavbar() {
-  const handleStartTracking = () => {
-    trackEvent('start_tracking_clicked');
-  };
-
   return (
     <header className="sticky top-0 z-40 w-full border-b border-neutral-200/80 bg-white/90 backdrop-blur-md">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
@@ -45,7 +40,6 @@ export function PublicNavbar() {
           <Link
             id="navbar-start-tracking-cta"
             to="/app"
-            onClick={handleStartTracking}
             className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-neutral-900 hover:bg-neutral-800 rounded-xl shadow-xs transition-all"
           >
             <span>Start Tracking</span>
