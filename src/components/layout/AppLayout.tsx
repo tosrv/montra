@@ -51,12 +51,11 @@ export function AppLayout() {
     window.dispatchEvent(new CustomEvent('money-tracker-tx-changed'));
   };
 
-  const navItems = [
+  const mobileNavItems = [
     { to: '/app', labelKey: 'app.nav.dashboard' as const, icon: LayoutDashboard, end: true },
     { to: '/app/transactions', labelKey: 'app.nav.transactions' as const, icon: Receipt },
     { to: '/app/accounts', labelKey: 'app.nav.accounts' as const, icon: Wallet },
     { to: '/app/categories', labelKey: 'app.nav.categories' as const, icon: Tags },
-    { to: '/app/settings', labelKey: 'app.nav.settings' as const, icon: Settings },
   ];
 
   if (!dbReady) {
@@ -82,26 +81,37 @@ export function AppLayout() {
           </div>
           <span className="font-bold text-neutral-900 dark:text-neutral-100 text-sm">{t('brand.name')}</span>
         </Link>
-        <button
-          type="button"
-          onClick={() => setIsAddTxOpen(true)}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-neutral-900 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-white hover:bg-neutral-800 rounded-lg shadow-xs active:scale-95"
+        <Link
+          to="/app/settings"
+          className="p-2 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors"
+          aria-label={t('app.nav.settings')}
+          title={t('app.nav.settings')}
         >
-          <Plus className="w-3.5 h-3.5" />
-          <span>{t('app.add')}</span>
-        </button>
+          <Settings className="w-5 h-5" />
+        </Link>
       </header>
 
       {/* Main Content Viewport */}
-      <main className="flex-1 min-w-0 pb-20 md:pb-8 overflow-y-auto">
+      <main className="flex-1 min-w-0 pb-28 md:pb-8 overflow-y-auto">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           <Outlet context={{ onOpenAddTransaction: () => setIsAddTxOpen(true) }} />
         </div>
       </main>
 
+      {/* Mobile FAB — above bottom nav */}
+      <button
+        type="button"
+        onClick={() => setIsAddTxOpen(true)}
+        className="md:hidden fixed bottom-24 right-4 z-40 w-14 h-14 rounded-full bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 shadow-lg flex items-center justify-center hover:bg-neutral-800 dark:hover:bg-white active:scale-95 transition-all"
+        aria-label={t('app.addTransaction')}
+        title={t('app.addTransaction')}
+      >
+        <Plus className="w-6 h-6" />
+      </button>
+
       {/* Mobile Bottom Navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-white dark:bg-neutral-900 border-t border-neutral-200 dark:border-neutral-800 flex items-center justify-around px-2 py-1.5 shadow-lg">
-        {navItems.map((item) => {
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-white dark:bg-neutral-900 border-t border-neutral-200 dark:border-neutral-800 flex items-center justify-around px-2 pt-2 pb-5 shadow-lg">
+        {mobileNavItems.map((item) => {
           const Icon = item.icon;
           return (
             <NavLink
@@ -116,7 +126,7 @@ export function AppLayout() {
                 }`
               }
             >
-              <Icon className="w-4 h-4 mb-0.5" />
+              <Icon className="w-5 h-5 mb-0.5" />
               <span>{t(item.labelKey)}</span>
             </NavLink>
           );

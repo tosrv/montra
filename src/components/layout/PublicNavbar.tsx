@@ -44,10 +44,10 @@ export function PublicNavbar() {
           <Link
             id="navbar-start-tracking-cta"
             to="/app"
-            className="flex items-center gap-2 px-3 sm:px-4 py-2 text-sm font-semibold text-white bg-neutral-900 dark:bg-neutral-100 dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-white rounded-xl shadow-xs transition-all"
+            className="hidden sm:flex items-center gap-2 px-3 sm:px-4 py-2 text-sm font-semibold text-white bg-neutral-900 dark:bg-neutral-100 dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-white rounded-xl shadow-xs transition-all"
           >
             <span>{t('nav.startTracking')}</span>
-            <ArrowRight className="w-4 h-4 hidden sm:block" />
+            <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       </div>
