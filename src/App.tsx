@@ -8,6 +8,7 @@ import { AccountsPage } from './pages/Accounts/AccountsPage.tsx';
 import { CategoriesPage } from './pages/Categories/CategoriesPage.tsx';
 import { SettingsPage } from './pages/Settings/SettingsPage.tsx';
 import { initializeAnalytics } from './services/analyticsService.ts';
+import { ThemeBootstrap } from './components/ThemeBootstrap.tsx';
 
 export default function App() {
   useEffect(() => {
@@ -16,6 +17,7 @@ export default function App() {
 
   return (
     <BrowserRouter>
+      <ThemeBootstrap />
       <Routes>
         {/* Public Landing Page */}
         <Route path="/" element={<LandingPage />} />

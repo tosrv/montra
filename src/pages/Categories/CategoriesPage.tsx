@@ -111,8 +111,8 @@ export function CategoriesPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-neutral-900 tracking-tight">Categories</h1>
-          <p className="text-xs text-neutral-500 mt-0.5">
+          <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 tracking-tight">Categories</h1>
+          <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
             Organize transactions into custom income and expense categories
           </p>
         </div>
@@ -121,7 +121,7 @@ export function CategoriesPage() {
           id="categories-add-btn"
           type="button"
           onClick={() => openCreateModal()}
-          className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-neutral-900 hover:bg-neutral-800 rounded-xl transition-all shadow-2xs active:scale-95 self-start sm:self-auto"
+          className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-neutral-900 dark:bg-neutral-100 dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-white rounded-xl transition-all shadow-2xs active:scale-95 self-start sm:self-auto"
         >
           <Plus className="w-3.5 h-3.5" />
           <span>New Category</span>
@@ -129,14 +129,14 @@ export function CategoriesPage() {
       </div>
 
       {/* Segmented Tabs (Expense vs Income) */}
-      <div className="flex items-center gap-2 p-1 bg-neutral-100 rounded-xl w-fit">
+      <div className="flex items-center gap-2 p-1 bg-neutral-100 dark:bg-neutral-800 rounded-xl w-fit">
         <button
           type="button"
           onClick={() => setActiveTab('expense')}
           className={`flex items-center gap-2 py-2 px-4 rounded-lg text-xs font-semibold transition-all ${
             activeTab === 'expense'
-              ? 'bg-white text-rose-700 shadow-2xs'
-              : 'text-neutral-600 hover:text-neutral-900'
+              ? 'bg-white dark:bg-neutral-900 text-rose-700 dark:text-rose-300 shadow-2xs'
+              : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100'
           }`}
         >
           <ArrowUpRight className="w-3.5 h-3.5 text-rose-500" />
@@ -148,8 +148,8 @@ export function CategoriesPage() {
           onClick={() => setActiveTab('income')}
           className={`flex items-center gap-2 py-2 px-4 rounded-lg text-xs font-semibold transition-all ${
             activeTab === 'income'
-              ? 'bg-white text-emerald-700 shadow-2xs'
-              : 'text-neutral-600 hover:text-neutral-900'
+              ? 'bg-white dark:bg-neutral-900 text-emerald-700 dark:text-emerald-300 shadow-2xs'
+              : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100'
           }`}
         >
           <ArrowDownRight className="w-3.5 h-3.5 text-emerald-500" />
@@ -159,20 +159,20 @@ export function CategoriesPage() {
 
       {/* Category List Grid */}
       {displayedCategories.length === 0 ? (
-        <div className="bg-white p-12 rounded-2xl border border-neutral-200/80 text-center space-y-3 shadow-2xs">
-          <div className="w-12 h-12 rounded-2xl bg-neutral-100 text-neutral-400 flex items-center justify-center mx-auto">
+        <div className="bg-white dark:bg-neutral-900 p-12 rounded-2xl border border-neutral-200/80 dark:border-neutral-800 text-center space-y-3 shadow-2xs">
+          <div className="w-12 h-12 rounded-2xl bg-neutral-100 dark:bg-neutral-800 text-neutral-400 dark:text-neutral-500 flex items-center justify-center mx-auto">
             <Tags className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-sm font-medium text-neutral-700">No {activeTab} categories yet.</p>
-            <p className="text-xs text-neutral-400 mt-0.5">
+            <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">No {activeTab} categories yet.</p>
+            <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-0.5">
               Create categories to organize your {activeTab} transactions.
             </p>
           </div>
           <button
             type="button"
             onClick={() => openCreateModal(activeTab)}
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-neutral-900 hover:bg-neutral-800 rounded-xl transition-all shadow-2xs"
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-neutral-900 dark:bg-neutral-100 dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-white rounded-xl transition-all shadow-2xs"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Create {activeTab} category</span>
@@ -183,20 +183,20 @@ export function CategoriesPage() {
           {displayedCategories.map((cat) => (
             <div
               key={cat.id}
-              className="bg-white p-4 rounded-2xl border border-neutral-200/80 shadow-2xs flex items-center justify-between gap-3 hover:shadow-xs transition-all"
+              className="bg-white dark:bg-neutral-900 p-4 rounded-2xl border border-neutral-200/80 dark:border-neutral-800 shadow-2xs flex items-center justify-between gap-3 hover:shadow-xs transition-all"
             >
               <div className="flex items-center gap-3 min-w-0">
                 <div
                   className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
                     cat.type === 'income'
-                      ? 'bg-emerald-50 text-emerald-700'
-                      : 'bg-rose-50 text-rose-700'
+                      ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300'
+                      : 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300'
                   }`}
                 >
                   <CategoryIcon name={cat.icon} className="w-4 h-4" />
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-xs font-bold text-neutral-900 truncate">{cat.name}</h3>
+                  <h3 className="text-xs font-bold text-neutral-900 dark:text-neutral-100 truncate">{cat.name}</h3>
                   <span className="text-[10px] text-neutral-400 capitalize">{cat.type}</span>
                 </div>
               </div>
@@ -205,7 +205,7 @@ export function CategoriesPage() {
                 <button
                   type="button"
                   onClick={() => openEditModal(cat)}
-                  className="p-1.5 text-neutral-400 hover:text-neutral-900 rounded-lg hover:bg-neutral-100 transition-colors"
+                  className="p-1.5 text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
                   title="Edit Category"
                 >
                   <Edit2 className="w-3.5 h-3.5" />
@@ -213,7 +213,7 @@ export function CategoriesPage() {
                 <button
                   type="button"
                   onClick={() => checkAndDelete(cat)}
-                  className="p-1.5 text-neutral-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors"
+                  className="p-1.5 text-neutral-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
                   title="Delete Category"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
@@ -226,16 +226,16 @@ export function CategoriesPage() {
 
       {/* Create / Edit Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/40 backdrop-blur-xs">
-          <div className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-neutral-200 overflow-hidden">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
-              <h2 className="text-base font-bold text-neutral-900">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/40 dark:bg-black/60 backdrop-blur-xs">
+          <div className="w-full max-w-md bg-white dark:bg-neutral-900 rounded-2xl shadow-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-100 dark:border-neutral-800">
+              <h2 className="text-base font-bold text-neutral-900 dark:text-neutral-100">
                 {editingCategory ? 'Edit Category' : 'New Category'}
               </h2>
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="p-1.5 text-neutral-400 hover:text-neutral-700 rounded-lg hover:bg-neutral-100"
+                className="p-1.5 text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -243,13 +243,13 @@ export function CategoriesPage() {
 
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               {error && (
-                <div className="p-3 text-xs text-rose-700 bg-rose-50 border border-rose-200 rounded-xl">
+                <div className="p-3 text-xs text-rose-700 dark:text-rose-100 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 rounded-xl">
                   {error}
                 </div>
               )}
 
               <div>
-                <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1">
                   Category Name
                 </label>
                 <input
@@ -258,12 +258,12 @@ export function CategoriesPage() {
                   placeholder="e.g. Groceries, Investment, Books"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                  className="w-full px-3.5 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-neutral-900 dark:focus:ring-neutral-100"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1">
                   Category Type
                 </label>
                 <div className="grid grid-cols-2 gap-2">
@@ -272,8 +272,8 @@ export function CategoriesPage() {
                     onClick={() => setType('expense')}
                     className={`py-2 px-3 rounded-xl text-xs font-medium border transition-all ${
                       type === 'expense'
-                        ? 'border-neutral-900 bg-neutral-900 text-white'
-                        : 'border-neutral-200 bg-neutral-50 text-neutral-700'
+                        ? 'border-neutral-900 dark:border-neutral-100 bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900'
+                        : 'border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300'
                     }`}
                   >
                     Expense
@@ -283,8 +283,8 @@ export function CategoriesPage() {
                     onClick={() => setType('income')}
                     className={`py-2 px-3 rounded-xl text-xs font-medium border transition-all ${
                       type === 'income'
-                        ? 'border-neutral-900 bg-neutral-900 text-white'
-                        : 'border-neutral-200 bg-neutral-50 text-neutral-700'
+                        ? 'border-neutral-900 dark:border-neutral-100 bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900'
+                        : 'border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300'
                     }`}
                   >
                     Income
@@ -294,10 +294,10 @@ export function CategoriesPage() {
 
               {/* Icon Selection */}
               <div>
-                <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1.5">
                   Select Icon
                 </label>
-                <div className="grid grid-cols-6 gap-2 max-h-36 overflow-y-auto p-2 bg-neutral-50 rounded-xl border border-neutral-200">
+                <div className="grid grid-cols-6 gap-2 max-h-36 overflow-y-auto p-2 bg-neutral-50 dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700">
                   {AVAILABLE_ICONS.map((iconName) => (
                     <button
                       key={iconName}
@@ -305,8 +305,8 @@ export function CategoriesPage() {
                       onClick={() => setIcon(iconName)}
                       className={`p-2 rounded-lg flex items-center justify-center transition-colors ${
                         icon === iconName
-                          ? 'bg-neutral-900 text-white shadow-2xs'
-                          : 'text-neutral-600 hover:bg-neutral-200/70'
+                          ? 'bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 shadow-2xs'
+                          : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200/70 dark:hover:bg-neutral-800'
                       }`}
                       title={iconName}
                     >
@@ -316,17 +316,17 @@ export function CategoriesPage() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-neutral-100">
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-neutral-100 dark:border-neutral-800">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 text-xs font-semibold text-neutral-600 hover:bg-neutral-100 rounded-xl"
+                  className="px-4 py-2 text-xs font-semibold text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-xl"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-neutral-900 hover:bg-neutral-800 rounded-xl shadow-2xs"
+                  className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-neutral-900 dark:bg-neutral-100 dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-white rounded-xl shadow-2xs"
                 >
                   <Check className="w-3.5 h-3.5" />
                   <span>{editingCategory ? 'Save Changes' : 'Create Category'}</span>
@@ -339,33 +339,33 @@ export function CategoriesPage() {
 
       {/* Delete Confirmation Modal */}
       {categoryToDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/40 backdrop-blur-xs">
-          <div className="w-full max-w-md bg-white p-6 rounded-2xl shadow-xl border border-neutral-200 space-y-4">
-            <div className="flex items-center gap-3 text-rose-600">
-              <div className="w-9 h-9 rounded-xl bg-rose-50 flex items-center justify-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/40 dark:bg-black/60 backdrop-blur-xs">
+          <div className="w-full max-w-md bg-white dark:bg-neutral-900 p-6 rounded-2xl shadow-xl border border-neutral-200 dark:border-neutral-800 space-y-4">
+            <div className="flex items-center gap-3 text-rose-600 dark:text-rose-400">
+              <div className="w-9 h-9 rounded-xl bg-rose-50 dark:bg-rose-950/40 flex items-center justify-center">
                 <AlertTriangle className="w-5 h-5" />
               </div>
-              <h3 className="text-base font-bold text-neutral-900">
+              <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-100">
                 Delete Category "{categoryToDelete.name}"?
               </h3>
             </div>
 
             {deleteRefTxCount > 0 ? (
-              <div className="space-y-2 text-xs text-neutral-600">
-                <p className="p-3 bg-amber-50 border border-amber-200 text-amber-900 rounded-xl">
+              <div className="space-y-2 text-xs text-neutral-600 dark:text-neutral-300">
+                <p className="p-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-200 rounded-xl">
                   <strong>Referenced by {deleteRefTxCount} transaction(s):</strong> Deleting will
                   reassign existing transactions to "Other" or leave them uncategorized so no
                   records are destroyed.
                 </p>
               </div>
             ) : (
-              <p className="text-xs text-neutral-600">
+              <p className="text-xs text-neutral-600 dark:text-neutral-300">
                 This category is not used by any transactions and can be safely deleted.
               </p>
             )}
 
             {deleteError && (
-              <p className="text-xs text-rose-700 bg-rose-50 p-2.5 rounded-lg border border-rose-200">
+              <p className="text-xs text-rose-700 dark:text-rose-100 bg-rose-50 dark:bg-rose-950/40 p-2.5 rounded-lg border border-rose-200 dark:border-rose-900">
                 {deleteError}
               </p>
             )}
@@ -374,7 +374,7 @@ export function CategoriesPage() {
               <button
                 type="button"
                 onClick={() => setCategoryToDelete(null)}
-                className="px-4 py-2 text-xs font-semibold text-neutral-600 hover:bg-neutral-100 rounded-xl"
+                className="px-4 py-2 text-xs font-semibold text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-xl"
               >
                 Cancel
               </button>

@@ -131,24 +131,24 @@ export function TransactionModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/40 backdrop-blur-xs"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/40 dark:bg-black/60 backdrop-blur-xs"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
       <div
         id="transaction-modal"
-        className="w-full max-w-lg bg-white rounded-2xl shadow-xl border border-neutral-200 overflow-hidden animate-in fade-in zoom-in-95 duration-150"
+        className="w-full max-w-lg bg-white dark:bg-neutral-900 rounded-2xl shadow-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden animate-in fade-in zoom-in-95 duration-150"
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
-          <h2 className="text-lg font-semibold text-neutral-900">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-100 dark:border-neutral-800">
+          <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
             {transactionToEdit ? 'Edit Transaction' : 'New Transaction'}
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 text-neutral-400 hover:text-neutral-700 rounded-lg hover:bg-neutral-100 transition-colors"
+            className="p-1.5 text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -157,20 +157,20 @@ export function TransactionModal({
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
           {error && (
-            <div className="p-3 text-sm text-rose-700 bg-rose-50 border border-rose-200 rounded-xl">
+            <div className="p-3 text-sm text-rose-700 dark:text-rose-100 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 rounded-xl">
               {error}
             </div>
           )}
 
           {/* Type Segmented Controls */}
-          <div className="grid grid-cols-3 gap-1.5 p-1 bg-neutral-100 rounded-xl">
+          <div className="grid grid-cols-3 gap-1.5 p-1 bg-neutral-100 dark:bg-neutral-800 rounded-xl">
             <button
               type="button"
               onClick={() => handleTypeChange('expense')}
               className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg text-sm font-medium transition-all ${
                 type === 'expense'
-                  ? 'bg-white text-rose-700 shadow-xs'
-                  : 'text-neutral-600 hover:text-neutral-900'
+                  ? 'bg-white dark:bg-neutral-900 text-rose-700 dark:text-rose-300 shadow-xs'
+                  : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100'
               }`}
             >
               <ArrowUpRight className="w-4 h-4 text-rose-500" />
@@ -181,8 +181,8 @@ export function TransactionModal({
               onClick={() => handleTypeChange('income')}
               className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg text-sm font-medium transition-all ${
                 type === 'income'
-                  ? 'bg-white text-emerald-700 shadow-xs'
-                  : 'text-neutral-600 hover:text-neutral-900'
+                  ? 'bg-white dark:bg-neutral-900 text-emerald-700 dark:text-emerald-300 shadow-xs'
+                  : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100'
               }`}
             >
               <ArrowDownRight className="w-4 h-4 text-emerald-500" />
@@ -193,8 +193,8 @@ export function TransactionModal({
               onClick={() => handleTypeChange('transfer')}
               className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg text-sm font-medium transition-all ${
                 type === 'transfer'
-                  ? 'bg-white text-blue-700 shadow-xs'
-                  : 'text-neutral-600 hover:text-neutral-900'
+                  ? 'bg-white dark:bg-neutral-900 text-blue-700 dark:text-blue-300 shadow-xs'
+                  : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100'
               }`}
             >
               <ArrowLeftRight className="w-4 h-4 text-blue-500" />
@@ -204,7 +204,7 @@ export function TransactionModal({
 
           {/* Amount Display & Input */}
           <div>
-            <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1.5">
               Amount
             </label>
             <div className="relative">
@@ -219,14 +219,14 @@ export function TransactionModal({
                   const cleaned = e.target.value.replace(/[^0-9]/g, '');
                   setAmountRaw(cleaned);
                 }}
-                className="w-full text-2xl font-bold px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent transition-all"
+                className="w-full text-2xl font-bold px-4 py-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-neutral-900 dark:focus:ring-neutral-100 focus:border-transparent transition-all"
               />
-              <div className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-medium text-neutral-400">
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-medium text-neutral-400 dark:text-neutral-500">
                 {currencyCode}
               </div>
             </div>
             {numericAmount > 0 && (
-              <p className="mt-1 text-xs text-neutral-500 font-medium">
+              <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400 font-medium">
                 {formatCurrency(numericAmount, currencyCode)}
               </p>
             )}
@@ -234,7 +234,7 @@ export function TransactionModal({
 
           {/* Date Picker */}
           <div>
-            <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1.5">
               Date
             </label>
             <input
@@ -243,7 +243,7 @@ export function TransactionModal({
               required
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent transition-all"
+              className="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl text-neutral-900 dark:text-neutral-100 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 dark:focus:ring-neutral-100 focus:border-transparent transition-all"
             />
           </div>
 
@@ -251,14 +251,14 @@ export function TransactionModal({
           {type === 'transfer' ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1.5">
                   From Account
                 </label>
                 <select
                   id="transaction-source-account"
                   value={accountId}
                   onChange={(e) => setAccountId(Number(e.target.value))}
-                  className="w-full px-3 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                  className="w-full px-3 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl text-neutral-900 dark:text-neutral-100 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 dark:focus:ring-neutral-100"
                 >
                   {accounts.map((acc) => (
                     <option key={acc.id} value={acc.id}>
@@ -268,14 +268,14 @@ export function TransactionModal({
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1.5">
                   To Destination Account
                 </label>
                 <select
                   id="transaction-destination-account"
                   value={destinationAccountId}
                   onChange={(e) => setDestinationAccountId(Number(e.target.value))}
-                  className="w-full px-3 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                  className="w-full px-3 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl text-neutral-900 dark:text-neutral-100 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 dark:focus:ring-neutral-100"
                 >
                   {accounts.map((acc) => (
                     <option key={acc.id} value={acc.id}>
@@ -288,14 +288,14 @@ export function TransactionModal({
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1.5">
                   Account
                 </label>
                 <select
                   id="transaction-account-select"
                   value={accountId}
                   onChange={(e) => setAccountId(Number(e.target.value))}
-                  className="w-full px-3 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                  className="w-full px-3 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl text-neutral-900 dark:text-neutral-100 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 dark:focus:ring-neutral-100"
                 >
                   {accounts.map((acc) => (
                     <option key={acc.id} value={acc.id}>
@@ -306,14 +306,14 @@ export function TransactionModal({
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1.5">
                   Category
                 </label>
                 <select
                   id="transaction-category-select"
                   value={categoryId || ''}
                   onChange={(e) => setCategoryId(Number(e.target.value))}
-                  className="w-full px-3 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                  className="w-full px-3 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl text-neutral-900 dark:text-neutral-100 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 dark:focus:ring-neutral-100"
                 >
                   {filteredCategories.length === 0 && (
                     <option value="">No {type} categories</option>
@@ -330,7 +330,7 @@ export function TransactionModal({
 
           {/* Description */}
           <div>
-            <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1.5">
               Description / Note (Optional)
             </label>
             <input
@@ -339,7 +339,7 @@ export function TransactionModal({
               placeholder="e.g. Lunch with team, Groceries, Client invoice"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent transition-all"
+              className="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl text-neutral-900 dark:text-neutral-100 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 dark:focus:ring-neutral-100 focus:border-transparent transition-all"
             />
           </div>
 
@@ -348,7 +348,7 @@ export function TransactionModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-xl transition-colors"
+              className="px-4 py-2 text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-xl transition-colors"
             >
               Cancel
             </button>
@@ -356,7 +356,7 @@ export function TransactionModal({
               id="save-transaction-button"
               type="submit"
               disabled={submitting}
-              className="flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white bg-neutral-900 hover:bg-neutral-800 disabled:opacity-50 rounded-xl shadow-xs transition-colors"
+              className="flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white bg-neutral-900 dark:bg-neutral-100 dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-white disabled:opacity-50 rounded-xl shadow-xs transition-colors"
             >
               <Check className="w-4 h-4" />
               {submitting ? 'Saving...' : transactionToEdit ? 'Save Changes' : 'Record Transaction'}

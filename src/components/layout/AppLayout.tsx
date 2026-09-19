@@ -52,24 +52,24 @@ export function AppLayout() {
   ];
 
   return (
-    <div className="min-h-screen bg-neutral-50/70 text-neutral-900 flex flex-col md:flex-row">
+    <div className="min-h-screen bg-neutral-50/70 dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 flex flex-col md:flex-row">
       {/* Desktop Sidebar */}
       <div className="hidden md:block shrink-0">
         <AppSidebar onOpenAddTransaction={() => setIsAddTxOpen(true)} />
       </div>
 
       {/* Mobile Top Header */}
-      <header className="md:hidden sticky top-0 z-30 flex items-center justify-between px-4 py-3 bg-white border-b border-neutral-200">
+      <header className="md:hidden sticky top-0 z-30 flex items-center justify-between px-4 py-3 bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800">
         <Link to="/" className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-neutral-900 text-white flex items-center justify-center font-bold text-xs">
+          <div className="w-7 h-7 rounded-lg bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 flex items-center justify-center font-bold text-xs">
             MT
           </div>
-          <span className="font-bold text-neutral-900 text-sm">Money Tracker</span>
+          <span className="font-bold text-neutral-900 dark:text-neutral-100 text-sm">Money Tracker</span>
         </Link>
         <button
           type="button"
           onClick={() => setIsAddTxOpen(true)}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-neutral-900 rounded-lg shadow-xs active:scale-95"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-neutral-900 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-white hover:bg-neutral-800 rounded-lg shadow-xs active:scale-95"
         >
           <Plus className="w-3.5 h-3.5" />
           <span>Add</span>
@@ -84,7 +84,7 @@ export function AppLayout() {
       </main>
 
       {/* Mobile Bottom Navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-white border-t border-neutral-200 flex items-center justify-around px-2 py-1.5 shadow-lg">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-white dark:bg-neutral-900 border-t border-neutral-200 dark:border-neutral-800 flex items-center justify-around px-2 py-1.5 shadow-lg">
         {navItems.map((item) => {
           const Icon = item.icon;
           return (
@@ -95,8 +95,8 @@ export function AppLayout() {
               className={({ isActive }) =>
                 `flex flex-col items-center justify-center py-1 px-2.5 rounded-lg text-[10px] font-medium transition-colors ${
                   isActive
-                    ? 'text-neutral-900 font-semibold'
-                    : 'text-neutral-500 hover:text-neutral-900'
+                    ? 'text-neutral-900 dark:text-neutral-100 font-semibold'
+                    : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100'
                 }`
               }
             >
