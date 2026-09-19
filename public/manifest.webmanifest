@@ -2,7 +2,7 @@
   "name": "MonTra",
   "short_name": "MonTra",
   "description": "A local-first personal finance tracker. Your money. Your device. Your privacy.",
-  "start_url": "/",
+  "start_url": "/app",
   "scope": "/",
   "display": "standalone",
   "background_color": "#fafafa",
