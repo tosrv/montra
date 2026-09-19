@@ -14,6 +14,7 @@ const en = {
   'nav.privacy': 'Privacy',
   'nav.howItWorks': 'How It Works',
   'nav.backup': 'Backup & Restore',
+  'nav.docs': 'Docs',
   'nav.startTracking': 'Start Tracking',
   'nav.language': 'Language',
 
@@ -25,6 +26,7 @@ const en = {
   'footer.zeroTelemetry': 'Zero cloud telemetry',
   'footer.navigation': 'Navigation',
   'footer.openApp': 'Open Application',
+  'footer.docs': 'Docs & Blog',
   'footer.productFeatures': 'Product Features',
   'footer.privacyArch': 'Privacy Architecture',
   'footer.howItWorks': 'How It Works',
@@ -35,6 +37,20 @@ const en = {
   'footer.portability': 'JSON & CSV Portability',
   'footer.copyright': '© {year} MonTra. Your money. Your device. Your privacy.',
   'footer.designed': 'Designed for personal ownership and offline productivity.',
+
+  // Docs / blog hub
+  'docs.title': 'Docs & Blog',
+  'docs.subtitle': 'Guides and notes about using MonTra — all stored as static content, no database required.',
+  'docs.filtersLabel': 'Filter content',
+  'docs.filterAll': 'All',
+  'docs.filterDocs': 'Docs',
+  'docs.filterBlog': 'Blog',
+  'docs.typeDoc': 'Doc',
+  'docs.typeBlog': 'Blog',
+  'docs.empty': 'No articles in this filter yet.',
+  'docs.backToDocs': 'Back to Docs',
+  'docs.notFoundTitle': 'Article not found',
+  'docs.notFoundBody': 'That page does not exist or may have been moved.',
 
   // Landing hero
   'landing.badge': '100% Local-First & Zero Cloud Financial Database',
@@ -306,6 +322,7 @@ const id: Record<TranslationKey, string> = {
   'nav.privacy': 'Privasi',
   'nav.howItWorks': 'Cara Kerja',
   'nav.backup': 'Backup & Pulihkan',
+  'nav.docs': 'Docs',
   'nav.startTracking': 'Mulai Catat',
   'nav.language': 'Bahasa',
 
@@ -316,6 +333,7 @@ const id: Record<TranslationKey, string> = {
   'footer.zeroTelemetry': 'Tanpa telemetri cloud',
   'footer.navigation': 'Navigasi',
   'footer.openApp': 'Buka Aplikasi',
+  'footer.docs': 'Docs & Blog',
   'footer.productFeatures': 'Fitur Produk',
   'footer.privacyArch': 'Arsitektur Privasi',
   'footer.howItWorks': 'Cara Kerja',
@@ -326,6 +344,19 @@ const id: Record<TranslationKey, string> = {
   'footer.portability': 'Portabilitas JSON & CSV',
   'footer.copyright': '© {year} MonTra. Uang Anda. Perangkat Anda. Privasi Anda.',
   'footer.designed': 'Dirancang untuk kepemilikan pribadi dan produktivitas offline.',
+
+  'docs.title': 'Docs & Blog',
+  'docs.subtitle': 'Panduan dan catatan tentang MonTra — konten statis, tanpa database.',
+  'docs.filtersLabel': 'Filter konten',
+  'docs.filterAll': 'Semua',
+  'docs.filterDocs': 'Docs',
+  'docs.filterBlog': 'Blog',
+  'docs.typeDoc': 'Doc',
+  'docs.typeBlog': 'Blog',
+  'docs.empty': 'Belum ada artikel di filter ini.',
+  'docs.backToDocs': 'Kembali ke Docs',
+  'docs.notFoundTitle': 'Artikel tidak ditemukan',
+  'docs.notFoundBody': 'Halaman itu tidak ada atau mungkin sudah dipindahkan.',
 
   'landing.badge': '100% Local-First & Tanpa Database Keuangan di Cloud',
   'landing.headlinePrefix': 'Uang Anda. Perangkat Anda.',

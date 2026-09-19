@@ -44,17 +44,22 @@ export function PublicFooter() {
                 </Link>
               </li>
               <li>
-                <a href="#features" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">
+                <Link to="/docs" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">
+                  {t('footer.docs')}
+                </Link>
+              </li>
+              <li>
+                <a href="/#features" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">
                   {t('footer.productFeatures')}
                 </a>
               </li>
               <li>
-                <a href="#privacy" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">
+                <a href="/#privacy" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">
                   {t('footer.privacyArch')}
                 </a>
               </li>
               <li>
-                <a href="#how-it-works" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">
+                <a href="/#how-it-works" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">
                   {t('footer.howItWorks')}
                 </a>
               </li>

@@ -25,21 +25,30 @@ export function PublicNavbar() {
         </Link>
 
         <nav className="hidden lg:flex items-center gap-8 text-sm font-medium text-neutral-600 dark:text-neutral-400">
-          <a href="#features" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">
+          <a href="/#features" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">
             {t('nav.features')}
           </a>
-          <a href="#privacy" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">
+          <a href="/#privacy" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">
             {t('nav.privacy')}
           </a>
-          <a href="#how-it-works" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">
+          <a href="/#how-it-works" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">
             {t('nav.howItWorks')}
           </a>
-          <a href="#backup" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">
+          <a href="/#backup" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">
             {t('nav.backup')}
           </a>
+          <Link to="/docs" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">
+            {t('nav.docs')}
+          </Link>
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          <Link
+            to="/docs"
+            className="lg:hidden text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors px-1"
+          >
+            {t('nav.docs')}
+          </Link>
           <LanguageSwitcher variant="compact" />
           <Link
             id="navbar-start-tracking-cta"

@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { LandingPage } from './pages/Landing/LandingPage.tsx';
+import { DocsIndexPage } from './pages/Docs/DocsIndexPage.tsx';
+import { DocsArticlePage } from './pages/Docs/DocsArticlePage.tsx';
 import { AppLayout } from './components/layout/AppLayout.tsx';
 import { DashboardPage } from './pages/Dashboard/DashboardPage.tsx';
 import { TransactionsPage } from './pages/Transactions/TransactionsPage.tsx';
@@ -31,6 +33,8 @@ export default function App() {
           <ThemeBootstrap />
           <Routes>
             <Route path="/" element={<LandingPage />} />
+            <Route path="/docs" element={<DocsIndexPage />} />
+            <Route path="/docs/:slug" element={<DocsArticlePage />} />
 
             <Route path="/app" element={<AppLayout />}>
               <Route index element={<DashboardPage />} />
