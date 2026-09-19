@@ -8,7 +8,7 @@
 
 ## Overview
 
-Money Tracker menyimpan empat store lokal. Relasi utama berpusat pada **Transaction**, yang mereferensikan **Account** (sumber / tujuan) dan opsional **Category**. **AppSettings** berdiri sendiri (singleton `id = 'default'`).
+MonTra menyimpan empat store lokal. Relasi utama berpusat pada **Transaction**, yang mereferensikan **Account** (sumber / tujuan) dan opsional **Category**. **AppSettings** berdiri sendiri (singleton `id = 'default'`).
 
 ---
 

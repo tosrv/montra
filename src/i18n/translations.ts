@@ -5,7 +5,7 @@ export type TranslationKey = keyof typeof en;
 
 const en = {
   // Common / brand
-  'brand.name': 'Money Tracker',
+  'brand.name': 'MonTra',
   'brand.localFirst': 'Local-First',
   'brand.tagline': 'Your money. Your device. Your privacy.',
 
@@ -33,7 +33,7 @@ const en = {
   'footer.indexedDb': 'IndexedDB Storage',
   'footer.zeroCloud': 'Zero Cloud Storage',
   'footer.portability': 'JSON & CSV Portability',
-  'footer.copyright': '© {year} Money Tracker. Your money. Your device. Your privacy.',
+  'footer.copyright': '© {year} MonTra. Your money. Your device. Your privacy.',
   'footer.designed': 'Designed for personal ownership and offline productivity.',
 
   // Landing hero
@@ -50,7 +50,7 @@ const en = {
 
   'landing.privacyTitle': 'Your financial data stays on your device.',
   'landing.privacyIntro':
-    'Most personal finance apps require you to upload bank details, passwords, and private transactions to their remote servers. Money Tracker is built entirely differently.',
+    'Most personal finance apps require you to upload bank details, passwords, and private transactions to their remote servers. MonTra is built entirely differently.',
   'landing.privacyCard1Title': 'Stored Locally in IndexedDB',
   'landing.privacyCard1Body':
     "Transactions, accounts, and categories live in your browser's persistent IndexedDB storage. No remote database or backend server has access to your transactions.",
@@ -59,7 +59,7 @@ const en = {
     'No email, no phone number, no passwords, and no oauth trackers. Just open the app and start tracking immediately without giving away personal identity.',
   'landing.privacyCard3Title': 'Never Uploaded to Cloud',
   'landing.privacyCard3Body':
-    'Money Tracker does not have a database backend like Supabase, Firebase, or SQL. Even if our website goes offline, your records remain intact on your computer or phone.',
+    'MonTra does not have a database backend like Supabase, Firebase, or SQL. Even if our website goes offline, your records remain intact on your computer or phone.',
   'landing.privacyCard4Title': 'Strict Analytics Separation',
   'landing.privacyCard4Body':
     'Your balances, amounts, notes, and categories stay in the browser. Optional Umami pageviews (if configured by the host) never include financial data.',
@@ -121,7 +121,7 @@ const en = {
   'settings.subtitle': 'Configure local preferences, data backup, restore, and privacy controls',
   'settings.privacyTitle': 'Privacy Notice & Architecture',
   'settings.privacyBody':
-    'Your financial data is stored locally on this device. Money Tracker does not require an account or cloud database. Balances, transactions, and notes never leave your browser.',
+    'Your financial data is stored locally on this device. MonTra does not require an account or cloud database. Balances, transactions, and notes never leave your browser.',
   'settings.prefsTitle': 'Display & Regional Preferences',
   'settings.currency': 'Primary Currency',
   'settings.currencyHint':
@@ -142,7 +142,7 @@ const en = {
   'settings.exportCsvHint': 'Download a spreadsheet-friendly CSV of all transactions.',
   'settings.exportCsvBtn': 'Download CSV',
   'settings.importTitle': 'Restore from Backup',
-  'settings.importHint': 'Select a Money Tracker JSON backup. It will be validated before replacing local data.',
+  'settings.importHint': 'Select a MonTra JSON backup. It will be validated before replacing local data.',
   'settings.chooseFile': 'Choose backup file',
   'settings.restoreBtn': 'Restore Backup',
   'settings.restoring': 'Restoring…',
@@ -294,7 +294,7 @@ const en = {
 } as const;
 
 const id: Record<TranslationKey, string> = {
-  'brand.name': 'Money Tracker',
+  'brand.name': 'MonTra',
   'brand.localFirst': 'Local-First',
   'brand.tagline': 'Uang Anda. Perangkat Anda. Privasi Anda.',
 
@@ -320,7 +320,7 @@ const id: Record<TranslationKey, string> = {
   'footer.indexedDb': 'Penyimpanan IndexedDB',
   'footer.zeroCloud': 'Tanpa Penyimpanan Cloud',
   'footer.portability': 'Portabilitas JSON & CSV',
-  'footer.copyright': '© {year} Money Tracker. Uang Anda. Perangkat Anda. Privasi Anda.',
+  'footer.copyright': '© {year} MonTra. Uang Anda. Perangkat Anda. Privasi Anda.',
   'footer.designed': 'Dirancang untuk kepemilikan pribadi dan produktivitas offline.',
 
   'landing.badge': '100% Local-First & Tanpa Database Keuangan di Cloud',
@@ -336,7 +336,7 @@ const id: Record<TranslationKey, string> = {
 
   'landing.privacyTitle': 'Data keuangan Anda tetap di perangkat.',
   'landing.privacyIntro':
-    'Kebanyakan aplikasi keuangan meminta Anda mengunggah detail bank, password, dan transaksi pribadi ke server mereka. Money Tracker dibangun dengan pendekatan berbeda.',
+    'Kebanyakan aplikasi keuangan meminta Anda mengunggah detail bank, password, dan transaksi pribadi ke server mereka. MonTra dibangun dengan pendekatan berbeda.',
   'landing.privacyCard1Title': 'Disimpan Lokal di IndexedDB',
   'landing.privacyCard1Body':
     'Transaksi, akun, dan kategori hidup di penyimpanan IndexedDB browser Anda. Tidak ada database atau server jarak jauh yang mengakses transaksi Anda.',
@@ -345,7 +345,7 @@ const id: Record<TranslationKey, string> = {
     'Tanpa email, nomor telepon, password, atau pelacak oauth. Buka aplikasi dan langsung mulai mencatat tanpa menyerahkan identitas pribadi.',
   'landing.privacyCard3Title': 'Tidak Pernah Diunggah ke Cloud',
   'landing.privacyCard3Body':
-    'Money Tracker tidak punya backend database seperti Supabase, Firebase, atau SQL. Meski situs kami offline, catatan Anda tetap utuh di komputer atau ponsel.',
+    'MonTra tidak punya backend database seperti Supabase, Firebase, atau SQL. Meski situs kami offline, catatan Anda tetap utuh di komputer atau ponsel.',
   'landing.privacyCard4Title': 'Pemisahan Analytics yang Ketat',
   'landing.privacyCard4Body':
     'Saldo, jumlah, catatan, dan kategori tetap di browser. Pageview Umami opsional (jika dikonfigurasi host) tidak pernah mencakup data keuangan.',
@@ -405,7 +405,7 @@ const id: Record<TranslationKey, string> = {
   'settings.subtitle': 'Atur preferensi lokal, backup, pemulihan, dan kontrol privasi',
   'settings.privacyTitle': 'Pemberitahuan Privasi & Arsitektur',
   'settings.privacyBody':
-    'Data keuangan Anda disimpan lokal di perangkat ini. Money Tracker tidak memerlukan akun atau database cloud. Saldo, transaksi, dan catatan tidak pernah meninggalkan browser.',
+    'Data keuangan Anda disimpan lokal di perangkat ini. MonTra tidak memerlukan akun atau database cloud. Saldo, transaksi, dan catatan tidak pernah meninggalkan browser.',
   'settings.prefsTitle': 'Preferensi Tampilan & Regional',
   'settings.currency': 'Mata Uang Utama',
   'settings.currencyHint':
@@ -427,7 +427,7 @@ const id: Record<TranslationKey, string> = {
   'settings.exportCsvBtn': 'Unduh CSV',
   'settings.importTitle': 'Pulihkan dari Backup',
   'settings.importHint':
-    'Pilih file backup JSON Money Tracker. Akan divalidasi sebelum mengganti data lokal.',
+    'Pilih file backup JSON MonTra. Akan divalidasi sebelum mengganti data lokal.',
   'settings.chooseFile': 'Pilih file backup',
   'settings.restoreBtn': 'Pulihkan Backup',
   'settings.restoring': 'Memulihkan…',

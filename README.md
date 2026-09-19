@@ -1,4 +1,4 @@
-# Money Tracker
+# MonTra
 
 A local-first personal finance tracker. **Your money. Your device. Your privacy.**
 
@@ -97,7 +97,7 @@ Unit tests cover currency formatting, dates, theme resolution, account balance m
 - Amounts are stored as **integers** in the smallest currency unit (e.g. `25000` = Rp 25.000).
 - Default currency is **IDR**; also supported: USD, EUR, GBP, SGD, MYR, JPY, AUD.
 - Seed data on first launch: sample Indonesian bank accounts (BNI, Jago, BCA, Cash) and common categories — **no fake balances or transactions**.
-- Backup file name pattern: `money-tracker-backup-YYYY-MM-DD.json`.
+- Backup file name pattern: `montra-backup-YYYY-MM-DD.json`.
 - Clearing site data / switching browsers will remove local data unless you restore a backup.
 
 ## Project structure

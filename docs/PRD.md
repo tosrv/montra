@@ -1,6 +1,6 @@
 # Product Requirements Document (PRD)
 
-**Product:** Money Tracker  
+**Product:** MonTra  
 **Version:** 1.0  
 **Status:** Current / shipped MVP  
 **Last updated:** 2026-09-19
@@ -9,7 +9,7 @@
 
 ## 1. Ringkasan produk
 
-Money Tracker adalah aplikasi pencatat keuangan pribadi berbasis web yang **local-first**. Pengguna mencatat pemasukan, pengeluaran, dan transfer antar akun tanpa membuat akun, tanpa login, dan tanpa mengunggah data keuangan ke server.
+MonTra adalah aplikasi pencatat keuangan pribadi berbasis web yang **local-first**. Pengguna mencatat pemasukan, pengeluaran, dan transfer antar akun tanpa membuat akun, tanpa login, dan tanpa mengunggah data keuangan ke server.
 
 **Value proposition:**  
 *Your money. Your device. Your privacy.*
@@ -25,7 +25,7 @@ Money Tracker adalah aplikasi pencatat keuangan pribadi berbasis web yang **loca
 | Spreadsheet manual sulit untuk multi-akun & transfer | Saldo tidak akurat / susah dirawat |
 | Banyak app “gratis” memonetisasi via data pengguna | Trust rendah |
 
-Money Tracker menargetkan pengguna yang ingin **kejelasan keuangan harian** dengan kontrol penuh atas datanya.
+MonTra menargetkan pengguna yang ingin **kejelasan keuangan harian** dengan kontrol penuh atas datanya.
 
 ---
 

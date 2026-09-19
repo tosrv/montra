@@ -1,6 +1,6 @@
 # Umami setup (Hobby / free)
 
-Money Tracker can optionally load [Umami Cloud](https://umami.is/pricing) for **anonymous pageviews** so you can see whether people other than you open the app. Financial data is never sent. There is no in-app telemetry UI or opt-out toggle — if `VITE_UMAMI_WEBSITE_ID` is set, pageviews are collected.
+MonTra can optionally load [Umami Cloud](https://umami.is/pricing) for **anonymous pageviews** so you can see whether people other than you open the app. Financial data is never sent. There is no in-app telemetry UI or opt-out toggle — if `VITE_UMAMI_WEBSITE_ID` is set, pageviews are collected.
 
 ## 1. Create a free Umami account
 
@@ -11,7 +11,7 @@ Money Tracker can optionally load [Umami Cloud](https://umami.is/pricing) for **
 ## 2. Add your website
 
 1. In the Umami dashboard: **Add website**.
-2. **Name:** e.g. `Money Tracker`
+2. **Name:** e.g. `MonTra`
 3. **Domain:** `localhost` for local tests, or your production host (e.g. `money-tracker.vercel.app`) — **no port**.
 4. Copy the **Website ID** (UUID).
 

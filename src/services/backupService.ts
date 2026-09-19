@@ -19,7 +19,7 @@ export async function exportBackupJson(): Promise<void> {
   };
 
   const backup: BackupData = {
-    appName: 'Money Tracker',
+    appName: 'MonTra',
     schemaVersion: 1,
     exportedAt: new Date().toISOString(),
     settings,
@@ -35,7 +35,7 @@ export async function exportBackupJson(): Promise<void> {
 
   const dateStr = new Date().toISOString().split('T')[0];
   link.href = url;
-  link.download = `money-tracker-backup-${dateStr}.json`;
+  link.download = `montra-backup-${dateStr}.json`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -112,7 +112,7 @@ export async function exportTransactionsCsv(): Promise<void> {
 
   const dateStr = new Date().toISOString().split('T')[0];
   link.href = url;
-  link.download = `money-tracker-transactions-${dateStr}.csv`;
+  link.download = `montra-transactions-${dateStr}.csv`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
