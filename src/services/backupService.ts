@@ -1,16 +1,7 @@
 import { db, initializeDatabase } from '../db/database.ts';
 import type { Account, AppSettings, BackupData, Category, Transaction } from '../types.ts';
-
-export interface ValidationResult {
-  isValid: boolean;
-  errors: string[];
-  warnings: string[];
-  stats?: {
-    accountsCount: number;
-    categoriesCount: number;
-    transactionsCount: number;
-  };
-}
+export type { ValidationResult } from './backupValidation.ts';
+export { validateBackupData } from './backupValidation.ts';
 
 /**
  * Generates a full JSON backup of the user's local database and initiates client-side download.
@@ -48,118 +39,6 @@ export async function exportBackupJson(): Promise<void> {
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
-}
-
-/**
- * Validates a parsed JSON backup object against strict integrity rules.
- */
-export function validateBackupData(data: any): ValidationResult {
-  const errors: string[] = [];
-  const warnings: string[] = [];
-
-  if (!data || typeof data !== 'object') {
-    return { isValid: false, errors: ['File does not contain a valid JSON object.'], warnings: [] };
-  }
-
-  if (data.schemaVersion && typeof data.schemaVersion !== 'number') {
-    errors.push('Invalid schemaVersion format.');
-  }
-
-  if (!Array.isArray(data.accounts)) {
-    errors.push('Missing or invalid "accounts" array.');
-  }
-
-  if (!Array.isArray(data.categories)) {
-    errors.push('Missing or invalid "categories" array.');
-  }
-
-  if (!Array.isArray(data.transactions)) {
-    errors.push('Missing or invalid "transactions" array.');
-  }
-
-  if (errors.length > 0) {
-    return { isValid: false, errors, warnings };
-  }
-
-  // Validate Accounts
-  const accountIdSet = new Set<number>();
-  for (let i = 0; i < data.accounts.length; i++) {
-    const acc = data.accounts[i];
-    if (!acc.name || typeof acc.name !== 'string') {
-      errors.push(`Account at index ${i} is missing a valid name.`);
-    }
-    if (!acc.id && acc.id !== 0) {
-      warnings.push(`Account "${acc.name || i}" has no ID and will receive a new one.`);
-    } else {
-      if (accountIdSet.has(acc.id)) {
-        errors.push(`Duplicate account ID detected: ${acc.id}`);
-      }
-      accountIdSet.add(acc.id);
-    }
-  }
-
-  // Validate Categories
-  const categoryIdSet = new Set<number>();
-  for (let i = 0; i < data.categories.length; i++) {
-    const cat = data.categories[i];
-    if (!cat.name || typeof cat.name !== 'string') {
-      errors.push(`Category at index ${i} is missing a valid name.`);
-    }
-    if (!['income', 'expense'].includes(cat.type)) {
-      errors.push(`Category "${cat.name || i}" has invalid type "${cat.type}".`);
-    }
-    if (cat.id !== undefined) {
-      if (categoryIdSet.has(cat.id)) {
-        errors.push(`Duplicate category ID detected: ${cat.id}`);
-      }
-      categoryIdSet.add(cat.id);
-    }
-  }
-
-  // Validate Transactions
-  for (let i = 0; i < data.transactions.length; i++) {
-    const tx = data.transactions[i];
-    if (!['income', 'expense', 'transfer'].includes(tx.type)) {
-      errors.push(`Transaction at index ${i} has invalid type "${tx.type}".`);
-    }
-    if (typeof tx.amount !== 'number' || tx.amount <= 0 || isNaN(tx.amount)) {
-      errors.push(`Transaction at index ${i} has invalid amount "${tx.amount}". Must be > 0.`);
-    }
-    if (!tx.date || typeof tx.date !== 'string') {
-      errors.push(`Transaction at index ${i} is missing a valid date.`);
-    }
-    if (tx.accountId === undefined || !accountIdSet.has(tx.accountId)) {
-      warnings.push(
-        `Transaction at index ${i} references account ID ${tx.accountId} which is not in the accounts list.`
-      );
-    }
-    if (tx.type === 'transfer') {
-      if (!tx.destinationAccountId) {
-        errors.push(`Transfer transaction at index ${i} is missing destinationAccountId.`);
-      } else if (tx.destinationAccountId === tx.accountId) {
-        errors.push(`Transfer transaction at index ${i} has identical source and destination account.`);
-      } else if (!accountIdSet.has(tx.destinationAccountId)) {
-        warnings.push(
-          `Transfer transaction at index ${i} references destination account ID ${tx.destinationAccountId} which is not found.`
-        );
-      }
-    } else if (tx.categoryId !== undefined && !categoryIdSet.has(tx.categoryId)) {
-      warnings.push(
-        `Transaction at index ${i} references category ID ${tx.categoryId} which is not found.`
-      );
-    }
-  }
-
-  return {
-    isValid: errors.length === 0,
-    errors,
-    warnings,
-    stats: {
-      accountsCount: data.accounts.length,
-      categoriesCount: data.categories.length,
-      transactionsCount: data.transactions.length,
-    },
-  };
 }
 
 /**

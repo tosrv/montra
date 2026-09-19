@@ -68,6 +68,15 @@ npm run preview
 npm run lint
 ```
 
+### Tests
+
+```bash
+npm test
+npm run test:watch   # interactive
+```
+
+Unit tests cover currency formatting, dates, theme resolution, account balance math, and backup validation (`vitest`).
+
 ## App routes
 
 | Path | Description |

@@ -1,4 +1,5 @@
 import { db } from '../db/database.ts';
+import { computeAccountBalance } from '../utils/balance.ts';
 import type { Account, AccountWithBalance, AccountType } from '../types.ts';
 
 export async function getAllAccounts(): Promise<Account[]> {
@@ -10,46 +11,10 @@ export async function getAccountsWithBalances(): Promise<AccountWithBalance[]> {
   const transactions = await db.transactions.toArray();
 
   return accounts.map((account) => {
-    let incomeTotal = 0;
-    let expenseTotal = 0;
-    let transferInTotal = 0;
-    let transferOutTotal = 0;
-    let transactionCount = 0;
-
-    for (const tx of transactions) {
-      if (tx.accountId === account.id) {
-        transactionCount++;
-        if (tx.type === 'income') {
-          incomeTotal += tx.amount;
-        } else if (tx.type === 'expense') {
-          expenseTotal += tx.amount;
-        } else if (tx.type === 'transfer') {
-          transferOutTotal += tx.amount;
-        }
-      }
-
-      // Check if destination of transfer
-      if (tx.type === 'transfer' && tx.destinationAccountId === account.id) {
-        transactionCount++;
-        transferInTotal += tx.amount;
-      }
-    }
-
-    const currentBalance =
-      account.initialBalance +
-      incomeTotal -
-      expenseTotal +
-      transferInTotal -
-      transferOutTotal;
-
+    const totals = computeAccountBalance(account, transactions);
     return {
       ...account,
-      currentBalance,
-      incomeTotal,
-      expenseTotal,
-      transferInTotal,
-      transferOutTotal,
-      transactionCount,
+      ...totals,
     };
   });
 }
