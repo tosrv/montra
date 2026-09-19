@@ -175,6 +175,7 @@ const en = {
   'settings.resetDone': 'Database successfully reset to clean default accounts with zero transactions.',
   'settings.restoreFailed': 'Restore failed: {message}',
   'settings.parseFailed': 'Failed to parse file: corrupt or invalid JSON structure.',
+  'settings.aboutVersion': 'MonTra {version}',
 
   // Dashboard (common labels)
   'dashboard.title': 'Dashboard',
@@ -479,6 +480,7 @@ const id: Record<TranslationKey, string> = {
   'settings.resetDone': 'Database berhasil di-reset ke akun default tanpa transaksi.',
   'settings.restoreFailed': 'Pemulihan gagal: {message}',
   'settings.parseFailed': 'Gagal membaca file: struktur JSON rusak atau tidak valid.',
+  'settings.aboutVersion': 'MonTra {version}',
 
   'dashboard.title': 'Dasbor',
   'dashboard.income': 'Pemasukan',

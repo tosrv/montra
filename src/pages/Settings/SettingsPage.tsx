@@ -20,6 +20,7 @@ import {
 import type { BackupData } from '../../types.ts';
 import { useLanguage } from '../../i18n/LanguageProvider.tsx';
 import { LanguageSwitcher } from '../../components/ui/LanguageSwitcher.tsx';
+import { APP_VERSION } from '../../version.ts';
 
 export function SettingsPage() {
   const { t } = useLanguage();
@@ -354,6 +355,13 @@ export function SettingsPage() {
             {t('settings.resetBtn')}
           </button>
         </div>
+      </div>
+
+      {/* 5. About / version */}
+      <div className="px-1 pt-2 pb-4 text-center sm:text-left">
+        <p className="text-xs text-neutral-400 dark:text-neutral-500">
+          {t('settings.aboutVersion', { version: APP_VERSION })}
+        </p>
       </div>
 
       {/* Reset Confirmation Dialog */}
