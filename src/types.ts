@@ -67,6 +67,60 @@ export interface MonthlySummary {
   transactionCount: number;
 }
 
+export interface Budget {
+  id?: number;
+  year: number; // e.g. 2026
+  month: number; // 0-11
+  totalBudget: number; // integer (e.g. 8200000)
+  createdAt: string; // ISO string
+  updatedAt: string; // ISO string
+}
+
+export interface BudgetCategory {
+  id?: number;
+  budgetId: number;
+  categoryId: number;
+  amount: number; // integer (e.g. 1500000)
+  createdAt: string; // ISO string
+  updatedAt: string; // ISO string
+}
+
+export type BudgetHealthStatus = 'on_track' | 'watch_spending' | 'over_budget';
+
+export interface BudgetCategoryStatus {
+  id?: number; // budgetCategoryId
+  categoryId: number;
+  categoryName: string;
+  categoryIcon: string;
+  budgetedAmount: number;
+  actualSpent: number;
+  remaining: number; // budgetedAmount - actualSpent
+  percentage: number; // Math.round((actualSpent / budgetedAmount) * 100)
+  isOverBudget: boolean;
+}
+
+export interface MonthlyBudgetOverview {
+  hasBudget: boolean;
+  budget?: Budget;
+  year: number;
+  month: number;
+  monthlyIncome: number;
+  totalBudget: number;
+  totalSpent: number;
+  remaining: number;
+  percentageUsed: number;
+  healthStatus: BudgetHealthStatus;
+  healthReason: string;
+  categoryBudgets: BudgetCategoryStatus[];
+  unbudgetedCategories: {
+    categoryId: number;
+    categoryName: string;
+    categoryIcon: string;
+    actualSpent: number;
+  }[];
+  totalAllocatedToCategories: number;
+}
+
 export interface BackupData {
   schemaVersion: number;
   exportedAt: string;
@@ -75,4 +129,6 @@ export interface BackupData {
   accounts: Account[];
   categories: Category[];
   transactions: Transaction[];
+  budgets?: Budget[];
+  budgetCategories?: BudgetCategory[];
 }

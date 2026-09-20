@@ -8,6 +8,7 @@ import { DashboardPage } from './pages/Dashboard/DashboardPage.tsx';
 import { TransactionsPage } from './pages/Transactions/TransactionsPage.tsx';
 import { AccountsPage } from './pages/Accounts/AccountsPage.tsx';
 import { CategoriesPage } from './pages/Categories/CategoriesPage.tsx';
+import { BudgetPage } from './pages/Budget/BudgetPage.tsx';
 import { SettingsPage } from './pages/Settings/SettingsPage.tsx';
 import { initializeAnalytics } from './services/analyticsService.ts';
 import { ThemeBootstrap } from './components/ThemeBootstrap.tsx';
@@ -39,6 +40,7 @@ export default function App() {
             <Route path="/app" element={<AppLayout />}>
               <Route index element={<DashboardPage />} />
               <Route path="transactions" element={<TransactionsPage />} />
+              <Route path="budget" element={<BudgetPage />} />
               <Route path="accounts" element={<AccountsPage />} />
               <Route path="categories" element={<CategoriesPage />} />
               <Route path="settings" element={<SettingsPage />} />
