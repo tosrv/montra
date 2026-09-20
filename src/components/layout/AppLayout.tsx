@@ -3,6 +3,7 @@ import { Outlet, NavLink, Link } from 'react-router-dom';
 import {
   LayoutDashboard,
   Receipt,
+  CircleDollarSign,
   Wallet,
   Tags,
   Settings,
@@ -55,6 +56,7 @@ export function AppLayout() {
   const mobileNavItems = [
     { to: '/app', labelKey: 'app.nav.dashboard' as const, icon: LayoutDashboard, end: true },
     { to: '/app/transactions', labelKey: 'app.nav.transactions' as const, icon: Receipt },
+    { to: '/app/budget', labelKey: 'app.nav.budget' as const, icon: CircleDollarSign },
     { to: '/app/accounts', labelKey: 'app.nav.accounts' as const, icon: Wallet },
     { to: '/app/categories', labelKey: 'app.nav.categories' as const, icon: Tags },
   ];

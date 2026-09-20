@@ -68,5 +68,6 @@ export async function deleteCategory(
   }
 
   await db.categories.delete(categoryId);
+  await db.budgetCategories.where('categoryId').equals(categoryId).delete();
   return { success: true };
 }

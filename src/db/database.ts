@@ -1,5 +1,5 @@
 import Dexie, { type Table } from 'dexie';
-import type { Account, AppSettings, Category, Transaction } from '../types.ts';
+import type { Account, AppSettings, Budget, BudgetCategory, Category, Transaction } from '../types.ts';
 import { getStoredLocale } from '../i18n/locale.ts';
 
 export class MoneyTrackerDB extends Dexie {
@@ -7,6 +7,8 @@ export class MoneyTrackerDB extends Dexie {
   accounts!: Table<Account, number>;
   categories!: Table<Category, number>;
   settings!: Table<AppSettings, string>;
+  budgets!: Table<Budget, number>;
+  budgetCategories!: Table<BudgetCategory, number>;
 
   constructor() {
     super('moneyTrackerDB');
@@ -16,6 +18,11 @@ export class MoneyTrackerDB extends Dexie {
       accounts: '++id, name, type, initialBalance, createdAt, updatedAt',
       categories: '++id, name, type, icon, createdAt',
       settings: 'id, currency, theme, schemaVersion',
+    });
+
+    this.version(2).stores({
+      budgets: '++id, &[year+month], year, month, createdAt, updatedAt',
+      budgetCategories: '++id, budgetId, categoryId, &[budgetId+categoryId]',
     });
   }
 }

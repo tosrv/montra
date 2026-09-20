@@ -10,6 +10,8 @@ export async function exportBackupJson(): Promise<void> {
   const transactions = await db.transactions.toArray();
   const accounts = await db.accounts.toArray();
   const categories = await db.categories.toArray();
+  const budgets = await db.budgets.toArray();
+  const budgetCategories = await db.budgetCategories.toArray();
   const settings = (await db.settings.get('default')) || {
     id: 'default',
     currency: 'IDR',
@@ -20,12 +22,14 @@ export async function exportBackupJson(): Promise<void> {
 
   const backup: BackupData = {
     appName: 'MonTra',
-    schemaVersion: 1,
+    schemaVersion: 2,
     exportedAt: new Date().toISOString(),
     settings,
     accounts,
     categories,
     transactions,
+    budgets,
+    budgetCategories,
   };
 
   const jsonString = JSON.stringify(backup, null, 2);
@@ -46,27 +50,39 @@ export async function exportBackupJson(): Promise<void> {
  * Restores a validated backup into Dexie local database.
  */
 export async function restoreBackupData(data: BackupData): Promise<void> {
-  await db.transaction('rw', [db.accounts, db.categories, db.transactions, db.settings], async () => {
-    await db.transactions.clear();
-    await db.accounts.clear();
-    await db.categories.clear();
+  await db.transaction(
+    'rw',
+    [db.accounts, db.categories, db.transactions, db.settings, db.budgets, db.budgetCategories],
+    async () => {
+      await db.transactions.clear();
+      await db.accounts.clear();
+      await db.categories.clear();
+      await db.budgets.clear();
+      await db.budgetCategories.clear();
 
-    if (data.accounts.length > 0) {
-      await db.accounts.bulkAdd(data.accounts);
+      if (data.accounts.length > 0) {
+        await db.accounts.bulkAdd(data.accounts);
+      }
+      if (data.categories.length > 0) {
+        await db.categories.bulkAdd(data.categories);
+      }
+      if (data.transactions.length > 0) {
+        await db.transactions.bulkAdd(data.transactions);
+      }
+      if (data.budgets && data.budgets.length > 0) {
+        await db.budgets.bulkAdd(data.budgets);
+      }
+      if (data.budgetCategories && data.budgetCategories.length > 0) {
+        await db.budgetCategories.bulkAdd(data.budgetCategories);
+      }
+      if (data.settings) {
+        await db.settings.put({
+          ...data.settings,
+          id: 'default',
+        });
+      }
     }
-    if (data.categories.length > 0) {
-      await db.categories.bulkAdd(data.categories);
-    }
-    if (data.transactions.length > 0) {
-      await db.transactions.bulkAdd(data.transactions);
-    }
-    if (data.settings) {
-      await db.settings.put({
-        ...data.settings,
-        id: 'default',
-      });
-    }
-  });
+  );
 }
 
 /**
@@ -123,11 +139,17 @@ export async function exportTransactionsCsv(): Promise<void> {
  * Resets database back to default initial state (zeros only)
  */
 export async function resetDatabaseToDefaults(): Promise<void> {
-  await db.transaction('rw', [db.accounts, db.categories, db.transactions, db.settings], async () => {
-    await db.transactions.clear();
-    await db.accounts.clear();
-    await db.categories.clear();
-    await db.settings.clear();
-  });
+  await db.transaction(
+    'rw',
+    [db.accounts, db.categories, db.transactions, db.settings, db.budgets, db.budgetCategories],
+    async () => {
+      await db.transactions.clear();
+      await db.accounts.clear();
+      await db.categories.clear();
+      await db.settings.clear();
+      await db.budgets.clear();
+      await db.budgetCategories.clear();
+    }
+  );
   await initializeDatabase();
 }

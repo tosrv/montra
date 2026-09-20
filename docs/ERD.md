@@ -19,6 +19,8 @@ erDiagram
   ACCOUNT ||--o{ TRANSACTION : "accountId (source)"
   ACCOUNT ||--o{ TRANSACTION : "destinationAccountId (transfer)"
   CATEGORY ||--o{ TRANSACTION : "categoryId"
+  BUDGET ||--o{ BUDGET_CATEGORY : "budgetId"
+  CATEGORY ||--o{ BUDGET_CATEGORY : "categoryId"
 
   ACCOUNT {
     number id PK "auto-increment"
@@ -46,6 +48,24 @@ erDiagram
     number destinationAccountId FK "nullable, transfer only"
     string description
     string date "YYYY-MM-DD"
+    string createdAt "ISO"
+    string updatedAt "ISO"
+  }
+
+  BUDGET {
+    number id PK "auto-increment"
+    number year "e.g. 2026"
+    number month "0-11"
+    number totalBudget "integer > 0"
+    string createdAt "ISO"
+    string updatedAt "ISO"
+  }
+
+  BUDGET_CATEGORY {
+    number id PK "auto-increment"
+    number budgetId FK "references BUDGET"
+    number categoryId FK "references CATEGORY"
+    number amount "integer > 0"
     string createdAt "ISO"
     string updatedAt "ISO"
   }
@@ -105,10 +125,12 @@ currentBalance =
 ## Indexes (Dexie)
 
 ```
-transactions: ++id, date, type, accountId, categoryId, destinationAccountId, createdAt, updatedAt
-accounts:     ++id, name, type, initialBalance, createdAt, updatedAt
-categories:   ++id, name, type, icon, createdAt
-settings:     id, currency, theme, schemaVersion
+transactions:     ++id, date, type, accountId, categoryId, destinationAccountId, createdAt, updatedAt
+accounts:         ++id, name, type, initialBalance, createdAt, updatedAt
+categories:       ++id, name, type, icon, createdAt
+settings:         id, currency, theme, schemaVersion
+budgets:          ++id, &[year+month], year, month, createdAt, updatedAt
+budgetCategories: ++id, budgetId, categoryId, &[budgetId+categoryId]
 ```
 
 `++id` = primary key auto-increment. Field lain di-index untuk query (filter bulan, filter akun, dll.).
