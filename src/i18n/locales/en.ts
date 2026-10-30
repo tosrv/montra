@@ -238,6 +238,7 @@ export const en = {
   'dashboard.addFirst': 'Add your first transaction',
   'dashboard.cashflowTitle': 'Income vs expenses',
   'dashboard.other': 'Other',
+  'budget.vsBudget': 'Budget',
   'chart.category': 'Category',
   'chart.share': 'Share',
   'chart.total': 'Total',

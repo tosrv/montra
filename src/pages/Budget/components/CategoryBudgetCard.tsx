@@ -1,5 +1,5 @@
 import React from 'react';
-import { Edit2, Trash2 } from 'lucide-react';
+import { AlertCircle, AlertTriangle, CheckCircle2, Edit2, Trash2 } from 'lucide-react';
 import { formatCurrency } from '../../../utils/currency.ts';
 import { CategoryIcon } from '../../../components/ui/CategoryIcon.tsx';
 import { useLanguage } from '../../../i18n/LanguageProvider.tsx';
@@ -34,7 +34,7 @@ export function CategoryBudgetCard({ item, currency, onEdit, onDelete }: Categor
               {item.categoryName}
             </h3>
             <span className="text-[10px] text-neutral-400 dark:text-neutral-500">
-              Budget: {formatCurrency(item.budgetedAmount, currency)}
+              {t('budget.vsBudget')}: {formatCurrency(item.budgetedAmount, currency)}
             </span>
           </div>
         </div>
@@ -60,57 +60,58 @@ export function CategoryBudgetCard({ item, currency, onEdit, onDelete }: Categor
         </div>
       </div>
 
-      {/* Progress Bar & Numerical stats */}
-      <div className="space-y-1.5">
-        <div className="flex items-center justify-between text-xs">
-          <span className="text-neutral-600 dark:text-neutral-400">
-            Spent:{' '}
-            <strong className="text-neutral-900 dark:text-neutral-100">
-              {formatCurrency(item.actualSpent, currency)}
-            </strong>
+      {/* Status badge + numbers (the comparison bar lives in the Budget vs. spent chart) */}
+      <div className="flex items-end justify-between gap-3">
+        <div className="grid grid-cols-2 gap-x-5 gap-y-0.5 text-[10px] text-neutral-400 dark:text-neutral-500">
+          <span>{t('budget.spent')}</span>
+          <span>{item.isOverBudget ? t('budget.overBudget') : t('budget.remaining')}</span>
+          <span className="text-xs font-bold tabular-nums text-neutral-900 dark:text-neutral-100">
+            {formatCurrency(item.actualSpent, currency)}
           </span>
           <span
-            className={`font-semibold ${
+            className={`text-xs font-bold tabular-nums ${
               item.isOverBudget
                 ? 'text-rose-600 dark:text-rose-400'
-                : item.percentage >= 80
-                  ? 'text-amber-600 dark:text-amber-400'
-                  : 'text-neutral-600 dark:text-neutral-400'
+                : 'text-neutral-900 dark:text-neutral-100'
             }`}
           >
-            {item.percentage}%
+            {formatCurrency(Math.abs(item.remaining), currency)}
           </span>
         </div>
 
-        <div className="h-2 w-full bg-neutral-200/70 dark:bg-neutral-800 rounded-full overflow-hidden">
-          <div
-            className={`h-full rounded-full transition-all duration-300 ${
-              item.isOverBudget
-                ? 'bg-rose-500'
-                : item.percentage >= 80
-                  ? 'bg-amber-500'
-                  : 'bg-neutral-900 dark:bg-neutral-100'
-            }`}
-            style={{ width: `${Math.min(Math.max(item.percentage, 2), 100)}%` }}
-          />
-        </div>
-
-        {/* Remaining / Over Indicator */}
-        <div className="flex items-center justify-between text-[11px] pt-0.5">
-          {item.isOverBudget ? (
-            <span className="font-semibold text-rose-600 dark:text-rose-400">
-              Over by {formatCurrency(Math.abs(item.remaining), currency)}
-            </span>
-          ) : (
-            <span className="text-neutral-500 dark:text-neutral-400">
-              {formatCurrency(item.remaining, currency)} remaining
-            </span>
-          )}
-          <span className="text-neutral-400 dark:text-neutral-500 text-[10px]">
-            of {formatCurrency(item.budgetedAmount, currency)}
-          </span>
-        </div>
+        <StatusBadge item={item} />
       </div>
     </div>
+  );
+}
+
+function StatusBadge({ item }: { item: BudgetCategoryStatus }) {
+  const { t } = useLanguage();
+  const status = item.isOverBudget
+    ? {
+        label: t('budget.overBudget'),
+        Icon: AlertTriangle,
+        className: 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300',
+      }
+    : item.percentage >= 80
+      ? {
+          label: t('budget.watchSpending'),
+          Icon: AlertCircle,
+          className: 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300',
+        }
+      : {
+          label: t('budget.onTrack'),
+          Icon: CheckCircle2,
+          className: 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300',
+        };
+
+  return (
+    <span
+      className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-semibold shrink-0 ${status.className}`}
+    >
+      <status.Icon className="w-3 h-3" />
+      <span>{status.label}</span>
+      <span className="tabular-nums opacity-80">{item.percentage}%</span>
+    </span>
   );
 }

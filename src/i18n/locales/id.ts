@@ -228,6 +228,7 @@ export const id: Record<TranslationKey, string> = {
   'dashboard.addFirst': 'Tambah transaksi pertama',
   'dashboard.cashflowTitle': 'Pemasukan vs pengeluaran',
   'dashboard.other': 'Lainnya',
+  'budget.vsBudget': 'Budget',
   'chart.category': 'Kategori',
   'chart.share': 'Porsi',
   'chart.total': 'Total',
