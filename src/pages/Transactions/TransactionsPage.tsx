@@ -22,9 +22,10 @@ import { useAccounts } from '../../hooks/useAccounts.ts';
 import { useCategories } from '../../hooks/useCategories.ts';
 import { useSettings } from '../../hooks/useSettings.ts';
 import { formatCurrency } from '../../utils/currency.ts';
-import { formatDisplayDate } from '../../utils/dates.ts';
+import { formatDisplayDate, formatMonthYear, getCurrentMonthYear } from '../../utils/dates.ts';
 import { TransactionModal } from '../../components/transactions/TransactionModal.tsx';
 import { useLanguage } from '../../i18n/LanguageProvider.tsx';
+import { MonthNavigator } from '../../components/ui/MonthNavigator.tsx';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog.tsx';
 import type { Transaction, TransactionType } from '../../types.ts';
 
@@ -40,6 +41,9 @@ export function TransactionsPage() {
   const { settings } = useSettings();
 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+
+  // Month scope keeps the list small; queries use the date index.
+  const [period, setPeriod] = useState(() => getCurrentMonthYear());
 
   // Filters & Search
   const [search, setSearch] = useState('');
@@ -57,6 +61,8 @@ export function TransactionsPage() {
   const fetchTxs = useCallback(async () => {
     try {
       const data = await getFilteredTransactions({
+        year: period.year,
+        month: period.month,
         search,
         type: typeFilter,
         categoryId: categoryFilter,
@@ -67,7 +73,7 @@ export function TransactionsPage() {
     } catch (e) {
       console.error('Failed to query transactions:', e);
     }
-  }, [search, typeFilter, categoryFilter, accountFilter, sortBy]);
+  }, [period, search, typeFilter, categoryFilter, accountFilter, sortBy]);
 
   useEffect(() => {
     fetchTxs();
@@ -115,11 +121,16 @@ export function TransactionsPage() {
             {t('tx.title')}
           </h1>
           <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
-            {t('tx.subtitle')}
+            {formatMonthYear(period.year, period.month)}
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <MonthNavigator
+            year={period.year}
+            month={period.month}
+            onChange={(year, month) => setPeriod({ year, month })}
+          />
           <button
             type="button"
             onClick={() => exportTransactionsCsv()}

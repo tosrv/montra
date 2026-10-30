@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, Plus, Trash2, CircleDollarSign, Copy } from 'lucide-react';
+import { Plus, Trash2, CircleDollarSign, Copy } from 'lucide-react';
 import { useBudget } from '../../hooks/useBudget.ts';
 import { useCategories } from '../../hooks/useCategories.ts';
 import { useSettings } from '../../hooks/useSettings.ts';
@@ -7,6 +7,7 @@ import { formatCurrency } from '../../utils/currency.ts';
 import { formatMonthYear, getMonthNames } from '../../utils/dates.ts';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog.tsx';
 import { useLanguage } from '../../i18n/LanguageProvider.tsx';
+import { MonthNavigator } from '../../components/ui/MonthNavigator.tsx';
 import { MonthlyBudgetModal } from './MonthlyBudgetModal.tsx';
 import { CategoryBudgetModal } from './CategoryBudgetModal.tsx';
 import { BudgetSummaryCard } from './components/BudgetSummaryCard.tsx';
@@ -24,8 +25,6 @@ export function BudgetPage() {
     selectedMonth,
     setSelectedYear,
     setSelectedMonth,
-    goToPreviousMonth,
-    goToNextMonth,
     overview,
     hasPreviousBudget,
     saveMonthlyBudget,
@@ -51,13 +50,6 @@ export function BudgetPage() {
   );
 
   const monthNames = getMonthNames();
-  const years = [
-    selectedYear - 2,
-    selectedYear - 1,
-    selectedYear,
-    selectedYear + 1,
-    selectedYear + 2,
-  ];
 
   const handleOpenAddCategory = (categoryId?: number, suggestedAmount?: number) => {
     setEditingCategoryStatus(null);
@@ -102,52 +94,14 @@ export function BudgetPage() {
           </p>
         </div>
 
-        {/* Month Selector Controls */}
-        <div className="flex items-center gap-1.5 bg-white dark:bg-neutral-900 p-1 rounded-xl border border-neutral-200/80 dark:border-neutral-800 shadow-2xs self-start sm:self-auto">
-          <button
-            type="button"
-            onClick={goToPreviousMonth}
-            className="p-1.5 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors"
-            title="Previous month"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-
-          <div className="flex items-center gap-1 px-1">
-            <select
-              value={selectedMonth}
-              onChange={(e) => setSelectedMonth(Number(e.target.value))}
-              className="text-xs font-semibold text-neutral-800 dark:text-neutral-200 bg-transparent py-1 px-2 rounded-md hover:bg-neutral-50 dark:hover:bg-neutral-800 focus:outline-none cursor-pointer"
-            >
-              {monthNames.map((name, idx) => (
-                <option key={name} value={idx}>
-                  {name}
-                </option>
-              ))}
-            </select>
-
-            <select
-              value={selectedYear}
-              onChange={(e) => setSelectedYear(Number(e.target.value))}
-              className="text-xs font-semibold text-neutral-800 dark:text-neutral-200 bg-transparent py-1 px-2 rounded-md hover:bg-neutral-50 dark:hover:bg-neutral-800 focus:outline-none cursor-pointer"
-            >
-              {years.map((y) => (
-                <option key={y} value={y}>
-                  {y}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <button
-            type="button"
-            onClick={goToNextMonth}
-            className="p-1.5 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors"
-            title="Next month"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
+        <MonthNavigator
+          year={selectedYear}
+          month={selectedMonth}
+          onChange={(year, month) => {
+            setSelectedYear(year);
+            setSelectedMonth(month);
+          }}
+        />
       </div>
 
       {/* 2. Empty State when no budget exists for this month */}

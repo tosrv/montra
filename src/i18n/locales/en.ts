@@ -251,7 +251,6 @@ export const en = {
 
   // Transactions
   'tx.title': 'Transactions',
-  'tx.subtitle': 'Complete local record of your financial movements',
   'tx.exportCsv': 'Export CSV',
   'tx.exportCsvTitle': 'Export CSV client-side',
   'tx.add': 'Add Transaction',
@@ -266,7 +265,7 @@ export const en = {
   'tx.sortDateOldest': 'Date (Oldest first)',
   'tx.sortAmountHigh': 'Amount (Highest first)',
   'tx.sortAmountLow': 'Amount (Lowest first)',
-  'tx.emptyTitle': 'No transactions yet.',
+  'tx.emptyTitle': 'No transactions this month.',
   'tx.emptyFiltered': 'No transactions matched your active filters.',
   'tx.emptyHint': 'Add your first transaction to start managing your records.',
   'tx.unknownAccount': 'Unknown Account',
@@ -366,6 +365,9 @@ export const en = {
   'common.income': 'Income',
   'common.expense': 'Expense',
   'common.transfer': 'Transfer',
+  'common.prevMonth': 'Previous month',
+  'common.nextMonth': 'Next month',
+  'common.year': 'Year',
   'common.all': 'All',
   'common.save': 'Save',
   'common.cancel': 'Cancel',

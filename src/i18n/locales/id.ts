@@ -241,7 +241,6 @@ export const id: Record<TranslationKey, string> = {
 
   // Transactions
   'tx.title': 'Transaksi',
-  'tx.subtitle': 'Catatan lokal lengkap pergerakan keuangan Anda',
   'tx.exportCsv': 'Ekspor CSV',
   'tx.exportCsvTitle': 'Ekspor CSV di perangkat',
   'tx.add': 'Tambah Transaksi',
@@ -256,7 +255,7 @@ export const id: Record<TranslationKey, string> = {
   'tx.sortDateOldest': 'Tanggal (Terlama)',
   'tx.sortAmountHigh': 'Jumlah (Tertinggi)',
   'tx.sortAmountLow': 'Jumlah (Terendah)',
-  'tx.emptyTitle': 'Belum ada transaksi.',
+  'tx.emptyTitle': 'Belum ada transaksi bulan ini.',
   'tx.emptyFiltered': 'Tidak ada transaksi yang cocok dengan filter aktif.',
   'tx.emptyHint': 'Tambah transaksi pertama untuk mulai mengelola catatan Anda.',
   'tx.unknownAccount': 'Akun Tidak Dikenal',
@@ -352,6 +351,9 @@ export const id: Record<TranslationKey, string> = {
   'common.income': 'Pemasukan',
   'common.expense': 'Pengeluaran',
   'common.transfer': 'Transfer',
+  'common.prevMonth': 'Bulan sebelumnya',
+  'common.nextMonth': 'Bulan berikutnya',
+  'common.year': 'Tahun',
   'common.all': 'Semua',
   'common.save': 'Simpan',
   'common.cancel': 'Batal',
