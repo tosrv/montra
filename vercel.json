@@ -1,7 +1,7 @@
 {
   "rewrites": [
     {
-      "source": "/((?!sw\\.js$|manifest\\.webmanifest$|icons/).*)",
+      "source": "/((?!sw\\.js$|manifest\\.webmanifest$|asset-manifest\\.json$|icons/).*)",
       "destination": "/index.html"
     }
   ],
@@ -15,9 +15,7 @@
     },
     {
       "source": "/manifest.webmanifest",
-      "headers": [
-        { "key": "Content-Type", "value": "application/manifest+json" }
-      ]
+      "headers": [{ "key": "Content-Type", "value": "application/manifest+json" }]
     }
   ]
 }

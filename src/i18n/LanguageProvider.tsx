@@ -1,10 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import {
-  applyDocumentLang,
-  getStoredLocale,
-  setStoredLocale,
-  type Locale,
-} from './locale.ts';
+import { applyDocumentLang, getStoredLocale, setStoredLocale, type Locale } from './locale.ts';
 import { translate, type TranslationKey } from './translations.ts';
 import { db, initializeDatabase } from '../db/database.ts';
 
@@ -40,6 +35,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     }
 
     void syncFromDb();
+    // Runs once on mount: syncs the stored locale with the DB.
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const setLocale = useCallback(async (next: Locale) => {

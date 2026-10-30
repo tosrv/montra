@@ -1,6 +1,6 @@
 import { db } from '../db/database.ts';
 import { isDateInMonth } from '../utils/dates.ts';
-import type { MonthlySummary, Transaction, TransactionType } from '../types.ts';
+import type { Transaction, TransactionType } from '../types.ts';
 
 export interface TransactionFilterOptions {
   search?: string;
@@ -16,16 +16,42 @@ export async function getAllTransactions(): Promise<Transaction[]> {
   return await db.transactions.orderBy('date').reverse().toArray();
 }
 
+/**
+ * Narrows the candidate set with the most selective available index so the
+ * in-memory filters below don't have to scan every transaction.
+ */
+async function queryIndexedCandidates(options: TransactionFilterOptions): Promise<Transaction[]> {
+  if (options.year !== undefined && options.month !== undefined) {
+    const prefix = `${options.year}-${String(options.month + 1).padStart(2, '0')}-`;
+    return await db.transactions.where('date').startsWith(prefix).toArray();
+  }
+  if (options.accountId) {
+    return await db.transactions
+      .where('accountId')
+      .equals(options.accountId)
+      .or('destinationAccountId')
+      .equals(options.accountId)
+      .toArray();
+  }
+  if (options.categoryId) {
+    return await db.transactions.where('categoryId').equals(options.categoryId).toArray();
+  }
+  if (options.type && options.type !== 'all') {
+    return await db.transactions.where('type').equals(options.type).toArray();
+  }
+  return await db.transactions.toArray();
+}
+
 export async function getFilteredTransactions(
   options: TransactionFilterOptions
 ): Promise<Transaction[]> {
-  let txs = await db.transactions.toArray();
+  let txs = await queryIndexedCandidates(options);
 
   // Search filter (description)
   if (options.search && options.search.trim() !== '') {
     const q = options.search.toLowerCase().trim();
-    txs = txs.filter((tx) =>
-      tx.description.toLowerCase().includes(q) || tx.amount.toString().includes(q)
+    txs = txs.filter(
+      (tx) => tx.description.toLowerCase().includes(q) || tx.amount.toString().includes(q)
     );
   }
 
@@ -252,7 +278,6 @@ export async function updateTransaction(
     date: data.date,
     updatedAt: now,
   });
-
 }
 
 export async function deleteTransaction(id: number): Promise<void> {

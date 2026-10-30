@@ -1,5 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getAccountsWithBalances, createAccount, updateAccount, deleteAccount } from '../services/accountService.ts';
+import {
+  getAccountsWithBalances,
+  createAccount,
+  updateAccount,
+  deleteAccount,
+} from '../services/accountService.ts';
 import type { AccountWithBalance, AccountType } from '../types.ts';
 
 export function useAccounts() {

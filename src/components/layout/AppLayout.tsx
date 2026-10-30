@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { Suspense, useState, useEffect } from 'react';
 import { Outlet, NavLink, Link } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -82,7 +82,9 @@ export function AppLayout() {
           <div className="w-7 h-7 rounded-lg bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 flex items-center justify-center font-bold text-xs shrink-0">
             MT
           </div>
-          <span className="font-bold text-neutral-900 dark:text-neutral-100 text-sm truncate">{t('brand.name')}</span>
+          <span className="font-bold text-neutral-900 dark:text-neutral-100 text-sm truncate">
+            {t('brand.name')}
+          </span>
         </Link>
         <div className="flex items-center gap-1.5 shrink-0">
           <PWAInstallButton variant="navbar" />
@@ -100,7 +102,9 @@ export function AppLayout() {
       {/* Main Content Viewport */}
       <main className="flex-1 min-w-0 pb-28 md:pb-8 overflow-y-auto">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-          <Outlet context={{ onOpenAddTransaction: () => setIsAddTxOpen(true) }} />
+          <Suspense fallback={null}>
+            <Outlet context={{ onOpenAddTransaction: () => setIsAddTxOpen(true) }} />
+          </Suspense>
         </div>
       </main>
 

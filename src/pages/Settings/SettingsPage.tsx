@@ -19,6 +19,7 @@ import {
 } from '../../services/backupService.ts';
 import type { BackupData } from '../../types.ts';
 import { useLanguage } from '../../i18n/LanguageProvider.tsx';
+import { ConfirmDialog } from '../../components/ui/ConfirmDialog.tsx';
 import { LanguageSwitcher } from '../../components/ui/LanguageSwitcher.tsx';
 import { APP_VERSION } from '../../version.ts';
 
@@ -28,7 +29,6 @@ export function SettingsPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Import flow states
-  const [importedFile, setImportedFile] = useState<File | null>(null);
   const [validation, setValidation] = useState<ValidationResult | null>(null);
   const [parsedBackup, setParsedBackup] = useState<BackupData | null>(null);
   const [importing, setImporting] = useState(false);
@@ -47,7 +47,6 @@ export function SettingsPage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    setImportedFile(file);
     setImportSuccess(false);
 
     const reader = new FileReader();
@@ -62,7 +61,7 @@ export function SettingsPage() {
         } else {
           setParsedBackup(null);
         }
-      } catch (err) {
+      } catch {
         setValidation({
           isValid: false,
           errors: [t('settings.parseFailed')],
@@ -80,7 +79,6 @@ export function SettingsPage() {
       setImporting(true);
       await restoreBackupData(parsedBackup);
       setImportSuccess(true);
-      setImportedFile(null);
       setValidation(null);
       setParsedBackup(null);
       if (fileInputRef.current) fileInputRef.current.value = '';
@@ -103,7 +101,9 @@ export function SettingsPage() {
     <div className="space-y-8 animate-in fade-in duration-200 max-w-4xl">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 tracking-tight">{t('settings.title')}</h1>
+        <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 tracking-tight">
+          {t('settings.title')}
+        </h1>
         <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
           {t('settings.subtitle')}
         </p>
@@ -298,9 +298,15 @@ export function SettingsPage() {
 
               {validation.stats && (
                 <div className="grid grid-cols-3 gap-2 py-2 border-y border-neutral-200/40 dark:border-neutral-700/40 text-[11px] font-medium">
-                  <div>{t('app.nav.accounts')}: {validation.stats.accountsCount}</div>
-                  <div>{t('app.nav.categories')}: {validation.stats.categoriesCount}</div>
-                  <div>{t('app.nav.transactions')}: {validation.stats.transactionsCount}</div>
+                  <div>
+                    {t('app.nav.accounts')}: {validation.stats.accountsCount}
+                  </div>
+                  <div>
+                    {t('app.nav.categories')}: {validation.stats.categoriesCount}
+                  </div>
+                  <div>
+                    {t('app.nav.transactions')}: {validation.stats.transactionsCount}
+                  </div>
                 </div>
               )}
 
@@ -342,7 +348,9 @@ export function SettingsPage() {
       <div className="bg-rose-50/50 dark:bg-rose-950/40 p-6 rounded-2xl border border-rose-200/80 dark:border-rose-900 shadow-2xs space-y-4">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div>
-            <h2 className="text-base font-bold text-rose-950 dark:text-rose-100">{t('settings.dangerTitle')}</h2>
+            <h2 className="text-base font-bold text-rose-950 dark:text-rose-100">
+              {t('settings.dangerTitle')}
+            </h2>
             <p className="text-xs text-rose-800/80 dark:text-rose-200/80 mt-0.5">
               {t('settings.dangerHint')}
             </p>
@@ -366,37 +374,17 @@ export function SettingsPage() {
 
       {/* Reset Confirmation Dialog */}
       {showResetConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/40 dark:bg-black/60 backdrop-blur-xs">
-          <div className="w-full max-w-md bg-white dark:bg-neutral-900 p-6 rounded-2xl shadow-xl border border-neutral-200 dark:border-neutral-800 space-y-4">
-            <div className="flex items-center gap-3 text-rose-600 dark:text-rose-400">
-              <div className="w-9 h-9 rounded-xl bg-rose-50 dark:bg-rose-950/40 flex items-center justify-center">
-                <AlertTriangle className="w-5 h-5" />
-              </div>
-              <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-100">{t('settings.resetConfirmTitle')}</h3>
-            </div>
-
-            <p className="text-xs text-neutral-600 dark:text-neutral-300 leading-relaxed">
-              {t('settings.resetConfirmBody')}
-            </p>
-
-            <div className="flex items-center justify-end gap-2 pt-2">
-              <button
-                type="button"
-                onClick={() => setShowResetConfirm(false)}
-                className="px-4 py-2 text-xs font-semibold text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-xl"
-              >
-                {t('settings.resetCancel')}
-              </button>
-              <button
-                type="button"
-                onClick={handleResetData}
-                className="px-4 py-2 text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-xl shadow-2xs"
-              >
-                {t('settings.resetConfirm')}
-              </button>
-            </div>
-          </div>
-        </div>
+        <ConfirmDialog
+          title={t('settings.resetConfirmTitle')}
+          cancelLabel={t('settings.resetCancel')}
+          confirmLabel={t('settings.resetConfirm')}
+          onCancel={() => setShowResetConfirm(false)}
+          onConfirm={handleResetData}
+        >
+          <p className="text-xs text-neutral-600 dark:text-neutral-300 leading-relaxed">
+            {t('settings.resetConfirmBody')}
+          </p>
+        </ConfirmDialog>
       )}
     </div>
   );

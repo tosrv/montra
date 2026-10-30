@@ -1,4 +1,4 @@
-/** Registers the minimal service worker used for PWA installability. */
+/** Registers the service worker that provides offline support and PWA installability. */
 export function registerServiceWorker(): void {
   if (typeof window === 'undefined' || !('serviceWorker' in navigator)) return;
 

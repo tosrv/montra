@@ -69,7 +69,11 @@ export function MonthlyBudgetModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (totalBudgetNum <= 0) {
-      setError(t('categories.nameRequired') ? 'Please enter a valid budget amount.' : 'Enter a valid amount');
+      setError(
+        t('categories.nameRequired')
+          ? 'Please enter a valid budget amount.'
+          : 'Enter a valid amount'
+      );
       return;
     }
 

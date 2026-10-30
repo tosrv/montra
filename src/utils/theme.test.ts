@@ -1,9 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import {
-  applyTheme,
-  getStoredThemePreference,
-  resolveTheme,
-} from './theme.ts';
+import { applyTheme, getStoredThemePreference, resolveTheme } from './theme.ts';
 
 describe('resolveTheme', () => {
   afterEach(() => {
@@ -21,8 +17,8 @@ describe('resolveTheme', () => {
       vi.fn().mockImplementation((query: string) => ({
         matches: query.includes('dark'),
         media: query,
-        addEventListener: vi.fn(),
-        removeEventListener: vi.fn(),
+        addEventListener: vi.fn<() => void>(),
+        removeEventListener: vi.fn<() => void>(),
       }))
     );
     expect(resolveTheme('system')).toBe('dark');

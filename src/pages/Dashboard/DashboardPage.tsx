@@ -35,7 +35,6 @@ export function DashboardPage() {
     goToPreviousMonth,
     goToNextMonth,
     data,
-    loading,
     refreshDashboard,
   } = useDashboard();
   const { settings } = useSettings();
@@ -64,7 +63,9 @@ export function DashboardPage() {
       {/* Month & Year Navigator Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 tracking-tight">{t('dashboard.title')}</h1>
+          <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 tracking-tight">
+            {t('dashboard.title')}
+          </h1>
           <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
             {formatMonthYear(selectedYear, selectedMonth)}
           </p>
@@ -123,13 +124,17 @@ export function DashboardPage() {
         {/* 1. Current Balance (Overall) */}
         <div className="bg-white dark:bg-neutral-900 p-5 rounded-2xl border border-neutral-200/80 dark:border-neutral-800 shadow-2xs space-y-2">
           <div className="flex items-center justify-between text-neutral-500 dark:text-neutral-400">
-            <span className="text-xs font-medium uppercase tracking-wider">{t('app.nav.accounts')}</span>
+            <span className="text-xs font-medium uppercase tracking-wider">
+              {t('app.nav.accounts')}
+            </span>
             <Wallet className="w-4 h-4 text-neutral-400 dark:text-neutral-500" />
           </div>
           <div className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 tracking-tight">
             {formatCurrency(data.currentBalance, settings.currency)}
           </div>
-          <p className="text-[11px] text-neutral-400 dark:text-neutral-500">{formatMonthYear(selectedYear, selectedMonth)}</p>
+          <p className="text-[11px] text-neutral-400 dark:text-neutral-500">
+            {formatMonthYear(selectedYear, selectedMonth)}
+          </p>
         </div>
 
         {/* 2. Monthly Income */}
@@ -143,7 +148,9 @@ export function DashboardPage() {
           <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-400 tracking-tight">
             {formatCurrency(data.monthlyIncome, settings.currency)}
           </div>
-          <p className="text-[11px] text-neutral-400 dark:text-neutral-500">{formatMonthYear(selectedYear, selectedMonth)}</p>
+          <p className="text-[11px] text-neutral-400 dark:text-neutral-500">
+            {formatMonthYear(selectedYear, selectedMonth)}
+          </p>
         </div>
 
         {/* 3. Monthly Expense */}
@@ -157,13 +164,17 @@ export function DashboardPage() {
           <div className="text-2xl font-bold text-rose-700 dark:text-rose-400 tracking-tight">
             {formatCurrency(data.monthlyExpense, settings.currency)}
           </div>
-          <p className="text-[11px] text-neutral-400 dark:text-neutral-500">{formatMonthYear(selectedYear, selectedMonth)}</p>
+          <p className="text-[11px] text-neutral-400 dark:text-neutral-500">
+            {formatMonthYear(selectedYear, selectedMonth)}
+          </p>
         </div>
 
         {/* 4. Net Cash Flow */}
         <div className="bg-white dark:bg-neutral-900 p-5 rounded-2xl border border-neutral-200/80 dark:border-neutral-800 shadow-2xs space-y-2">
           <div className="flex items-center justify-between text-neutral-500 dark:text-neutral-400">
-            <span className="text-xs font-medium uppercase tracking-wider">{t('dashboard.net')}</span>
+            <span className="text-xs font-medium uppercase tracking-wider">
+              {t('dashboard.net')}
+            </span>
             {data.netCashFlow >= 0 ? (
               <TrendingUp className="w-4 h-4 text-emerald-600" />
             ) : (
@@ -172,12 +183,16 @@ export function DashboardPage() {
           </div>
           <div
             className={`text-2xl font-bold tracking-tight ${
-              data.netCashFlow >= 0 ? 'text-emerald-700 dark:text-emerald-400' : 'text-rose-700 dark:text-rose-400'
+              data.netCashFlow >= 0
+                ? 'text-emerald-700 dark:text-emerald-400'
+                : 'text-rose-700 dark:text-rose-400'
             }`}
           >
             {formatCurrency(data.netCashFlow, settings.currency)}
           </div>
-          <p className="text-[11px] text-neutral-400 dark:text-neutral-500">{formatMonthYear(selectedYear, selectedMonth)}</p>
+          <p className="text-[11px] text-neutral-400 dark:text-neutral-500">
+            {formatMonthYear(selectedYear, selectedMonth)}
+          </p>
         </div>
       </div>
 
@@ -185,9 +200,7 @@ export function DashboardPage() {
       <div className="p-4 bg-neutral-900 dark:bg-neutral-800 text-white rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs">
         <div className="text-center sm:text-left">
           <h3 className="text-sm font-semibold">{t('app.addTransaction')}</h3>
-          <p className="text-xs text-neutral-300 mt-0.5">
-            {t('dashboard.addFirst')}
-          </p>
+          <p className="text-xs text-neutral-300 mt-0.5">{t('dashboard.addFirst')}</p>
         </div>
         <button
           id="dashboard-add-tx-btn"
@@ -204,7 +217,9 @@ export function DashboardPage() {
       <div className="bg-white dark:bg-neutral-900 p-6 rounded-2xl border border-neutral-200/80 dark:border-neutral-800 shadow-2xs space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-base font-bold text-neutral-900 dark:text-neutral-100">{t('dashboard.breakdown')}</h2>
+            <h2 className="text-base font-bold text-neutral-900 dark:text-neutral-100">
+              {t('dashboard.breakdown')}
+            </h2>
             <p className="text-xs text-neutral-500 dark:text-neutral-400">
               {formatMonthYear(selectedYear, selectedMonth)}
             </p>
@@ -229,7 +244,9 @@ export function DashboardPage() {
                     <div className="w-6 h-6 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 flex items-center justify-center">
                       <CategoryIcon name={item.categoryIcon} className="w-3.5 h-3.5" />
                     </div>
-                    <span className="font-medium text-neutral-800 dark:text-neutral-200">{item.categoryName}</span>
+                    <span className="font-medium text-neutral-800 dark:text-neutral-200">
+                      {item.categoryName}
+                    </span>
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="font-semibold text-neutral-900 dark:text-neutral-100">
@@ -258,7 +275,9 @@ export function DashboardPage() {
       <div className="bg-white dark:bg-neutral-900 p-6 rounded-2xl border border-neutral-200/80 dark:border-neutral-800 shadow-2xs space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-base font-bold text-neutral-900 dark:text-neutral-100">{t('app.nav.transactions')}</h2>
+            <h2 className="text-base font-bold text-neutral-900 dark:text-neutral-100">
+              {t('app.nav.transactions')}
+            </h2>
             <p className="text-xs text-neutral-500 dark:text-neutral-400">
               {formatMonthYear(selectedYear, selectedMonth)}
             </p>
@@ -278,7 +297,9 @@ export function DashboardPage() {
               <Receipt className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('dashboard.noData')}</p>
+              <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                {t('dashboard.noData')}
+              </p>
               <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-0.5">
                 {t('dashboard.addFirst')}
               </p>
@@ -302,8 +323,8 @@ export function DashboardPage() {
                       tx.type === 'income'
                         ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300'
                         : tx.type === 'expense'
-                        ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300'
-                        : 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300'
+                          ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300'
+                          : 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300'
                     }`}
                   >
                     {tx.type === 'income' ? (
@@ -316,7 +337,10 @@ export function DashboardPage() {
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 leading-tight">
-                      {tx.description || (tx.type === 'transfer' ? t('common.transfer') : t(`common.${tx.type}` as 'common.income' | 'common.expense'))}
+                      {tx.description ||
+                        (tx.type === 'transfer'
+                          ? t('common.transfer')
+                          : t(`common.${tx.type}` as 'common.income' | 'common.expense'))}
                     </p>
                     <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-0.5">
                       {formatDisplayDate(tx.date)}
@@ -330,8 +354,8 @@ export function DashboardPage() {
                       tx.type === 'income'
                         ? 'text-emerald-700 dark:text-emerald-400'
                         : tx.type === 'expense'
-                        ? 'text-rose-700 dark:text-rose-400'
-                        : 'text-blue-700 dark:text-blue-400'
+                          ? 'text-rose-700 dark:text-rose-400'
+                          : 'text-blue-700 dark:text-blue-400'
                     }`}
                   >
                     {tx.type === 'income' ? '+' : tx.type === 'expense' ? '-' : ''}
@@ -341,8 +365,8 @@ export function DashboardPage() {
                     {tx.type === 'income'
                       ? t('common.income')
                       : tx.type === 'expense'
-                      ? t('common.expense')
-                      : t('common.transfer')}
+                        ? t('common.expense')
+                        : t('common.transfer')}
                   </span>
                 </div>
               </div>
