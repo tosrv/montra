@@ -6,6 +6,7 @@ import {
   FileSpreadsheet,
   CheckCircle2,
   AlertTriangle,
+  Sparkles,
 } from 'lucide-react';
 import { useSettings } from '../../hooks/useSettings.ts';
 import { CURRENCY_OPTIONS } from '../../utils/currency.ts';
@@ -20,6 +21,7 @@ import {
 import type { BackupData } from '../../types.ts';
 import { useLanguage } from '../../i18n/LanguageProvider.tsx';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog.tsx';
+import { loadDemoData } from '../../services/demoDataService.ts';
 import { LanguageSwitcher } from '../../components/ui/LanguageSwitcher.tsx';
 import { APP_VERSION } from '../../version.ts';
 
@@ -36,6 +38,7 @@ export function SettingsPage() {
 
   // Reset database state
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [showDemoConfirm, setShowDemoConfirm] = useState(false);
 
   const themeLabels = {
     system: t('settings.themeSystem'),
@@ -95,6 +98,13 @@ export function SettingsPage() {
     setShowResetConfirm(false);
     window.dispatchEvent(new CustomEvent('money-tracker-tx-changed'));
     alert(t('settings.resetDone'));
+  };
+
+  const handleLoadDemo = async () => {
+    await loadDemoData();
+    setShowDemoConfirm(false);
+    window.dispatchEvent(new CustomEvent('money-tracker-tx-changed'));
+    alert(t('settings.demoDone'));
   };
 
   return (
@@ -344,6 +354,28 @@ export function SettingsPage() {
         </div>
       </div>
 
+      {/* Demo data */}
+      <div className="bg-white dark:bg-neutral-900 p-6 rounded-2xl border border-neutral-200/80 dark:border-neutral-800 shadow-2xs">
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div>
+            <h2 className="text-base font-bold text-neutral-900 dark:text-neutral-100">
+              {t('settings.demoTitle')}
+            </h2>
+            <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
+              {t('settings.demoHint')}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowDemoConfirm(true)}
+            className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-neutral-800 dark:text-neutral-200 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-xl transition-colors"
+          >
+            <Sparkles className="w-4 h-4" />
+            <span>{t('settings.demoBtn')}</span>
+          </button>
+        </div>
+      </div>
+
       {/* 4. Destructive Area: Reset Database */}
       <div className="bg-rose-50/50 dark:bg-rose-950/40 p-6 rounded-2xl border border-rose-200/80 dark:border-rose-900 shadow-2xs space-y-4">
         <div className="flex items-center justify-between flex-wrap gap-4">
@@ -371,6 +403,21 @@ export function SettingsPage() {
           {t('settings.aboutVersion', { version: APP_VERSION })}
         </p>
       </div>
+
+      {/* Demo Data Confirmation Dialog */}
+      {showDemoConfirm && (
+        <ConfirmDialog
+          title={t('settings.demoConfirmTitle')}
+          cancelLabel={t('settings.resetCancel')}
+          confirmLabel={t('settings.demoConfirm')}
+          onCancel={() => setShowDemoConfirm(false)}
+          onConfirm={handleLoadDemo}
+        >
+          <p className="text-xs text-neutral-600 dark:text-neutral-300 leading-relaxed">
+            {t('settings.demoConfirmBody')}
+          </p>
+        </ConfirmDialog>
+      )}
 
       {/* Reset Confirmation Dialog */}
       {showResetConfirm && (

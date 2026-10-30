@@ -17,8 +17,10 @@ import { useDashboard } from '../../hooks/useDashboard.ts';
 import { useSettings } from '../../hooks/useSettings.ts';
 import { formatCurrency } from '../../utils/currency.ts';
 import { formatMonthYear, getMonthNames, formatDisplayDate } from '../../utils/dates.ts';
-import { CategoryIcon } from '../../components/ui/CategoryIcon.tsx';
 import { useLanguage } from '../../i18n/LanguageProvider.tsx';
+import { CashflowTrendChart } from '../../components/charts/CashflowTrendChart.tsx';
+import { BalanceTrendChart } from '../../components/charts/BalanceTrendChart.tsx';
+import { ExpenseDonutChart } from '../../components/charts/ExpenseDonutChart.tsx';
 
 interface AppContext {
   onOpenAddTransaction: () => void;
@@ -35,6 +37,8 @@ export function DashboardPage() {
     goToPreviousMonth,
     goToNextMonth,
     data,
+    cashflowTrend,
+    balanceSeries,
     refreshDashboard,
   } = useDashboard();
   const { settings } = useSettings();
@@ -196,6 +200,17 @@ export function DashboardPage() {
         </div>
       </div>
 
+      {/* Cash-flow charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <CashflowTrendChart data={cashflowTrend} currency={settings.currency} />
+        <BalanceTrendChart
+          data={balanceSeries}
+          currency={settings.currency}
+          year={selectedYear}
+          month={selectedMonth}
+        />
+      </div>
+
       {/* 5. Add Transaction Banner / Action */}
       <div className="p-4 bg-neutral-900 dark:bg-neutral-800 text-white rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs">
         <div className="text-center sm:text-left">
@@ -214,62 +229,12 @@ export function DashboardPage() {
       </div>
 
       {/* 6. Expense Breakdown */}
-      <div className="bg-white dark:bg-neutral-900 p-6 rounded-2xl border border-neutral-200/80 dark:border-neutral-800 shadow-2xs space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-base font-bold text-neutral-900 dark:text-neutral-100">
-              {t('dashboard.breakdown')}
-            </h2>
-            <p className="text-xs text-neutral-500 dark:text-neutral-400">
-              {formatMonthYear(selectedYear, selectedMonth)}
-            </p>
-          </div>
-          {data.expenseBreakdown.length > 0 && (
-            <span className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">
-              {t('dashboard.expense')}: {formatCurrency(data.monthlyExpense, settings.currency)}
-            </span>
-          )}
-        </div>
-
-        {data.expenseBreakdown.length === 0 ? (
-          <div className="py-8 text-center text-neutral-400 dark:text-neutral-500 text-xs">
-            {t('dashboard.noData')}
-          </div>
-        ) : (
-          <div className="space-y-3 pt-2">
-            {data.expenseBreakdown.map((item) => (
-              <div key={item.categoryId} className="space-y-1.5">
-                <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 flex items-center justify-center">
-                      <CategoryIcon name={item.categoryIcon} className="w-3.5 h-3.5" />
-                    </div>
-                    <span className="font-medium text-neutral-800 dark:text-neutral-200">
-                      {item.categoryName}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="font-semibold text-neutral-900 dark:text-neutral-100">
-                      {formatCurrency(item.amount, settings.currency)}
-                    </span>
-                    <span className="text-neutral-400 dark:text-neutral-500 w-9 text-right font-medium">
-                      {item.percentage}%
-                    </span>
-                  </div>
-                </div>
-
-                {/* Progress bar */}
-                <div className="h-2 w-full bg-neutral-100 dark:bg-neutral-800 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-neutral-800 dark:bg-neutral-200 rounded-full transition-all duration-300"
-                    style={{ width: `${Math.max(item.percentage, 2)}%` }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+      <ExpenseDonutChart
+        items={data.expenseBreakdown}
+        total={data.monthlyExpense}
+        currency={settings.currency}
+        description={formatMonthYear(selectedYear, selectedMonth)}
+      />
 
       {/* 7. Recent Transactions for the Month */}
       <div className="bg-white dark:bg-neutral-900 p-6 rounded-2xl border border-neutral-200/80 dark:border-neutral-800 shadow-2xs space-y-4">

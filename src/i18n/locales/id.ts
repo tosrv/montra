@@ -196,6 +196,15 @@ export const id: Record<TranslationKey, string> = {
   'settings.restoreBtn': 'Pulihkan Backup',
   'settings.restoring': 'Memulihkan…',
   'settings.restoreSuccess': 'Backup berhasil divalidasi dan dipulihkan ke database lokal!',
+  'settings.demoTitle': 'Data demo',
+  'settings.demoHint':
+    'Isi aplikasi dengan contoh akun, transaksi, dan budget selama 6 bulan untuk mencoba fitur-fiturnya.',
+  'settings.demoBtn': 'Muat Data Demo',
+  'settings.demoConfirmTitle': 'Ganti data kamu dengan data demo?',
+  'settings.demoConfirmBody':
+    'Semua akun, kategori, transaksi, dan budget saat ini akan diganti. Pengaturan tetap disimpan. Unduh backup JSON dulu kalau ingin menyimpan data kamu.',
+  'settings.demoConfirm': 'Ya, Muat Data Demo',
+  'settings.demoDone': 'Data demo berhasil dimuat. Buka Dashboard untuk melihatnya.',
   'settings.dangerTitle': 'Zona Berbahaya: Reset Database',
   'settings.dangerHint':
     'Hapus permanen semua transaksi, akun kustom, dan kategori kembali ke default bersih.',
@@ -217,6 +226,18 @@ export const id: Record<TranslationKey, string> = {
   'dashboard.breakdown': 'Breakdown kategori',
   'dashboard.noData': 'Belum ada transaksi bulan ini.',
   'dashboard.addFirst': 'Tambah transaksi pertama',
+  'dashboard.cashflowTitle': 'Pemasukan vs pengeluaran',
+  'dashboard.other': 'Lainnya',
+  'chart.category': 'Kategori',
+  'chart.share': 'Porsi',
+  'chart.total': 'Total',
+  'dashboard.cashflowDesc': '6 bulan terakhir',
+  'dashboard.balanceTitle': 'Total saldo',
+  'dashboard.balanceDesc': 'Saldo akhir hari, {month}',
+  'chart.showTable': 'Tabel',
+  'chart.showChart': 'Grafik',
+  'chart.month': 'Bulan',
+  'chart.date': 'Tanggal',
 
   // Transactions
   'tx.title': 'Transaksi',

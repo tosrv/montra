@@ -4,6 +4,8 @@ import { db } from '../db/database.ts';
 import {
   createTransaction,
   deleteTransaction,
+  getCashflowTrend,
+  getDailyBalanceSeries,
   getFilteredTransactions,
   getMonthlyDashboardSummary,
   updateTransaction,
@@ -180,5 +182,35 @@ describe('updateTransaction / deleteTransaction', () => {
 
     await deleteTransaction(lunch.id!);
     expect(await db.transactions.get(lunch.id!)).toBeUndefined();
+  });
+});
+
+describe('getCashflowTrend', () => {
+  it('returns one point per month ending at the selected month, ignoring transfers', async () => {
+    const trend = await getCashflowTrend(2026, 9, 3);
+    expect(trend).toEqual([
+      { year: 2026, month: 7, income: 0, expense: 0 },
+      { year: 2026, month: 8, income: 500000, expense: 25000 },
+      { year: 2026, month: 9, income: 0, expense: 15000 },
+    ]);
+  });
+
+  it('crosses year boundaries', async () => {
+    const trend = await getCashflowTrend(2027, 0, 2);
+    expect(trend.map((p) => [p.year, p.month])).toEqual([
+      [2026, 11],
+      [2027, 0],
+    ]);
+  });
+});
+
+describe('getDailyBalanceSeries', () => {
+  it("carries the opening balance and applies each day's net change", async () => {
+    const series = await getDailyBalanceSeries(2026, 8);
+    expect(series).toHaveLength(30);
+    expect(series[0]).toEqual({ date: '2026-09-01', balance: 600000 });
+    expect(series.find((p) => p.date === '2026-09-19')?.balance).toBe(575000);
+    // Transfer on the 20th does not change the total
+    expect(series[29]).toEqual({ date: '2026-09-30', balance: 575000 });
   });
 });

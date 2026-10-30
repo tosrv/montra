@@ -204,6 +204,15 @@ export const en = {
   'settings.restoreBtn': 'Restore Backup',
   'settings.restoring': 'Restoring…',
   'settings.restoreSuccess': 'Backup successfully validated and restored to your local database!',
+  'settings.demoTitle': 'Demo data',
+  'settings.demoHint':
+    'Fill the app with 6 months of sample accounts, transactions, and budgets to explore the features.',
+  'settings.demoBtn': 'Load Demo Data',
+  'settings.demoConfirmTitle': 'Replace your data with demo data?',
+  'settings.demoConfirmBody':
+    'All current accounts, categories, transactions, and budgets will be replaced. Your preferences are kept. Download a JSON backup first if you want to keep your data.',
+  'settings.demoConfirm': 'Yes, Load Demo Data',
+  'settings.demoDone': 'Demo data loaded. Open the Dashboard to explore it.',
   'settings.dangerTitle': 'Danger Zone: Reset Database',
   'settings.dangerHint':
     'Permanently wipe all transactions, custom accounts, and categories back to clean defaults.',
@@ -227,6 +236,18 @@ export const en = {
   'dashboard.breakdown': 'Category breakdown',
   'dashboard.noData': 'No transactions this month yet.',
   'dashboard.addFirst': 'Add your first transaction',
+  'dashboard.cashflowTitle': 'Income vs expenses',
+  'dashboard.other': 'Other',
+  'chart.category': 'Category',
+  'chart.share': 'Share',
+  'chart.total': 'Total',
+  'dashboard.cashflowDesc': 'Last 6 months',
+  'dashboard.balanceTitle': 'Total balance',
+  'dashboard.balanceDesc': 'End-of-day balance, {month}',
+  'chart.showTable': 'Table',
+  'chart.showChart': 'Chart',
+  'chart.month': 'Month',
+  'chart.date': 'Date',
 
   // Transactions
   'tx.title': 'Transactions',
