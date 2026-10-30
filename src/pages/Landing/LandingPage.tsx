@@ -37,7 +37,9 @@ export function LandingPage() {
           {/* Headline */}
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-neutral-900 dark:text-neutral-100 tracking-tight leading-[1.15] mb-6">
             {t('landing.headlinePrefix')}{' '}
-            <span className="text-emerald-700 dark:text-emerald-400">{t('landing.headlinePrivacy')}</span>
+            <span className="text-emerald-700 dark:text-emerald-400">
+              {t('landing.headlinePrivacy')}
+            </span>
           </h1>
 
           {/* Supporting text */}
@@ -86,7 +88,10 @@ export function LandingPage() {
       </section>
 
       {/* Privacy Section */}
-      <section id="privacy" className="py-16 sm:py-24 bg-neutral-50/50 dark:bg-neutral-900/50 border-b border-neutral-100 dark:border-neutral-800">
+      <section
+        id="privacy"
+        className="py-16 sm:py-24 bg-neutral-50/50 dark:bg-neutral-900/50 border-b border-neutral-100 dark:border-neutral-800"
+      >
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <div className="text-center max-w-3xl mx-auto mb-14">
             <h2 className="text-2xl sm:text-3xl font-bold text-neutral-900 dark:text-neutral-100 tracking-tight mb-4">
@@ -102,7 +107,9 @@ export function LandingPage() {
               <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-200 flex items-center justify-center font-bold">
                 <Database className="w-5 h-5" />
               </div>
-              <h3 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">{t('landing.privacyCard1Title')}</h3>
+              <h3 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">
+                {t('landing.privacyCard1Title')}
+              </h3>
               <p className="text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed">
                 {t('landing.privacyCard1Body')}
               </p>
@@ -112,7 +119,9 @@ export function LandingPage() {
               <div className="w-10 h-10 rounded-xl bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 flex items-center justify-center font-bold">
                 <Lock className="w-5 h-5" />
               </div>
-              <h3 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">{t('landing.privacyCard2Title')}</h3>
+              <h3 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">
+                {t('landing.privacyCard2Title')}
+              </h3>
               <p className="text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed">
                 {t('landing.privacyCard2Body')}
               </p>
@@ -122,7 +131,9 @@ export function LandingPage() {
               <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-200 flex items-center justify-center font-bold">
                 <ShieldCheck className="w-5 h-5" />
               </div>
-              <h3 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">{t('landing.privacyCard3Title')}</h3>
+              <h3 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">
+                {t('landing.privacyCard3Title')}
+              </h3>
               <p className="text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed">
                 {t('landing.privacyCard3Body')}
               </p>
@@ -132,7 +143,9 @@ export function LandingPage() {
               <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-200 flex items-center justify-center font-bold">
                 <Sparkles className="w-5 h-5" />
               </div>
-              <h3 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">{t('landing.privacyCard4Title')}</h3>
+              <h3 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">
+                {t('landing.privacyCard4Title')}
+              </h3>
               <p className="text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed">
                 {t('landing.privacyCard4Body')}
               </p>
@@ -142,7 +155,10 @@ export function LandingPage() {
       </section>
 
       {/* Core Features */}
-      <section id="features" className="py-16 sm:py-24 bg-white dark:bg-neutral-950 border-b border-neutral-100 dark:border-neutral-800">
+      <section
+        id="features"
+        className="py-16 sm:py-24 bg-white dark:bg-neutral-950 border-b border-neutral-100 dark:border-neutral-800"
+      >
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <div className="text-center max-w-2xl mx-auto mb-14">
             <h2 className="text-2xl sm:text-3xl font-bold text-neutral-900 dark:text-neutral-100 tracking-tight mb-3">
@@ -158,7 +174,9 @@ export function LandingPage() {
               <div className="w-9 h-9 rounded-lg bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-200 flex items-center justify-center mb-4">
                 <ArrowLeftRight className="w-4 h-4" />
               </div>
-              <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-100 mb-2">{t('landing.feature1Title')}</h3>
+              <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-100 mb-2">
+                {t('landing.feature1Title')}
+              </h3>
               <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed">
                 {t('landing.feature1Body')}
               </p>
@@ -168,7 +186,9 @@ export function LandingPage() {
               <div className="w-9 h-9 rounded-lg bg-blue-100 dark:bg-blue-950/40 text-blue-800 dark:text-blue-200 flex items-center justify-center mb-4">
                 <Wallet className="w-4 h-4" />
               </div>
-              <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-100 mb-2">{t('landing.feature2Title')}</h3>
+              <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-100 mb-2">
+                {t('landing.feature2Title')}
+              </h3>
               <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed">
                 {t('landing.feature2Body')}
               </p>
@@ -178,7 +198,9 @@ export function LandingPage() {
               <div className="w-9 h-9 rounded-lg bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-200 flex items-center justify-center mb-4">
                 <PieChart className="w-4 h-4" />
               </div>
-              <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-100 mb-2">{t('landing.feature3Title')}</h3>
+              <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-100 mb-2">
+                {t('landing.feature3Title')}
+              </h3>
               <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed">
                 {t('landing.feature3Body')}
               </p>
@@ -188,7 +210,9 @@ export function LandingPage() {
               <div className="w-9 h-9 rounded-lg bg-neutral-200 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 flex items-center justify-center mb-4">
                 <ShieldCheck className="w-4 h-4" />
               </div>
-              <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-100 mb-2">{t('landing.feature4Title')}</h3>
+              <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-100 mb-2">
+                {t('landing.feature4Title')}
+              </h3>
               <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed">
                 {t('landing.feature4Body')}
               </p>
@@ -198,7 +222,9 @@ export function LandingPage() {
               <div className="w-9 h-9 rounded-lg bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-200 flex items-center justify-center mb-4">
                 <Download className="w-4 h-4" />
               </div>
-              <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-100 mb-2">{t('landing.feature5Title')}</h3>
+              <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-100 mb-2">
+                {t('landing.feature5Title')}
+              </h3>
               <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed">
                 {t('landing.feature5Body')}
               </p>
@@ -208,7 +234,9 @@ export function LandingPage() {
               <div className="w-9 h-9 rounded-lg bg-teal-100 dark:bg-teal-950/40 text-teal-800 dark:text-teal-200 flex items-center justify-center mb-4">
                 <FileSpreadsheet className="w-4 h-4" />
               </div>
-              <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-100 mb-2">{t('landing.feature6Title')}</h3>
+              <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-100 mb-2">
+                {t('landing.feature6Title')}
+              </h3>
               <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed">
                 {t('landing.feature6Body')}
               </p>
@@ -218,7 +246,10 @@ export function LandingPage() {
       </section>
 
       {/* How It Works */}
-      <section id="how-it-works" className="py-16 sm:py-24 bg-neutral-50/40 dark:bg-neutral-900/50 border-b border-neutral-100 dark:border-neutral-800">
+      <section
+        id="how-it-works"
+        className="py-16 sm:py-24 bg-neutral-50/40 dark:bg-neutral-900/50 border-b border-neutral-100 dark:border-neutral-800"
+      >
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <div className="text-center max-w-2xl mx-auto mb-14">
             <h2 className="text-2xl sm:text-3xl font-bold text-neutral-900 dark:text-neutral-100 tracking-tight mb-3">
@@ -231,7 +262,9 @@ export function LandingPage() {
               <div className="w-8 h-8 rounded-full bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 flex items-center justify-center text-sm font-bold">
                 1
               </div>
-              <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-100">{t('landing.howStep1Title')}</h3>
+              <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-100">
+                {t('landing.howStep1Title')}
+              </h3>
               <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed">
                 {t('landing.howStep1Body')}
               </p>
@@ -241,7 +274,9 @@ export function LandingPage() {
               <div className="w-8 h-8 rounded-full bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 flex items-center justify-center text-sm font-bold">
                 2
               </div>
-              <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-100">{t('landing.howStep2Title')}</h3>
+              <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-100">
+                {t('landing.howStep2Title')}
+              </h3>
               <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed">
                 {t('landing.howStep2Body')}
               </p>
@@ -251,7 +286,9 @@ export function LandingPage() {
               <div className="w-8 h-8 rounded-full bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 flex items-center justify-center text-sm font-bold">
                 3
               </div>
-              <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-100">{t('landing.howStep3Title')}</h3>
+              <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-100">
+                {t('landing.howStep3Title')}
+              </h3>
               <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed">
                 {t('landing.howStep3Body')}
               </p>
@@ -261,7 +298,10 @@ export function LandingPage() {
       </section>
 
       {/* Backup & Restore Deep Dive */}
-      <section id="backup" className="py-16 bg-white dark:bg-neutral-950 border-b border-neutral-100 dark:border-neutral-800">
+      <section
+        id="backup"
+        className="py-16 bg-white dark:bg-neutral-950 border-b border-neutral-100 dark:border-neutral-800"
+      >
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <div className="p-8 sm:p-10 rounded-3xl bg-neutral-900 dark:bg-neutral-800 text-white space-y-6">
             <div className="space-y-4 max-w-2xl">
@@ -272,9 +312,7 @@ export function LandingPage() {
               <h3 className="text-2xl sm:text-3xl font-bold tracking-tight leading-snug">
                 {t('landing.backupTitle')}
               </h3>
-              <p className="text-neutral-300 text-sm leading-relaxed">
-                {t('landing.backupBody')}
-              </p>
+              <p className="text-neutral-300 text-sm leading-relaxed">{t('landing.backupBody')}</p>
             </div>
 
             <ul className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm text-neutral-300">
@@ -311,9 +349,7 @@ export function LandingPage() {
           <h2 className="text-3xl sm:text-4xl font-extrabold text-neutral-900 dark:text-neutral-100 tracking-tight">
             {t('landing.ctaTitle')}
           </h2>
-          <p className="text-neutral-600 dark:text-neutral-300 text-base">
-            {t('landing.ctaBody')}
-          </p>
+          <p className="text-neutral-600 dark:text-neutral-300 text-base">{t('landing.ctaBody')}</p>
           <div>
             <Link
               id="final-start-tracking-cta"

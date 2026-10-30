@@ -1,10 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  formatDisplayDate,
-  formatMonthYear,
-  getMonthNames,
-  isDateInMonth,
-} from './dates.ts';
+import { formatDisplayDate, formatMonthYear, getMonthNames, isDateInMonth } from './dates.ts';
 
 describe('formatDisplayDate', () => {
   it('formats YYYY-MM-DD to short display form', () => {

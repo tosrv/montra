@@ -1,11 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { db } from '../db/database.ts';
 import type { AppSettings } from '../types.ts';
-import {
-  applyTheme,
-  subscribeSystemTheme,
-  type ThemePreference,
-} from '../utils/theme.ts';
+import { applyTheme, subscribeSystemTheme, type ThemePreference } from '../utils/theme.ts';
 import { getStoredLocale } from '../i18n/locale.ts';
 
 export function useSettings() {

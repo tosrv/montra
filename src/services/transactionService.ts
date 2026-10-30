@@ -1,6 +1,6 @@
 import { db } from '../db/database.ts';
-import { isDateInMonth } from '../utils/dates.ts';
-import type { MonthlySummary, Transaction, TransactionType } from '../types.ts';
+import { getTodayDateString, isDateInMonth } from '../utils/dates.ts';
+import type { Transaction, TransactionType } from '../types.ts';
 
 export interface TransactionFilterOptions {
   search?: string;
@@ -16,16 +16,42 @@ export async function getAllTransactions(): Promise<Transaction[]> {
   return await db.transactions.orderBy('date').reverse().toArray();
 }
 
+/**
+ * Narrows the candidate set with the most selective available index so the
+ * in-memory filters below don't have to scan every transaction.
+ */
+async function queryIndexedCandidates(options: TransactionFilterOptions): Promise<Transaction[]> {
+  if (options.year !== undefined && options.month !== undefined) {
+    const prefix = `${options.year}-${String(options.month + 1).padStart(2, '0')}-`;
+    return await db.transactions.where('date').startsWith(prefix).toArray();
+  }
+  if (options.accountId) {
+    return await db.transactions
+      .where('accountId')
+      .equals(options.accountId)
+      .or('destinationAccountId')
+      .equals(options.accountId)
+      .toArray();
+  }
+  if (options.categoryId) {
+    return await db.transactions.where('categoryId').equals(options.categoryId).toArray();
+  }
+  if (options.type && options.type !== 'all') {
+    return await db.transactions.where('type').equals(options.type).toArray();
+  }
+  return await db.transactions.toArray();
+}
+
 export async function getFilteredTransactions(
   options: TransactionFilterOptions
 ): Promise<Transaction[]> {
-  let txs = await db.transactions.toArray();
+  let txs = await queryIndexedCandidates(options);
 
   // Search filter (description)
   if (options.search && options.search.trim() !== '') {
     const q = options.search.toLowerCase().trim();
-    txs = txs.filter((tx) =>
-      tx.description.toLowerCase().includes(q) || tx.amount.toString().includes(q)
+    txs = txs.filter(
+      (tx) => tx.description.toLowerCase().includes(q) || tx.amount.toString().includes(q)
     );
   }
 
@@ -252,9 +278,90 @@ export async function updateTransaction(
     date: data.date,
     updatedAt: now,
   });
-
 }
 
 export async function deleteTransaction(id: number): Promise<void> {
   await db.transactions.delete(id);
+}
+
+export interface CashflowPoint {
+  year: number;
+  month: number; // 0-11
+  income: number;
+  expense: number;
+}
+
+/**
+ * Income vs expense per month for the `months` months ending at (year, month).
+ * Transfers are excluded since they don't change overall cash.
+ */
+export async function getCashflowTrend(
+  year: number,
+  month: number,
+  months = 6
+): Promise<CashflowPoint[]> {
+  const points: CashflowPoint[] = [];
+  for (let i = months - 1; i >= 0; i--) {
+    const d = new Date(year, month - i, 1);
+    points.push({ year: d.getFullYear(), month: d.getMonth(), income: 0, expense: 0 });
+  }
+
+  const toKey = (y: number, m: number) => `${y}-${String(m + 1).padStart(2, '0')}`;
+  const first = points[0];
+  const last = points[points.length - 1];
+  const txs = await db.transactions
+    .where('date')
+    .between(
+      `${toKey(first.year, first.month)}-01`,
+      `${toKey(last.year, last.month)}-99`,
+      true,
+      true
+    )
+    .toArray();
+
+  const byKey = new Map(points.map((p) => [toKey(p.year, p.month), p]));
+  for (const tx of txs) {
+    const point = byKey.get(tx.date.slice(0, 7));
+    if (!point) continue;
+    if (tx.type === 'income') point.income += tx.amount;
+    else if (tx.type === 'expense') point.expense += tx.amount;
+  }
+  return points;
+}
+
+export interface BalancePoint {
+  date: string; // YYYY-MM-DD
+  balance: number;
+}
+
+/**
+ * Total balance across all accounts at the end of each day of the month.
+ * Days after today are omitted for the current month.
+ */
+export async function getDailyBalanceSeries(year: number, month: number): Promise<BalancePoint[]> {
+  const [accounts, txs] = await Promise.all([db.accounts.toArray(), db.transactions.toArray()]);
+  const monthKey = `${year}-${String(month + 1).padStart(2, '0')}`;
+  const startDate = `${monthKey}-01`;
+
+  let balance = accounts.reduce((acc, a) => acc + (a.initialBalance || 0), 0);
+  const dailyDelta = new Map<string, number>();
+  for (const tx of txs) {
+    const delta = tx.type === 'income' ? tx.amount : tx.type === 'expense' ? -tx.amount : 0;
+    if (delta === 0) continue;
+    if (tx.date < startDate) balance += delta;
+    else if (tx.date.startsWith(monthKey)) {
+      dailyDelta.set(tx.date, (dailyDelta.get(tx.date) || 0) + delta);
+    }
+  }
+
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const today = getTodayDateString();
+  const points: BalancePoint[] = [];
+  for (let day = 1; day <= daysInMonth; day++) {
+    const date = `${monthKey}-${String(day).padStart(2, '0')}`;
+    if (date > today) break;
+    balance += dailyDelta.get(date) || 0;
+    points.push({ date, balance });
+  }
+  return points;
 }

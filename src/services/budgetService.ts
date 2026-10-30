@@ -8,10 +8,7 @@ import type {
   MonthlyBudgetOverview,
 } from '../types.ts';
 
-export async function getBudgetForMonth(
-  year: number,
-  month: number
-): Promise<Budget | undefined> {
+export async function getBudgetForMonth(year: number, month: number): Promise<Budget | undefined> {
   const all = await db.budgets.toArray();
   return all.find((b) => b.year === year && b.month === month);
 }

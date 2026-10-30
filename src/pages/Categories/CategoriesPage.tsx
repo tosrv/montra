@@ -1,32 +1,16 @@
 import React, { useState } from 'react';
-import {
-  Plus,
-  Tags,
-  Edit2,
-  Trash2,
-  AlertTriangle,
-  X,
-  Check,
-  ArrowDownRight,
-  ArrowUpRight,
-} from 'lucide-react';
+import { Plus, Tags, Edit2, Trash2, X, Check, ArrowDownRight, ArrowUpRight } from 'lucide-react';
 import { useCategories } from '../../hooks/useCategories.ts';
 import { countCategoryTransactions } from '../../services/categoryService.ts';
 import { CategoryIcon, AVAILABLE_ICONS } from '../../components/ui/CategoryIcon.tsx';
 import { useLanguage } from '../../i18n/LanguageProvider.tsx';
+import { ConfirmDialog } from '../../components/ui/ConfirmDialog.tsx';
 import type { Category, CategoryType } from '../../types.ts';
 
 export function CategoriesPage() {
   const { t } = useLanguage();
-  const {
-    categories,
-    incomeCategories,
-    expenseCategories,
-    loading,
-    addCategory,
-    editCategory,
-    removeCategory,
-  } = useCategories();
+  const { incomeCategories, expenseCategories, addCategory, editCategory, removeCategory } =
+    useCategories();
 
   const [activeTab, setActiveTab] = useState<CategoryType>('expense');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -114,7 +98,9 @@ export function CategoriesPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 tracking-tight">{t('categories.title')}</h1>
+          <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 tracking-tight">
+            {t('categories.title')}
+          </h1>
           <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
             {t('categories.subtitle')}
           </p>
@@ -201,7 +187,9 @@ export function CategoriesPage() {
                   <CategoryIcon name={cat.icon} className="w-4 h-4" />
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-xs font-bold text-neutral-900 dark:text-neutral-100 truncate">{cat.name}</h3>
+                  <h3 className="text-xs font-bold text-neutral-900 dark:text-neutral-100 truncate">
+                    {cat.name}
+                  </h3>
                   <span className="text-[10px] text-neutral-400">{t(`common.${cat.type}`)}</span>
                 </div>
               </div>
@@ -344,51 +332,29 @@ export function CategoriesPage() {
 
       {/* Delete Confirmation Modal */}
       {categoryToDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/40 dark:bg-black/60 backdrop-blur-xs">
-          <div className="w-full max-w-md bg-white dark:bg-neutral-900 p-6 rounded-2xl shadow-xl border border-neutral-200 dark:border-neutral-800 space-y-4">
-            <div className="flex items-center gap-3 text-rose-600 dark:text-rose-400">
-              <div className="w-9 h-9 rounded-xl bg-rose-50 dark:bg-rose-950/40 flex items-center justify-center">
-                <AlertTriangle className="w-5 h-5" />
-              </div>
-              <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-100">
-                {t('categories.deleteConfirmTitle')}
-              </h3>
-            </div>
+        <ConfirmDialog
+          title={t('categories.deleteConfirmTitle')}
+          cancelLabel={t('common.cancel')}
+          confirmLabel={deleteRefTxCount > 0 ? t('categories.deleteForce') : t('common.delete')}
+          onCancel={() => setCategoryToDelete(null)}
+          onConfirm={() => confirmDelete(deleteRefTxCount > 0)}
+        >
+          {deleteRefTxCount > 0 ? (
+            <p className="text-xs p-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-200 rounded-xl">
+              {t('categories.deleteLinked', { count: deleteRefTxCount })}
+            </p>
+          ) : (
+            <p className="text-xs text-neutral-600 dark:text-neutral-300">
+              {t('categories.deleteConfirmBody')}
+            </p>
+          )}
 
-            {deleteRefTxCount > 0 ? (
-              <p className="text-xs text-neutral-600 dark:text-neutral-300 p-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-200 rounded-xl">
-                {t('categories.deleteLinked', { count: deleteRefTxCount })}
-              </p>
-            ) : (
-              <p className="text-xs text-neutral-600 dark:text-neutral-300">
-                {t('categories.deleteConfirmBody')}
-              </p>
-            )}
-
-            {deleteError && (
-              <p className="text-xs text-rose-700 dark:text-rose-100 bg-rose-50 dark:bg-rose-950/40 p-2.5 rounded-lg border border-rose-200 dark:border-rose-900">
-                {deleteError}
-              </p>
-            )}
-
-            <div className="flex items-center justify-end gap-2 pt-2">
-              <button
-                type="button"
-                onClick={() => setCategoryToDelete(null)}
-                className="px-4 py-2 text-xs font-semibold text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-xl"
-              >
-                {t('common.cancel')}
-              </button>
-              <button
-                type="button"
-                onClick={() => confirmDelete(deleteRefTxCount > 0)}
-                className="px-4 py-2 text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-xl shadow-2xs"
-              >
-                {deleteRefTxCount > 0 ? t('categories.deleteForce') : t('common.delete')}
-              </button>
-            </div>
-          </div>
-        </div>
+          {deleteError && (
+            <p className="text-xs text-rose-700 dark:text-rose-100 bg-rose-50 dark:bg-rose-950/40 p-2.5 rounded-lg border border-rose-200 dark:border-rose-900">
+              {deleteError}
+            </p>
+          )}
+        </ConfirmDialog>
       )}
     </div>
   );

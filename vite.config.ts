@@ -13,6 +13,10 @@ const pkg = JSON.parse(readFileSync(path.join(rootDir, 'package.json'), 'utf-8')
 export default defineConfig(() => {
   return {
     plugins: [react(), tailwindcss()],
+    build: {
+      // Read by public/sw.js to precache every build asset for offline use.
+      manifest: 'asset-manifest.json',
+    },
     define: {
       __APP_VERSION__: JSON.stringify(pkg.version),
     },

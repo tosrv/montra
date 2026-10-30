@@ -90,8 +90,8 @@ export function validateBackupData(data: unknown): ValidationResult {
     if (typeof tx.amount !== 'number' || tx.amount <= 0 || isNaN(tx.amount)) {
       errors.push(`Transaction at index ${i} has invalid amount "${tx.amount}". Must be > 0.`);
     }
-    if (!tx.date || typeof tx.date !== 'string') {
-      errors.push(`Transaction at index ${i} is missing a valid date.`);
+    if (typeof tx.date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(tx.date)) {
+      errors.push(`Transaction at index ${i} is missing a valid date (expected YYYY-MM-DD).`);
     }
     if (tx.accountId === undefined || !accountIdSet.has(tx.accountId)) {
       warnings.push(
@@ -102,7 +102,9 @@ export function validateBackupData(data: unknown): ValidationResult {
       if (!tx.destinationAccountId) {
         errors.push(`Transfer transaction at index ${i} is missing destinationAccountId.`);
       } else if (tx.destinationAccountId === tx.accountId) {
-        errors.push(`Transfer transaction at index ${i} has identical source and destination account.`);
+        errors.push(
+          `Transfer transaction at index ${i} has identical source and destination account.`
+        );
       } else if (!accountIdSet.has(tx.destinationAccountId)) {
         warnings.push(
           `Transfer transaction at index ${i} references destination account ID ${tx.destinationAccountId} which is not found.`

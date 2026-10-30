@@ -1,5 +1,5 @@
 import { db, initializeDatabase } from '../db/database.ts';
-import type { Account, AppSettings, BackupData, Category, Transaction } from '../types.ts';
+import type { BackupData } from '../types.ts';
 export type { ValidationResult } from './backupValidation.ts';
 export { validateBackupData } from './backupValidation.ts';
 

@@ -67,16 +67,17 @@ export async function deleteAccount(
     };
   }
 
-  // If forced, delete referencing transactions or prevent
-  if (force) {
-    const toDelete = await db.transactions
-      .filter((tx) => tx.accountId === accountId || tx.destinationAccountId === accountId)
-      .toArray();
-    for (const tx of toDelete) {
-      if (tx.id) await db.transactions.delete(tx.id);
+  // Delete the account and (if forced) its transactions atomically
+  await db.transaction('rw', [db.accounts, db.transactions], async () => {
+    if (force) {
+      await db.transactions
+        .where('accountId')
+        .equals(accountId)
+        .or('destinationAccountId')
+        .equals(accountId)
+        .delete();
     }
-  }
-
-  await db.accounts.delete(accountId);
+    await db.accounts.delete(accountId);
+  });
   return { success: true };
 }

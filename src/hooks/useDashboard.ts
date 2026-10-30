@@ -1,5 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getMonthlyDashboardSummary } from '../services/transactionService.ts';
+import {
+  getCashflowTrend,
+  getDailyBalanceSeries,
+  getMonthlyDashboardSummary,
+  type BalancePoint,
+  type CashflowPoint,
+} from '../services/transactionService.ts';
 import { getCurrentMonthYear } from '../utils/dates.ts';
 import type { Transaction } from '../types.ts';
 
@@ -30,13 +36,21 @@ export function useDashboard() {
     recentTransactions: [],
   });
 
+  const [cashflowTrend, setCashflowTrend] = useState<CashflowPoint[]>([]);
+  const [balanceSeries, setBalanceSeries] = useState<BalancePoint[]>([]);
   const [loading, setLoading] = useState(true);
 
   const refreshDashboard = useCallback(async () => {
     try {
       setLoading(true);
-      const summary = await getMonthlyDashboardSummary(selectedYear, selectedMonth);
+      const [summary, trend, balance] = await Promise.all([
+        getMonthlyDashboardSummary(selectedYear, selectedMonth),
+        getCashflowTrend(selectedYear, selectedMonth),
+        getDailyBalanceSeries(selectedYear, selectedMonth),
+      ]);
       setData(summary);
+      setCashflowTrend(trend);
+      setBalanceSeries(balance);
     } catch (e) {
       console.error('Failed to load dashboard:', e);
     } finally {
@@ -74,6 +88,8 @@ export function useDashboard() {
     goToPreviousMonth,
     goToNextMonth,
     data,
+    cashflowTrend,
+    balanceSeries,
     loading,
     refreshDashboard,
   };

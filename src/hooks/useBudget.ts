@@ -115,12 +115,9 @@ export function useBudget(initialYear?: number, initialMonth?: number) {
     // If no monthly budget exists yet, create one with at least this amount
     let budgetId = overview.budget?.id;
     if (!budgetId) {
-      const newBudget = await createOrUpdateMonthlyBudget(
-        selectedYear,
-        selectedMonth,
-        amount,
-        [{ categoryId, amount }]
-      );
+      const newBudget = await createOrUpdateMonthlyBudget(selectedYear, selectedMonth, amount, [
+        { categoryId, amount },
+      ]);
       budgetId = newBudget.id;
     } else {
       await setCategoryBudget(budgetId, categoryId, amount);

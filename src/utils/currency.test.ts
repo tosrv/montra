@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatCurrency, parseCurrencyInput } from './currency.ts';
+import { formatCurrency, maskCurrency, parseCurrencyInput } from './currency.ts';
 
 describe('formatCurrency', () => {
   it('formats IDR with dot thousands separator', () => {
@@ -38,5 +38,12 @@ describe('parseCurrencyInput', () => {
   it('returns 0 for empty or non-numeric input', () => {
     expect(parseCurrencyInput('')).toBe(0);
     expect(parseCurrencyInput('abc')).toBe(0);
+  });
+});
+
+describe('maskCurrency', () => {
+  it('hides digits but keeps the currency symbol', () => {
+    expect(maskCurrency('IDR')).toBe('Rp ••••••');
+    expect(maskCurrency('USD')).toBe('$••••••');
   });
 });

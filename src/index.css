@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* Class-based dark mode (driven by documentElement.dark from theme preference) */
 @custom-variant dark (&:where(.dark, .dark *));
@@ -13,7 +13,14 @@
   }
 
   body {
-    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family:
+      'Plus Jakarta Sans',
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      'Segoe UI',
+      Roboto,
+      sans-serif;
     @apply bg-neutral-50 text-neutral-900 antialiased transition-colors;
   }
 
@@ -28,4 +35,37 @@
   html.dark ::selection {
     @apply bg-emerald-900 text-emerald-100;
   }
+}
+
+/*
+ * Chart tokens. Income/expense pairs are validated per mode for colorblind
+ * separation against the card surface (white / neutral-900).
+ */
+:root {
+  --chart-income: #047857;
+  --chart-expense: #fb7185;
+  --chart-line: #171717;
+  --chart-grid: #e5e5e5;
+  --chart-axis: #737373;
+  --chart-surface: #ffffff;
+  /* Category slots: validated all-pairs (donut slices can touch in any order) */
+  --chart-cat-1: #2a78d6;
+  --chart-cat-2: #eda100;
+  --chart-cat-3: #e87ba4;
+  --chart-cat-4: #008300;
+  --chart-cat-other: #d4d4d4;
+}
+
+html.dark {
+  --chart-income: #14ae7c;
+  --chart-expense: #d0204f;
+  --chart-line: #f5f5f5;
+  --chart-grid: #262626;
+  --chart-axis: #a3a3a3;
+  --chart-surface: #171717;
+  --chart-cat-1: #3987e5;
+  --chart-cat-2: #c98500;
+  --chart-cat-3: #d55181;
+  --chart-cat-4: #008300;
+  --chart-cat-other: #404040;
 }

@@ -3,9 +3,6 @@ import { useOutletContext } from 'react-router-dom';
 import {
   Plus,
   Search,
-  Filter,
-  ArrowUpDown,
-  Download,
   Trash2,
   Edit2,
   ArrowDownRight,
@@ -19,16 +16,17 @@ import {
   getFilteredTransactions,
   updateTransaction,
   deleteTransaction,
-  createTransaction,
 } from '../../services/transactionService.ts';
 import { exportTransactionsCsv } from '../../services/backupService.ts';
 import { useAccounts } from '../../hooks/useAccounts.ts';
 import { useCategories } from '../../hooks/useCategories.ts';
 import { useSettings } from '../../hooks/useSettings.ts';
 import { formatCurrency } from '../../utils/currency.ts';
-import { formatDisplayDate, getMonthNames } from '../../utils/dates.ts';
+import { formatDisplayDate, formatMonthYear, getCurrentMonthYear } from '../../utils/dates.ts';
 import { TransactionModal } from '../../components/transactions/TransactionModal.tsx';
 import { useLanguage } from '../../i18n/LanguageProvider.tsx';
+import { MonthNavigator } from '../../components/ui/MonthNavigator.tsx';
+import { ConfirmDialog } from '../../components/ui/ConfirmDialog.tsx';
 import type { Transaction, TransactionType } from '../../types.ts';
 
 interface AppContext {
@@ -39,11 +37,13 @@ export function TransactionsPage() {
   const { t } = useLanguage();
   const { onOpenAddTransaction } = useOutletContext<AppContext>();
   const { accounts, refreshAccounts } = useAccounts();
-  const { categories, refreshCategories } = useCategories();
+  const { categories } = useCategories();
   const { settings } = useSettings();
 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState(true);
+
+  // Month scope keeps the list small; queries use the date index.
+  const [period, setPeriod] = useState(() => getCurrentMonthYear());
 
   // Filters & Search
   const [search, setSearch] = useState('');
@@ -60,8 +60,9 @@ export function TransactionsPage() {
 
   const fetchTxs = useCallback(async () => {
     try {
-      setLoading(true);
       const data = await getFilteredTransactions({
+        year: period.year,
+        month: period.month,
         search,
         type: typeFilter,
         categoryId: categoryFilter,
@@ -71,10 +72,8 @@ export function TransactionsPage() {
       setTransactions(data);
     } catch (e) {
       console.error('Failed to query transactions:', e);
-    } finally {
-      setLoading(false);
     }
-  }, [search, typeFilter, categoryFilter, accountFilter, sortBy]);
+  }, [period, search, typeFilter, categoryFilter, accountFilter, sortBy]);
 
   useEffect(() => {
     fetchTxs();
@@ -118,13 +117,20 @@ export function TransactionsPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 tracking-tight">{t('tx.title')}</h1>
+          <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 tracking-tight">
+            {t('tx.title')}
+          </h1>
           <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
-            {t('tx.subtitle')}
+            {formatMonthYear(period.year, period.month)}
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <MonthNavigator
+            year={period.year}
+            month={period.month}
+            onChange={(year, month) => setPeriod({ year, month })}
+          />
           <button
             type="button"
             onClick={() => exportTransactionsCsv()}
@@ -186,7 +192,9 @@ export function TransactionsPage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 border-t border-neutral-100 dark:border-neutral-800 text-xs">
           {/* Account selector */}
           <div className="flex items-center gap-2">
-            <span className="text-neutral-400 font-medium whitespace-nowrap">{t('tx.account')}:</span>
+            <span className="text-neutral-400 font-medium whitespace-nowrap">
+              {t('tx.account')}:
+            </span>
             <select
               value={accountFilter}
               onChange={(e) => setAccountFilter(Number(e.target.value))}
@@ -203,7 +211,9 @@ export function TransactionsPage() {
 
           {/* Category selector */}
           <div className="flex items-center gap-2">
-            <span className="text-neutral-400 font-medium whitespace-nowrap">{t('tx.category')}:</span>
+            <span className="text-neutral-400 font-medium whitespace-nowrap">
+              {t('tx.category')}:
+            </span>
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(Number(e.target.value))}
@@ -243,7 +253,9 @@ export function TransactionsPage() {
               <Receipt className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('tx.emptyTitle')}</p>
+              <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                {t('tx.emptyTitle')}
+              </p>
               <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-0.5">
                 {search || typeFilter !== 'all' || categoryFilter !== 0 || accountFilter !== 0
                   ? t('tx.emptyFiltered')
@@ -279,8 +291,8 @@ export function TransactionsPage() {
                         tx.type === 'income'
                           ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200/50 dark:border-emerald-800'
                           : tx.type === 'expense'
-                          ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200/50 dark:border-rose-900'
-                          : 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200/50 dark:border-blue-800'
+                            ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200/50 dark:border-rose-900'
+                            : 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200/50 dark:border-blue-800'
                       }`}
                     >
                       {tx.type === 'income' ? (
@@ -305,8 +317,8 @@ export function TransactionsPage() {
                             tx.type === 'income'
                               ? 'bg-emerald-100/70 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-200'
                               : tx.type === 'expense'
-                              ? 'bg-rose-100/70 dark:bg-rose-950/40 text-rose-800 dark:text-rose-200'
-                              : 'bg-blue-100/70 dark:bg-blue-950/40 text-blue-800 dark:text-blue-200'
+                                ? 'bg-rose-100/70 dark:bg-rose-950/40 text-rose-800 dark:text-rose-200'
+                                : 'bg-blue-100/70 dark:bg-blue-950/40 text-blue-800 dark:text-blue-200'
                           }`}
                         >
                           {t(`common.${tx.type}`)}
@@ -331,7 +343,9 @@ export function TransactionsPage() {
                             {category && (
                               <>
                                 <span className="text-neutral-300 dark:text-neutral-600">•</span>
-                                <span className="text-neutral-600 dark:text-neutral-300">{category.name}</span>
+                                <span className="text-neutral-600 dark:text-neutral-300">
+                                  {category.name}
+                                </span>
                               </>
                             )}
                           </>
@@ -347,8 +361,8 @@ export function TransactionsPage() {
                           tx.type === 'income'
                             ? 'text-emerald-700 dark:text-emerald-400'
                             : tx.type === 'expense'
-                            ? 'text-rose-700 dark:text-rose-400'
-                            : 'text-blue-700 dark:text-blue-400'
+                              ? 'text-rose-700 dark:text-rose-400'
+                              : 'text-blue-700 dark:text-blue-400'
                         }`}
                       >
                         {tx.type === 'income' ? '+' : tx.type === 'expense' ? '-' : ''}
@@ -397,30 +411,18 @@ export function TransactionsPage() {
 
       {/* Delete Confirmation Dialog */}
       {deletingId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/40 dark:bg-black/60 backdrop-blur-xs">
-          <div className="w-full max-w-sm bg-white dark:bg-neutral-900 p-6 rounded-2xl shadow-xl border border-neutral-200 dark:border-neutral-800 space-y-4">
-            <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-100">{t('tx.deleteConfirmTitle')}</h3>
-            <p className="text-xs text-neutral-600 dark:text-neutral-300 leading-relaxed">
-              {t('tx.deleteConfirmBody')}
-            </p>
-            <div className="flex items-center justify-end gap-2 pt-2">
-              <button
-                type="button"
-                onClick={() => setDeletingId(null)}
-                className="px-4 py-2 text-xs font-semibold text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-xl transition-colors"
-              >
-                {t('common.cancel')}
-              </button>
-              <button
-                type="button"
-                onClick={handleDeleteConfirm}
-                className="px-4 py-2 text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-xl shadow-xs transition-colors"
-              >
-                {t('tx.deleteConfirm')}
-              </button>
-            </div>
-          </div>
-        </div>
+        <ConfirmDialog
+          title={t('tx.deleteConfirmTitle')}
+          icon={Trash2}
+          cancelLabel={t('common.cancel')}
+          confirmLabel={t('tx.deleteConfirm')}
+          onCancel={() => setDeletingId(null)}
+          onConfirm={handleDeleteConfirm}
+        >
+          <p className="text-xs text-neutral-600 dark:text-neutral-300 leading-relaxed">
+            {t('tx.deleteConfirmBody')}
+          </p>
+        </ConfirmDialog>
       )}
     </div>
   );

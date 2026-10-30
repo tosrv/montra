@@ -95,6 +95,15 @@ describe('validateBackupData', () => {
     expect(result.warnings.some((w) => w.includes('account ID 999'))).toBe(true);
   });
 
+  it('rejects dates that are not YYYY-MM-DD', () => {
+    const result = validateBackupData({
+      ...validBackup,
+      transactions: [{ ...validBackup.transactions[0], date: '2026-9-1' }],
+    });
+    expect(result.isValid).toBe(false);
+    expect(result.errors.some((e) => e.includes('YYYY-MM-DD'))).toBe(true);
+  });
+
   it('rejects duplicate account IDs', () => {
     const result = validateBackupData({
       ...validBackup,
