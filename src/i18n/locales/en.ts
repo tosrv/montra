@@ -233,6 +233,8 @@ export const en = {
   'dashboard.income': 'Income',
   'dashboard.expense': 'Expenses',
   'dashboard.net': 'Net cash flow',
+  'dashboard.showAmounts': 'Show amounts',
+  'dashboard.hideAmounts': 'Hide amounts',
   'dashboard.breakdown': 'Category breakdown',
   'dashboard.noData': 'No transactions this month yet.',
   'dashboard.addFirst': 'Add your first transaction',

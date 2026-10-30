@@ -2,8 +2,12 @@ import React, { useState } from 'react';
 import { Plus, Wallet, Building2, Banknote, Layers, Edit2, Trash2, X, Check } from 'lucide-react';
 import { useAccounts } from '../../hooks/useAccounts.ts';
 import { useSettings } from '../../hooks/useSettings.ts';
-import { formatCurrency, parseCurrencyInput } from '../../utils/currency.ts';
+import { parseCurrencyInput } from '../../utils/currency.ts';
 import { useLanguage } from '../../i18n/LanguageProvider.tsx';
+import {
+  AmountVisibilityToggle,
+  useAmountVisibility,
+} from '../../components/ui/AmountVisibility.tsx';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog.tsx';
 import type { AccountType, AccountWithBalance } from '../../types.ts';
 
@@ -22,6 +26,11 @@ export function AccountsPage() {
   const { t } = useLanguage();
   const { accounts, addAccount, editAccount, removeAccount } = useAccounts();
   const { settings } = useSettings();
+  const {
+    hidden: amountsHidden,
+    toggle: toggleAmounts,
+    money,
+  } = useAmountVisibility(settings.currency);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAccount, setEditingAccount] = useState<AccountWithBalance | null>(null);
@@ -120,15 +129,19 @@ export function AccountsPage() {
           </p>
         </div>
 
-        <button
-          id="accounts-add-btn"
-          type="button"
-          onClick={openCreateModal}
-          className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-neutral-900 dark:bg-neutral-100 dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-white rounded-xl transition-all shadow-2xs active:scale-95 self-start sm:self-auto"
-        >
-          <Plus className="w-3.5 h-3.5" />
-          <span>{t('accounts.new')}</span>
-        </button>
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <AmountVisibilityToggle hidden={amountsHidden} onToggle={toggleAmounts} />
+
+          <button
+            id="accounts-add-btn"
+            type="button"
+            onClick={openCreateModal}
+            className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-neutral-900 dark:bg-neutral-100 dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-white rounded-xl transition-all shadow-2xs active:scale-95"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>{t('accounts.new')}</span>
+          </button>
+        </div>
       </div>
 
       {/* Account Cards Grid */}
@@ -207,7 +220,7 @@ export function AccountsPage() {
                       {t('accounts.currentBalance')}
                     </span>
                     <div className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mt-0.5 tracking-tight">
-                      {formatCurrency(acc.currentBalance, settings.currency)}
+                      {money(acc.currentBalance)}
                     </div>
                   </div>
                 </div>
@@ -216,7 +229,7 @@ export function AccountsPage() {
                   <div className="flex items-center justify-between">
                     <span>{t('accounts.initialBalance')}</span>
                     <span className="font-semibold text-neutral-700 dark:text-neutral-300">
-                      {formatCurrency(acc.initialBalance, settings.currency)}
+                      {money(acc.initialBalance)}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">

@@ -17,6 +17,10 @@ import { formatCurrency } from '../../utils/currency.ts';
 import { formatMonthYear, formatDisplayDate } from '../../utils/dates.ts';
 import { useLanguage } from '../../i18n/LanguageProvider.tsx';
 import { MonthNavigator } from '../../components/ui/MonthNavigator.tsx';
+import {
+  AmountVisibilityToggle,
+  useAmountVisibility,
+} from '../../components/ui/AmountVisibility.tsx';
 import { CashflowTrendChart } from '../../components/charts/CashflowTrendChart.tsx';
 import { BalanceTrendChart } from '../../components/charts/BalanceTrendChart.tsx';
 import { ExpenseDonutChart } from '../../components/charts/ExpenseDonutChart.tsx';
@@ -50,6 +54,12 @@ export function DashboardPage() {
     };
   }, [refreshDashboard]);
 
+  const {
+    hidden: amountsHidden,
+    toggle: toggleAmounts,
+    money,
+  } = useAmountVisibility(settings.currency);
+
   return (
     <div className="space-y-8 animate-in fade-in duration-200">
       {/* Month & Year Navigator Header */}
@@ -63,14 +73,17 @@ export function DashboardPage() {
           </p>
         </div>
 
-        <MonthNavigator
-          year={selectedYear}
-          month={selectedMonth}
-          onChange={(year, month) => {
-            setSelectedYear(year);
-            setSelectedMonth(month);
-          }}
-        />
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <AmountVisibilityToggle hidden={amountsHidden} onToggle={toggleAmounts} />
+          <MonthNavigator
+            year={selectedYear}
+            month={selectedMonth}
+            onChange={(year, month) => {
+              setSelectedYear(year);
+              setSelectedMonth(month);
+            }}
+          />
+        </div>
       </div>
 
       {/* 1 to 4: Metric Blocks in requested priority */}
@@ -84,7 +97,7 @@ export function DashboardPage() {
             <Wallet className="w-4 h-4 text-neutral-400 dark:text-neutral-500" />
           </div>
           <div className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 tracking-tight">
-            {formatCurrency(data.currentBalance, settings.currency)}
+            {money(data.currentBalance)}
           </div>
           <p className="text-[11px] text-neutral-400 dark:text-neutral-500">
             {formatMonthYear(selectedYear, selectedMonth)}
@@ -100,7 +113,7 @@ export function DashboardPage() {
             <ArrowDownRight className="w-4 h-4 text-emerald-600" />
           </div>
           <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-400 tracking-tight">
-            {formatCurrency(data.monthlyIncome, settings.currency)}
+            {money(data.monthlyIncome)}
           </div>
           <p className="text-[11px] text-neutral-400 dark:text-neutral-500">
             {formatMonthYear(selectedYear, selectedMonth)}
@@ -116,7 +129,7 @@ export function DashboardPage() {
             <ArrowUpRight className="w-4 h-4 text-rose-600" />
           </div>
           <div className="text-2xl font-bold text-rose-700 dark:text-rose-400 tracking-tight">
-            {formatCurrency(data.monthlyExpense, settings.currency)}
+            {money(data.monthlyExpense)}
           </div>
           <p className="text-[11px] text-neutral-400 dark:text-neutral-500">
             {formatMonthYear(selectedYear, selectedMonth)}
@@ -142,7 +155,7 @@ export function DashboardPage() {
                 : 'text-rose-700 dark:text-rose-400'
             }`}
           >
-            {formatCurrency(data.netCashFlow, settings.currency)}
+            {money(data.netCashFlow)}
           </div>
           <p className="text-[11px] text-neutral-400 dark:text-neutral-500">
             {formatMonthYear(selectedYear, selectedMonth)}

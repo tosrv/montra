@@ -31,6 +31,13 @@ export function formatCurrency(amount: number, currencyCode: string = 'IDR'): st
   return isNegative ? `-${symbol}${formatted}` : `${symbol}${formatted}`;
 }
 
+/** Hidden-amount placeholder that keeps the currency symbol, e.g. "Rp ••••••". */
+export function maskCurrency(currencyCode: string = 'IDR'): string {
+  if (currencyCode === 'IDR') return 'Rp ••••••';
+  const option = CURRENCY_OPTIONS.find((c) => c.code === currencyCode);
+  return `${option ? option.symbol : `${currencyCode} `}••••••`;
+}
+
 /**
  * Parses user input string (which may have commas, dots, spaces, "Rp") into a clean positive integer.
  */

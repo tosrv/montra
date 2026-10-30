@@ -8,14 +8,13 @@ import {
   Trash2,
   Wallet,
 } from 'lucide-react';
-import { formatCurrency } from '../../../utils/currency.ts';
 import { formatMonthYear } from '../../../utils/dates.ts';
 import { useLanguage } from '../../../i18n/LanguageProvider.tsx';
 import type { MonthlyBudgetOverview } from '../../../types.ts';
 
 interface BudgetSummaryCardProps {
   overview: MonthlyBudgetOverview;
-  currency: string;
+  money: (amount: number) => string;
   selectedYear: number;
   selectedMonth: number;
   onEdit: () => void;
@@ -24,7 +23,7 @@ interface BudgetSummaryCardProps {
 
 export function BudgetSummaryCard({
   overview,
-  currency,
+  money,
   selectedYear,
   selectedMonth,
   onEdit,
@@ -40,7 +39,7 @@ export function BudgetSummaryCard({
             {formatMonthYear(selectedYear, selectedMonth)}
           </h2>
           <p className="text-xs text-neutral-500 dark:text-neutral-400">
-            {t('budget.totalBudget')}: {formatCurrency(overview.totalBudget, currency)}
+            {t('budget.totalBudget')}: {money(overview.totalBudget)}
           </p>
         </div>
 
@@ -75,7 +74,7 @@ export function BudgetSummaryCard({
             <ArrowDownRight className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
           </div>
           <div className="text-xl font-bold text-emerald-700 dark:text-emerald-400 tracking-tight">
-            {formatCurrency(overview.monthlyIncome, currency)}
+            {money(overview.monthlyIncome)}
           </div>
           <p className="text-[10px] text-neutral-400 dark:text-neutral-500">From transactions</p>
         </div>
@@ -89,7 +88,7 @@ export function BudgetSummaryCard({
             <Wallet className="w-4 h-4 text-neutral-400 dark:text-neutral-500" />
           </div>
           <div className="text-xl font-bold text-neutral-900 dark:text-neutral-100 tracking-tight">
-            {formatCurrency(overview.totalBudget, currency)}
+            {money(overview.totalBudget)}
           </div>
           <p className="text-[10px] text-neutral-400 dark:text-neutral-500">Planned limit</p>
         </div>
@@ -103,7 +102,7 @@ export function BudgetSummaryCard({
             <ArrowUpRight className="w-4 h-4 text-rose-600 dark:text-rose-400" />
           </div>
           <div className="text-xl font-bold text-rose-700 dark:text-rose-400 tracking-tight">
-            {formatCurrency(overview.totalSpent, currency)}
+            {money(overview.totalSpent)}
           </div>
           <p className="text-[10px] text-neutral-400 dark:text-neutral-500">
             {t('budget.used', { percentage: overview.percentageUsed })}
@@ -130,7 +129,7 @@ export function BudgetSummaryCard({
             }`}
           >
             {overview.remaining < 0 ? '-' : ''}
-            {formatCurrency(Math.abs(overview.remaining), currency)}
+            {money(Math.abs(overview.remaining))}
           </div>
           <p className="text-[10px] text-neutral-400 dark:text-neutral-500">
             {overview.remaining >= 0 ? 'Left to spend' : 'Over planned budget'}
@@ -152,8 +151,8 @@ export function BudgetSummaryCard({
             }`}
           >
             {overview.remaining >= 0
-              ? `${formatCurrency(overview.remaining, currency)} ${t('budget.remaining').toLowerCase()}`
-              : `${formatCurrency(Math.abs(overview.remaining), currency)} ${t('budget.overBudget').toLowerCase()}`}
+              ? `${money(overview.remaining)} ${t('budget.remaining').toLowerCase()}`
+              : `${money(Math.abs(overview.remaining))} ${t('budget.overBudget').toLowerCase()}`}
           </span>
         </div>
 

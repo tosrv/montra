@@ -223,6 +223,8 @@ export const id: Record<TranslationKey, string> = {
   'dashboard.income': 'Pemasukan',
   'dashboard.expense': 'Pengeluaran',
   'dashboard.net': 'Arus kas bersih',
+  'dashboard.showAmounts': 'Tampilkan nominal',
+  'dashboard.hideAmounts': 'Sembunyikan nominal',
   'dashboard.breakdown': 'Breakdown kategori',
   'dashboard.noData': 'Belum ada transaksi bulan ini.',
   'dashboard.addFirst': 'Tambah transaksi pertama',

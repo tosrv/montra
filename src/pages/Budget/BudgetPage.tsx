@@ -3,11 +3,14 @@ import { Plus, Trash2, CircleDollarSign, Copy } from 'lucide-react';
 import { useBudget } from '../../hooks/useBudget.ts';
 import { useCategories } from '../../hooks/useCategories.ts';
 import { useSettings } from '../../hooks/useSettings.ts';
-import { formatCurrency } from '../../utils/currency.ts';
 import { formatMonthYear, getMonthNames } from '../../utils/dates.ts';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog.tsx';
 import { useLanguage } from '../../i18n/LanguageProvider.tsx';
 import { MonthNavigator } from '../../components/ui/MonthNavigator.tsx';
+import {
+  AmountVisibilityToggle,
+  useAmountVisibility,
+} from '../../components/ui/AmountVisibility.tsx';
 import { MonthlyBudgetModal } from './MonthlyBudgetModal.tsx';
 import { CategoryBudgetModal } from './CategoryBudgetModal.tsx';
 import { BudgetSummaryCard } from './components/BudgetSummaryCard.tsx';
@@ -20,6 +23,11 @@ export function BudgetPage() {
   const { t } = useLanguage();
   const { settings } = useSettings();
   const { expenseCategories } = useCategories();
+  const {
+    hidden: amountsHidden,
+    toggle: toggleAmounts,
+    money,
+  } = useAmountVisibility(settings.currency);
   const {
     selectedYear,
     selectedMonth,
@@ -94,14 +102,18 @@ export function BudgetPage() {
           </p>
         </div>
 
-        <MonthNavigator
-          year={selectedYear}
-          month={selectedMonth}
-          onChange={(year, month) => {
-            setSelectedYear(year);
-            setSelectedMonth(month);
-          }}
-        />
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <AmountVisibilityToggle hidden={amountsHidden} onToggle={toggleAmounts} />
+
+          <MonthNavigator
+            year={selectedYear}
+            month={selectedMonth}
+            onChange={(year, month) => {
+              setSelectedYear(year);
+              setSelectedMonth(month);
+            }}
+          />
+        </div>
       </div>
 
       {/* 2. Empty State when no budget exists for this month */}
@@ -125,7 +137,7 @@ export function BudgetPage() {
             <div className="max-w-sm mx-auto p-3 rounded-xl bg-neutral-50 dark:bg-neutral-800/60 border border-neutral-200/60 dark:border-neutral-800 text-xs text-neutral-600 dark:text-neutral-400 flex items-center justify-between">
               <span>Actual spending recorded so far:</span>
               <span className="font-bold text-neutral-900 dark:text-neutral-100">
-                {formatCurrency(overview.totalSpent, settings.currency)}
+                {money(overview.totalSpent)}
               </span>
             </div>
           )}
@@ -158,7 +170,7 @@ export function BudgetPage() {
         <div className="space-y-6">
           <BudgetSummaryCard
             overview={overview}
-            currency={settings.currency}
+            money={money}
             selectedYear={selectedYear}
             selectedMonth={selectedMonth}
             onEdit={() => setIsMonthlyModalOpen(true)}
@@ -176,8 +188,7 @@ export function BudgetPage() {
                 </h2>
                 <p className="text-xs text-neutral-500 dark:text-neutral-400">
                   {overview.categoryBudgets.length} budgeted categories (
-                  {formatCurrency(overview.totalAllocatedToCategories, settings.currency)}{' '}
-                  allocated)
+                  {money(overview.totalAllocatedToCategories)} allocated)
                 </p>
               </div>
 
