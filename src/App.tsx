@@ -65,6 +65,7 @@ export default function App() {
                 <Route path="accounts" element={<AccountsPage />} />
                 <Route path="categories" element={<CategoriesPage />} />
                 <Route path="settings" element={<SettingsPage />} />
+                <Route path="settings/:section" element={<SettingsPage />} />
               </Route>
 
               <Route path="*" element={<Navigate to="/" replace />} />

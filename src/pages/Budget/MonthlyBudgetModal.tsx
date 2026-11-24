@@ -3,6 +3,7 @@ import { X, Check } from 'lucide-react';
 import { formatCurrency } from '../../utils/currency.ts';
 import { useLanguage } from '../../i18n/LanguageProvider.tsx';
 import type { Category } from '../../types.ts';
+import { useSheetDrag } from '../../hooks/useSheetDrag.ts';
 
 interface MonthlyBudgetModalProps {
   isOpen: boolean;
@@ -31,6 +32,7 @@ export function MonthlyBudgetModal({
   onSave,
 }: MonthlyBudgetModalProps) {
   const { t } = useLanguage();
+  const sheetRef = useSheetDrag(onClose);
   const [totalBudgetStr, setTotalBudgetStr] = useState(
     initialTotalBudget > 0 ? String(initialTotalBudget) : ''
   );
@@ -102,8 +104,11 @@ export function MonthlyBudgetModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/40 dark:bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
-      <div className="w-full max-w-lg bg-white dark:bg-neutral-900 rounded-2xl shadow-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-neutral-900/40 dark:bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
+      <div
+        ref={sheetRef}
+        className="sheet w-full max-w-lg bg-white dark:bg-neutral-900 rounded-2xl shadow-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden flex flex-col max-h-[90vh]"
+      >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-100 dark:border-neutral-800 shrink-0">
           <div>

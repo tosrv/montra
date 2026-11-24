@@ -9,24 +9,29 @@ interface MonthNavigatorProps {
   onChange: (year: number, month: number) => void;
 }
 
-const selectClass =
-  'text-xs font-semibold text-neutral-800 dark:text-neutral-200 bg-transparent py-1 px-2 rounded-md hover:bg-neutral-50 dark:hover:bg-neutral-800 focus:outline-none cursor-pointer';
 const arrowClass =
-  'p-1.5 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors';
+  'p-1.5 text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors';
 
-/** Prev/next arrows plus month & year selects, shared by month-scoped pages. */
+/**
+ * Compact "‹ Nov 2026 ›" navigator. The label is backed by an invisible native
+ * select (months of the surrounding years) so tapping it opens the OS picker.
+ */
 export function MonthNavigator({ year, month, onChange }: MonthNavigatorProps) {
   const { t } = useLanguage();
   const monthNames = getMonthNames();
-  const years = [year - 2, year - 1, year, year + 1, year + 2];
 
   const shift = (delta: number) => {
     const d = new Date(year, month + delta, 1);
     onChange(d.getFullYear(), d.getMonth());
   };
 
+  const options: { year: number; month: number }[] = [];
+  for (let y = year - 2; y <= year + 1; y++) {
+    for (let m = 0; m < 12; m++) options.push({ year: y, month: m });
+  }
+
   return (
-    <div className="flex items-center gap-1.5 bg-white dark:bg-neutral-900 p-1 rounded-xl border border-neutral-200/80 dark:border-neutral-800 shadow-2xs self-start sm:self-auto">
+    <div className="flex items-center gap-0.5">
       <button
         type="button"
         onClick={() => shift(-1)}
@@ -37,29 +42,22 @@ export function MonthNavigator({ year, month, onChange }: MonthNavigatorProps) {
         <ChevronLeft className="w-4 h-4" />
       </button>
 
-      <div className="flex items-center gap-1 px-1">
+      <div className="relative">
+        <span className="block px-1.5 py-1 rounded-md text-sm font-semibold text-neutral-900 dark:text-neutral-100 whitespace-nowrap min-w-22 text-center">
+          {monthNames[month]?.slice(0, 3)} {year}
+        </span>
         <select
-          value={month}
-          onChange={(e) => onChange(year, Number(e.target.value))}
-          className={selectClass}
+          value={`${year}-${month}`}
+          onChange={(e) => {
+            const [y, m] = e.target.value.split('-').map(Number);
+            onChange(y, m);
+          }}
+          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
           aria-label={t('chart.month')}
         >
-          {monthNames.map((name, idx) => (
-            <option key={name} value={idx}>
-              {name}
-            </option>
-          ))}
-        </select>
-
-        <select
-          value={year}
-          onChange={(e) => onChange(Number(e.target.value), month)}
-          className={selectClass}
-          aria-label={t('common.year')}
-        >
-          {years.map((y) => (
-            <option key={y} value={y}>
-              {y}
+          {options.map((o) => (
+            <option key={`${o.year}-${o.month}`} value={`${o.year}-${o.month}`}>
+              {monthNames[o.month]} {o.year}
             </option>
           ))}
         </select>

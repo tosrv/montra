@@ -3,6 +3,7 @@ import { X, Check } from 'lucide-react';
 import { CategoryIcon } from '../../components/ui/CategoryIcon.tsx';
 import { useLanguage } from '../../i18n/LanguageProvider.tsx';
 import type { Category } from '../../types.ts';
+import { useSheetDrag } from '../../hooks/useSheetDrag.ts';
 
 interface CategoryBudgetModalProps {
   isOpen: boolean;
@@ -26,6 +27,7 @@ export function CategoryBudgetModal({
   onSave,
 }: CategoryBudgetModalProps) {
   const { t } = useLanguage();
+  const sheetRef = useSheetDrag(onClose);
   const [categoryId, setCategoryId] = useState<number>(
     initialCategoryId || (availableCategories[0]?.id ?? 0)
   );
@@ -80,8 +82,11 @@ export function CategoryBudgetModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/40 dark:bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
-      <div className="w-full max-w-md bg-white dark:bg-neutral-900 rounded-2xl shadow-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-neutral-900/40 dark:bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
+      <div
+        ref={sheetRef}
+        className="sheet w-full max-w-md bg-white dark:bg-neutral-900 rounded-2xl shadow-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden"
+      >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-100 dark:border-neutral-800">
           <h2 className="text-base font-bold text-neutral-900 dark:text-neutral-100">
