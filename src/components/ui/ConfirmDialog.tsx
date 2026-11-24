@@ -1,5 +1,6 @@
 import React from 'react';
 import { AlertTriangle, type LucideIcon } from 'lucide-react';
+import { useSheetDrag } from '../../hooks/useSheetDrag.ts';
 
 interface ConfirmDialogProps {
   title: string;
@@ -21,13 +22,15 @@ export function ConfirmDialog({
   onCancel,
   icon: Icon = AlertTriangle,
 }: ConfirmDialogProps) {
+  const sheetRef = useSheetDrag(onCancel);
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/40 dark:bg-black/60 backdrop-blur-xs">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-neutral-900/40 dark:bg-black/60 backdrop-blur-xs">
       <div
+        ref={sheetRef}
         role="alertdialog"
         aria-modal="true"
         aria-label={title}
-        className="w-full max-w-md bg-white dark:bg-neutral-900 p-6 rounded-2xl shadow-xl border border-neutral-200 dark:border-neutral-800 space-y-4"
+        className="sheet w-full max-w-md bg-white dark:bg-neutral-900 p-6 rounded-2xl shadow-xl border border-neutral-200 dark:border-neutral-800 space-y-4"
       >
         <div className="flex items-center gap-3 text-rose-600 dark:text-rose-400">
           <div className="w-9 h-9 rounded-xl bg-rose-50 dark:bg-rose-950/40 flex items-center justify-center">

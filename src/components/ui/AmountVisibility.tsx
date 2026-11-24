@@ -1,15 +1,33 @@
-import React, { useCallback, useState } from 'react';
+import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { formatCurrency, maskCurrency } from '../../utils/currency.ts';
 import { useLanguage } from '../../i18n/LanguageProvider.tsx';
 
+interface AmountVisibilityState {
+  hidden: boolean;
+  toggle: () => void;
+}
+
+const AmountVisibilityContext = createContext<AmountVisibilityState | null>(null);
+
 /**
- * Per-page "hide amounts" state. Amounts start hidden every time the page mounts
- * (privacy when the screen is visible to others).
+ * App-wide "hide amounts" state. Amounts start hidden each time the app opens
+ * (privacy when the screen is visible to others) and the choice is shared by all pages.
  */
-export function useAmountVisibility(currency: string) {
+export function AmountVisibilityProvider({ children }: { children: React.ReactNode }) {
   const [hidden, setHidden] = useState(true);
   const toggle = useCallback(() => setHidden((v) => !v), []);
+  const value = useMemo(() => ({ hidden, toggle }), [hidden, toggle]);
+  return (
+    <AmountVisibilityContext.Provider value={value}>{children}</AmountVisibilityContext.Provider>
+  );
+}
+
+export function useAmountVisibility(currency: string) {
+  const ctx = useContext(AmountVisibilityContext);
+  const [localHidden, setLocalHidden] = useState(true);
+  const hidden = ctx ? ctx.hidden : localHidden;
+  const toggle = useMemo(() => ctx?.toggle ?? (() => setLocalHidden((v) => !v)), [ctx]);
   const money = useCallback(
     (amount: number) => (hidden ? maskCurrency(currency) : formatCurrency(amount, currency)),
     [hidden, currency]
@@ -17,26 +35,24 @@ export function useAmountVisibility(currency: string) {
   return { hidden, toggle, money };
 }
 
-export function AmountVisibilityToggle({
-  hidden,
-  onToggle,
-}: {
-  hidden: boolean;
-  onToggle: () => void;
-}) {
+/** Global eye toggle shown in the app header / sidebar. */
+export function AmountVisibilityToggle({ className = '' }: { className?: string }) {
   const { t } = useLanguage();
+  const ctx = useContext(AmountVisibilityContext);
+  if (!ctx) return null;
+  const { hidden, toggle } = ctx;
   const label = hidden ? t('dashboard.showAmounts') : t('dashboard.hideAmounts');
 
   return (
     <button
       type="button"
-      onClick={onToggle}
+      onClick={toggle}
       aria-pressed={!hidden}
       title={label}
       aria-label={label}
-      className="p-2 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-xl shadow-2xs transition-colors shrink-0"
+      className={`p-2 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors shrink-0 ${className}`}
     >
-      {hidden ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+      {hidden ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
     </button>
   );
 }

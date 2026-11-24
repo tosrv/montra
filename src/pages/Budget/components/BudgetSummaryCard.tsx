@@ -32,7 +32,7 @@ export function BudgetSummaryCard({
   const { t } = useLanguage();
 
   return (
-    <div className="bg-white dark:bg-neutral-900 p-6 rounded-2xl border border-neutral-200/80 dark:border-neutral-800 shadow-2xs space-y-6">
+    <div className="bg-white dark:bg-neutral-900 p-6 rounded-2xl space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-base font-bold text-neutral-900 dark:text-neutral-100">

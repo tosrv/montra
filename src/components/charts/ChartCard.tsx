@@ -25,7 +25,7 @@ export function ChartCard({
   const [showTable, setShowTable] = useState(false);
 
   return (
-    <div className="bg-white dark:bg-neutral-900 p-6 rounded-2xl border border-neutral-200/80 dark:border-neutral-800 shadow-2xs space-y-4">
+    <div className="bg-white dark:bg-neutral-900 p-6 rounded-2xl space-y-4">
       <div className="flex items-start justify-between gap-3">
         <div>
           <h2 className="text-base font-bold text-neutral-900 dark:text-neutral-100">{title}</h2>
