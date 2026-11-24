@@ -154,7 +154,7 @@ export function TransactionsPage() {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-white dark:bg-neutral-900 p-4 rounded-2xl border border-neutral-200/80 dark:border-neutral-800 shadow-2xs space-y-3">
+      <div className="bg-white dark:bg-neutral-900 p-4 rounded-2xl space-y-3">
         <div className="flex flex-col md:flex-row gap-3">
           {/* Search input */}
           <div className="relative flex-1">
@@ -246,7 +246,7 @@ export function TransactionsPage() {
       </div>
 
       {/* Transaction List */}
-      <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200/80 dark:border-neutral-800 shadow-2xs overflow-hidden">
+      <div className="bg-white dark:bg-neutral-900 rounded-2xl overflow-hidden">
         {transactions.length === 0 ? (
           <div className="py-16 text-center space-y-3">
             <div className="w-12 h-12 rounded-2xl bg-neutral-100 dark:bg-neutral-800 text-neutral-400 dark:text-neutral-500 flex items-center justify-center mx-auto">
@@ -292,7 +292,7 @@ export function TransactionsPage() {
                           ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200/50 dark:border-emerald-800'
                           : tx.type === 'expense'
                             ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200/50 dark:border-rose-900'
-                            : 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200/50 dark:border-blue-800'
+                            : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700'
                       }`}
                     >
                       {tx.type === 'income' ? (
@@ -318,7 +318,7 @@ export function TransactionsPage() {
                               ? 'bg-emerald-100/70 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-200'
                               : tx.type === 'expense'
                                 ? 'bg-rose-100/70 dark:bg-rose-950/40 text-rose-800 dark:text-rose-200'
-                                : 'bg-blue-100/70 dark:bg-blue-950/40 text-blue-800 dark:text-blue-200'
+                                : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300'
                           }`}
                         >
                           {t(`common.${tx.type}`)}
@@ -362,7 +362,7 @@ export function TransactionsPage() {
                             ? 'text-emerald-700 dark:text-emerald-400'
                             : tx.type === 'expense'
                               ? 'text-rose-700 dark:text-rose-400'
-                              : 'text-blue-700 dark:text-blue-400'
+                              : 'text-neutral-700 dark:text-neutral-300'
                         }`}
                       >
                         {tx.type === 'income' ? '+' : tx.type === 'expense' ? '-' : ''}

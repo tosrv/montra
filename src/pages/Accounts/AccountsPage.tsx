@@ -1,15 +1,25 @@
 import React, { useState } from 'react';
-import { Plus, Wallet, Building2, Banknote, Layers, Edit2, Trash2, X, Check } from 'lucide-react';
+import {
+  ChevronLeft,
+  Plus,
+  Wallet,
+  Building2,
+  Banknote,
+  Layers,
+  Edit2,
+  Trash2,
+  X,
+  Check,
+} from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useAccounts } from '../../hooks/useAccounts.ts';
 import { useSettings } from '../../hooks/useSettings.ts';
 import { parseCurrencyInput } from '../../utils/currency.ts';
 import { useLanguage } from '../../i18n/LanguageProvider.tsx';
-import {
-  AmountVisibilityToggle,
-  useAmountVisibility,
-} from '../../components/ui/AmountVisibility.tsx';
+import { useAmountVisibility } from '../../components/ui/AmountVisibility.tsx';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog.tsx';
 import type { AccountType, AccountWithBalance } from '../../types.ts';
+import { useSheetDrag } from '../../hooks/useSheetDrag.ts';
 
 function accountTypeLabel(type: AccountType, t: ReturnType<typeof useLanguage>['t']) {
   switch (type) {
@@ -26,13 +36,10 @@ export function AccountsPage() {
   const { t } = useLanguage();
   const { accounts, addAccount, editAccount, removeAccount } = useAccounts();
   const { settings } = useSettings();
-  const {
-    hidden: amountsHidden,
-    toggle: toggleAmounts,
-    money,
-  } = useAmountVisibility(settings.currency);
+  const { money } = useAmountVisibility(settings.currency);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const sheetRef = useSheetDrag(() => setIsModalOpen(false));
   const [editingAccount, setEditingAccount] = useState<AccountWithBalance | null>(null);
 
   // Form states
@@ -118,6 +125,13 @@ export function AccountsPage() {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
+      <Link
+        to="/app/settings"
+        className="inline-flex items-center gap-1 text-xs font-medium text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100"
+      >
+        <ChevronLeft className="w-3.5 h-3.5" />
+        <span>{t('app.nav.settings')}</span>
+      </Link>
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -130,8 +144,6 @@ export function AccountsPage() {
         </div>
 
         <div className="flex items-center gap-2 self-start sm:self-auto">
-          <AmountVisibilityToggle hidden={amountsHidden} onToggle={toggleAmounts} />
-
           <button
             id="accounts-add-btn"
             type="button"
@@ -168,76 +180,48 @@ export function AccountsPage() {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {accounts.map((acc) => {
             const Icon = getAccountIcon(acc.type);
             return (
               <div
                 key={acc.id}
-                className="bg-white dark:bg-neutral-900 p-5 rounded-2xl border border-neutral-200/80 dark:border-neutral-800 shadow-2xs hover:shadow-xs transition-all space-y-4 flex flex-col justify-between"
+                className="bg-white dark:bg-neutral-900 p-4 rounded-2xl flex items-center justify-between gap-3 hover:shadow-xs transition-all"
               >
-                <div>
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-9 h-9 rounded-xl bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 flex items-center justify-center">
-                        <Icon className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <h3 className="text-sm font-bold text-neutral-900 dark:text-neutral-100">
-                          {acc.name}
-                        </h3>
-                        <span className="text-[11px] text-neutral-400 font-medium">
-                          {t('accounts.typeLabel', { type: accountTypeLabel(acc.type, t) })}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-1">
-                      <button
-                        type="button"
-                        onClick={() => openEditModal(acc)}
-                        className="p-1.5 text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
-                        title={t('accounts.edit')}
-                      >
-                        <Edit2 className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setAccountToDelete(acc);
-                          setDeleteError(null);
-                        }}
-                        className="p-1.5 text-neutral-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
-                        title={t('accounts.delete')}
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-9 h-9 rounded-xl bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200 flex items-center justify-center shrink-0">
+                    <Icon className="w-4 h-4" />
                   </div>
-
-                  <div className="mt-5">
-                    <span className="text-[11px] font-medium text-neutral-400 uppercase tracking-wider block">
-                      {t('accounts.currentBalance')}
+                  <div className="min-w-0">
+                    <h3 className="text-xs font-bold text-neutral-900 dark:text-neutral-100 truncate">
+                      {acc.name}
+                    </h3>
+                    <span className="text-[10px] text-neutral-400">
+                      {accountTypeLabel(acc.type, t)} · {money(acc.currentBalance)}
                     </span>
-                    <div className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mt-0.5 tracking-tight">
-                      {money(acc.currentBalance)}
-                    </div>
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-neutral-100 dark:border-neutral-800 text-[11px] text-neutral-500 dark:text-neutral-400 space-y-1">
-                  <div className="flex items-center justify-between">
-                    <span>{t('accounts.initialBalance')}</span>
-                    <span className="font-semibold text-neutral-700 dark:text-neutral-300">
-                      {money(acc.initialBalance)}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span>{t('accounts.transactions')}</span>
-                    <span className="font-semibold text-neutral-700 dark:text-neutral-300">
-                      {acc.transactionCount}
-                    </span>
-                  </div>
+                <div className="flex items-center gap-1 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => openEditModal(acc)}
+                    className="p-1.5 text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+                    title={t('accounts.edit')}
+                  >
+                    <Edit2 className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAccountToDelete(acc);
+                      setDeleteError(null);
+                    }}
+                    className="p-1.5 text-neutral-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
+                    title={t('accounts.delete')}
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               </div>
             );
@@ -247,8 +231,11 @@ export function AccountsPage() {
 
       {/* Create / Edit Account Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/40 dark:bg-black/60 backdrop-blur-xs">
-          <div className="w-full max-w-md bg-white dark:bg-neutral-900 rounded-2xl shadow-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-neutral-900/40 dark:bg-black/60 backdrop-blur-xs">
+          <div
+            ref={sheetRef}
+            className="sheet w-full max-w-md bg-white dark:bg-neutral-900 rounded-2xl shadow-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden"
+          >
             <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-100 dark:border-neutral-800">
               <h2 className="text-base font-bold text-neutral-900 dark:text-neutral-100">
                 {editingAccount ? t('accounts.modalEdit') : t('accounts.modalNew')}

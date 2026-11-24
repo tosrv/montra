@@ -1,11 +1,23 @@
 import React, { useState } from 'react';
-import { Plus, Tags, Edit2, Trash2, X, Check, ArrowDownRight, ArrowUpRight } from 'lucide-react';
+import {
+  ChevronLeft,
+  Plus,
+  Tags,
+  Edit2,
+  Trash2,
+  X,
+  Check,
+  ArrowDownRight,
+  ArrowUpRight,
+} from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useCategories } from '../../hooks/useCategories.ts';
 import { countCategoryTransactions } from '../../services/categoryService.ts';
 import { CategoryIcon, AVAILABLE_ICONS } from '../../components/ui/CategoryIcon.tsx';
 import { useLanguage } from '../../i18n/LanguageProvider.tsx';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog.tsx';
 import type { Category, CategoryType } from '../../types.ts';
+import { useSheetDrag } from '../../hooks/useSheetDrag.ts';
 
 export function CategoriesPage() {
   const { t } = useLanguage();
@@ -14,6 +26,7 @@ export function CategoriesPage() {
 
   const [activeTab, setActiveTab] = useState<CategoryType>('expense');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const sheetRef = useSheetDrag(() => setIsModalOpen(false));
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
 
   // Form
@@ -95,6 +108,13 @@ export function CategoriesPage() {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
+      <Link
+        to="/app/settings"
+        className="inline-flex items-center gap-1 text-xs font-medium text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100"
+      >
+        <ChevronLeft className="w-3.5 h-3.5" />
+        <span>{t('app.nav.settings')}</span>
+      </Link>
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -174,7 +194,7 @@ export function CategoriesPage() {
           {displayedCategories.map((cat) => (
             <div
               key={cat.id}
-              className="bg-white dark:bg-neutral-900 p-4 rounded-2xl border border-neutral-200/80 dark:border-neutral-800 shadow-2xs flex items-center justify-between gap-3 hover:shadow-xs transition-all"
+              className="bg-white dark:bg-neutral-900 p-4 rounded-2xl flex items-center justify-between gap-3 hover:shadow-xs transition-all"
             >
               <div className="flex items-center gap-3 min-w-0">
                 <div
@@ -219,8 +239,11 @@ export function CategoriesPage() {
 
       {/* Create / Edit Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/40 dark:bg-black/60 backdrop-blur-xs">
-          <div className="w-full max-w-md bg-white dark:bg-neutral-900 rounded-2xl shadow-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-neutral-900/40 dark:bg-black/60 backdrop-blur-xs">
+          <div
+            ref={sheetRef}
+            className="sheet w-full max-w-md bg-white dark:bg-neutral-900 rounded-2xl shadow-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden"
+          >
             <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-100 dark:border-neutral-800">
               <h2 className="text-base font-bold text-neutral-900 dark:text-neutral-100">
                 {editingCategory ? t('categories.modalEdit') : t('categories.modalNew')}

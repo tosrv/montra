@@ -69,3 +69,47 @@ html.dark {
   --chart-cat-4: #008300;
   --chart-cat-other: #404040;
 }
+
+/* Modal panels become a bottom sheet (drawer) on phones; centered dialog from sm up. */
+@media (max-width: 639px) {
+  .sheet {
+    max-width: none;
+    max-height: 90dvh;
+    overflow-y: auto;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-width: 0;
+    animation: sheet-up 0.22s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
+  .sheet::before {
+    content: '';
+    display: block;
+    width: 2.5rem;
+    height: 0.25rem;
+    margin: 0.5rem auto 0;
+    border-radius: 9999px;
+    background: var(--color-neutral-300);
+  }
+
+  /* Keep content clear of the iPhone home indicator */
+  .sheet::after {
+    content: '';
+    display: block;
+    flex-shrink: 0;
+    height: env(safe-area-inset-bottom);
+  }
+
+  html.dark .sheet::before {
+    background: var(--color-neutral-700);
+  }
+}
+
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}

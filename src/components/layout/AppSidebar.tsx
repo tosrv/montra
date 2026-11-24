@@ -1,17 +1,16 @@
 import React from 'react';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink, Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
   Receipt,
   CircleDollarSign,
-  Wallet,
-  Tags,
   Settings,
   Plus,
   ArrowLeft,
   ShieldCheck,
 } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageProvider.tsx';
+import { AmountVisibilityToggle } from '../ui/AmountVisibility.tsx';
 
 interface AppSidebarProps {
   onOpenAddTransaction: () => void;
@@ -19,13 +18,13 @@ interface AppSidebarProps {
 
 export function AppSidebar({ onOpenAddTransaction }: AppSidebarProps) {
   const { t } = useLanguage();
+  const { pathname } = useLocation();
+  const inManage = pathname.startsWith('/app/accounts') || pathname.startsWith('/app/categories');
 
   const navItems = [
     { to: '/app', labelKey: 'app.nav.dashboard' as const, icon: LayoutDashboard, end: true },
     { to: '/app/transactions', labelKey: 'app.nav.transactions' as const, icon: Receipt },
     { to: '/app/budget', labelKey: 'app.nav.budget' as const, icon: CircleDollarSign },
-    { to: '/app/accounts', labelKey: 'app.nav.accounts' as const, icon: Wallet },
-    { to: '/app/categories', labelKey: 'app.nav.categories' as const, icon: Tags },
     { to: '/app/settings', labelKey: 'app.nav.settings' as const, icon: Settings },
   ];
 
@@ -47,6 +46,7 @@ export function AppSidebar({ onOpenAddTransaction }: AppSidebarProps) {
               </span>
             </div>
           </Link>
+          <AmountVisibilityToggle />
         </div>
 
         {/* Primary CTA button */}
@@ -69,13 +69,14 @@ export function AppSidebar({ onOpenAddTransaction }: AppSidebarProps) {
                 key={item.to}
                 to={item.to}
                 end={item.end}
-                className={({ isActive }) =>
-                  `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                className={({ isActive: active }) => {
+                  const isActive = active || (item.to === '/app/settings' && inManage);
+                  return `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                     isActive
                       ? 'bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 font-semibold'
                       : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 hover:bg-neutral-50 dark:hover:bg-neutral-800'
-                  }`
-                }
+                  }`;
+                }}
               >
                 <Icon className="w-4 h-4 text-neutral-500 dark:text-neutral-400" />
                 <span>{t(item.labelKey)}</span>
